@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Back Arrow -->
+    <ImageView
+        android:id="@+id/backButton"
+        android:layout_width="38dp"
+        android:layout_height="36dp"
+        android:layout_alignParentStart="true"
+        android:layout_margin="16dp"
+        android:contentDescription="Back"
+        android:src="@drawable/ic_backarrow" />
+
+    <!-- Logo -->
+    <ImageView
+        android:id="@+id/logoImage"
+        android:layout_width="100dp"
+        android:layout_height="70dp"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="16dp"
+        android:contentDescription="EduAlert Logo"
+        android:src="@drawable/logo" />
+
+    <!-- Scroll Content -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/backButton"
+        android:padding="20dp"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Title -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Help &amp; Support"
+                android:textColor="#922381"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp" />
+
+            <!-- Subtitle -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="We’re here to help you with any issues."
+                android:textColor="#666666"
+                android:textSize="13sp"
+                android:layout_marginBottom="25dp"/>
+
+            <!-- FAQs -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Frequently Asked Questions"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:textColor="#333333"
+                android:layout_marginBottom="10dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Q: How do I reset my password?\nA: Go to Change Password under settings."
+                android:padding="10dp"
+                android:background="@drawable/input_bg"
+                android:textSize="14sp"
+                android:layout_marginBottom="10dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Q: How do I update my profile?\nA: Navigate to Profile section in settings."
+                android:padding="10dp"
+                android:background="@drawable/input_bg"
+                android:textSize="14sp"
+                android:layout_marginBottom="10dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Q: How do I contact support?\nA: You can email us directly at the address below."
+                android:padding="10dp"
+                android:background="@drawable/input_bg"
+                android:textSize="14sp"
+                android:layout_marginBottom="20dp"/>
+
+            <!-- Contact -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Contact Support"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:textColor="#333333"
+                android:layout_marginBottom="10dp" />
+
+            <!-- Email -->
+            <TextView
+                android:id="@+id/emailSupport"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autoLink="email"
+                android:text="edualert.notifications@gmail.com"
+                android:textSize="14sp"
+                android:textColor="#555555"
+                android:layout_marginBottom="20dp" />
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>

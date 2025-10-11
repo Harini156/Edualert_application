@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    card_view:cardCornerRadius="12dp"
+    card_view:cardElevation="6dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="12dp"
+        android:background="@drawable/input_bg"
+        android:clipToOutline="true">
+
+        <!-- Message Title -->
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Message Title"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:textColor="#000" />
+
+        <!-- Message Content -->
+        <TextView
+            android:id="@+id/tvContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Message content goes here..."
+            android:textSize="14sp"
+            android:textColor="#333"
+            android:layout_marginTop="4dp" />
+
+        <!-- Attachment -->
+        <TextView
+            android:id="@+id/tvAttachment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="📎 Attachment"
+            android:textColor="#1E88E5"
+            android:textSize="14sp"
+            android:layout_marginTop="6dp"
+            android:visibility="gone"
+            android:clickable="true"
+            android:focusable="true"/>
+
+        <!-- Sent at -->
+        <TextView
+            android:id="@+id/tvCreatedAt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Sent at: 10 Sep 2025, 05:04 PM"
+            android:textSize="12sp"
+            android:textColor="#888"
+            android:layout_marginTop="4dp"/>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

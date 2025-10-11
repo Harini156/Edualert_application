@@ -1,0 +1,6 @@
+<!-- res/drawable/student_bg.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <solid android:color="#E6E6FA" /> <!-- Light Lavender -->
+</shape>

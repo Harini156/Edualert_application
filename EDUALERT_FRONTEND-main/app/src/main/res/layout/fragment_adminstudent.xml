@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:fitsSystemWindows="true"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Gradient Background -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+      />
+
+    <!-- Main Content -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Title and Subtitle -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:id="@+id/adminTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Send Message to Students"
+                android:textSize="28sp"
+                android:textColor="#922381"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/adminSubtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Choose students to send your message"
+                android:textSize="16sp"
+                android:textColor="#555555"
+                android:layout_marginTop="4dp"/>
+        </LinearLayout>
+
+        <!-- Grid of Cards -->
+        <GridLayout
+            android:id="@+id/gridFilters"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="2"
+            >
+
+            <!-- Department Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardDepartment"
+                android:layout_width="0dp"
+                android:layout_height="120dp"
+                android:layout_columnWeight="1"
+                app:cardCornerRadius="20dp"
+                android:checkable="true"
+                app:checkedIcon="@drawable/ic_check"
+                app:strokeColor="#922381"
+                app:cardBackgroundColor="@android:color/white"
+                android:foreground="?attr/selectableItemBackground"
+                android:layout_margin="8dp">
+
+                <LinearLayout
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/input_bg">
+
+                    <ImageView
+                        android:src="@drawable/ic_domain_24"
+                        app:tint="#922381"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"/>
+
+                    <TextView
+                        android:id="@+id/titleDepartment"
+                        android:text="Department"
+                        android:textStyle="bold"
+                        android:textColor="#333333"
+                        android:layout_marginTop="8dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                    <TextView
+                        android:id="@+id/subDepartment"
+                        android:text="CSE, ECE, IT, ..."
+                        android:textColor="#666666"
+                        android:textSize="12sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Year Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardYear"
+                android:layout_width="0dp"
+                android:layout_height="120dp"
+                android:layout_columnWeight="1"
+                app:cardCornerRadius="20dp"
+                android:checkable="true"
+                app:checkedIcon="@drawable/ic_check"
+                app:strokeColor="#922381"
+                app:cardBackgroundColor="@android:color/white"
+                android:foreground="?attr/selectableItemBackground"
+                android:layout_margin="8dp">
+
+                <LinearLayout
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/input_bg">
+
+                    <ImageView
+                        android:src="@drawable/ic_calendar_24"
+                        app:tint="#922381"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"/>
+
+                    <TextView
+                        android:id="@+id/titleYear"
+                        android:text="Year"
+                        android:textStyle="bold"
+                        android:textColor="#333333"
+                        android:layout_marginTop="8dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                    <TextView
+                        android:id="@+id/subYear"
+                        android:text="1st, 2nd, 3rd, 4th"
+                        android:textColor="#666666"
+                        android:textSize="12sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- CGPA Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardCGPA"
+                android:layout_width="0dp"
+                android:layout_height="120dp"
+                android:layout_columnWeight="1"
+                app:cardCornerRadius="20dp"
+                android:checkable="true"
+                app:checkedIcon="@drawable/ic_check"
+                app:strokeColor="#922381"
+                app:cardBackgroundColor="@android:color/white"
+                android:foreground="?attr/selectableItemBackground"
+                android:layout_margin="8dp">
+
+                <LinearLayout
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/input_bg">
+
+                    <ImageView
+                        android:src="@drawable/ic_grade_24"
+                        app:tint="#922381"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"/>
+
+                    <TextView
+                        android:id="@+id/titleCGPA"
+                        android:text="CGPA"
+                        android:textStyle="bold"
+                        android:textColor="#333333"
+                        android:layout_marginTop="8dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                    <TextView
+                        android:id="@+id/subCGPA"
+                        android:text="≥9, ≥8, ≥7, &lt;7"
+                        android:textColor="#666666"
+                        android:textSize="12sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Backlogs Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardBacklogs"
+                android:layout_width="0dp"
+                android:layout_height="120dp"
+                android:layout_columnWeight="1"
+                app:cardCornerRadius="20dp"
+                android:checkable="true"
+                app:checkedIcon="@drawable/ic_check"
+                app:strokeColor="#922381"
+                app:cardBackgroundColor="@android:color/white"
+                android:foreground="?attr/selectableItemBackground"
+                android:layout_margin="8dp">
+
+                <LinearLayout
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/input_bg">
+
+                    <ImageView
+                        android:src="@drawable/ic_book_24"
+                        app:tint="#922381"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"/>
+
+                    <TextView
+                        android:id="@+id/titleBacklogs"
+                        android:text="Backlogs"
+                        android:textStyle="bold"
+                        android:textColor="#333333"
+                        android:layout_marginTop="8dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                    <TextView
+                        android:id="@+id/subBacklogs"
+                        android:text="None / 1–2 / >2"
+                        android:textColor="#666666"
+                        android:textSize="12sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Stay Type Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardStayType"
+                android:layout_width="0dp"
+                android:layout_height="120dp"
+                android:layout_columnWeight="1"
+                app:cardCornerRadius="20dp"
+                android:checkable="true"
+                app:checkedIcon="@drawable/ic_check"
+                app:strokeColor="#922381"
+                app:cardBackgroundColor="@android:color/white"
+                android:foreground="?attr/selectableItemBackground"
+                android:layout_margin="8dp">
+
+                <LinearLayout
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/input_bg">
+
+                    <ImageView
+                        android:src="@drawable/ic_home"
+                        app:tint="#922381"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"/>
+
+                    <TextView
+                        android:id="@+id/titleStayType"
+                        android:text="Stay Type"
+                        android:textStyle="bold"
+                        android:textColor="#333333"
+                        android:layout_marginTop="8dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                    <TextView
+                        android:id="@+id/subStayType"
+                        android:text="Hosteller / Day Scholar"
+                        android:textColor="#666666"
+                        android:textSize="12sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Gender Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardGender"
+                android:layout_width="0dp"
+                android:layout_height="120dp"
+                android:layout_columnWeight="1"
+                app:cardCornerRadius="20dp"
+                android:checkable="true"
+                app:checkedIcon="@drawable/ic_check"
+                app:strokeColor="#922381"
+                app:cardBackgroundColor="@android:color/white"
+                android:foreground="?attr/selectableItemBackground"
+                android:layout_margin="8dp">
+
+                <LinearLayout
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/input_bg">
+
+                    <ImageView
+                        android:src="@drawable/ic_gender_24"
+                        app:tint="#922381"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"/>
+
+                    <TextView
+                        android:id="@+id/titleGender"
+                        android:text="Gender"
+                        android:textStyle="bold"
+                        android:textColor="#333333"
+                        android:layout_marginTop="8dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                    <TextView
+                        android:id="@+id/subGender"
+                        android:text="Male / Female / Other"
+                        android:textColor="#666666"
+                        android:textSize="12sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </GridLayout>
+
+        <!-- Spacer -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="72dp"/>
+    </LinearLayout>
+
+    <!-- Bottom Continue Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnContinue"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_margin="16dp"
+        android:text="Continue"
+        android:textAllCaps="false"
+        app:cornerRadius="14dp"
+        app:backgroundTint="#922381"
+        android:layout_gravity="bottom"/>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:fitsSystemWindows="true"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Background -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <!-- Main Content -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Title and Subtitle -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:id="@+id/titleSendTo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Send Message"
+                android:textSize="28sp"
+                android:textColor="#922381"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/subtitleSendTo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Choose who should receive your message"
+                android:textSize="16sp"
+                android:textColor="#555555"
+                android:layout_marginTop="4dp"/>
+        </LinearLayout>
+
+        <!-- Grid with 3 cards -->
+        <GridLayout
+            android:id="@+id/gridSendTo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="2"
+            android:rowCount="2"
+            android:orientation="horizontal"
+            >
+
+            <!-- Students Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardStudents"
+                android:layout_width="0dp"
+                android:layout_height="140dp"
+                app:cardCornerRadius="20dp"
+                android:layout_columnWeight="1"
+                android:checkable="true"
+                app:checkedIcon="@drawable/ic_check"
+                app:strokeColor="#922381"
+                app:cardBackgroundColor="@android:color/white"
+                android:foreground="?attr/selectableItemBackground"
+                android:layout_margin="8dp">
+
+                <LinearLayout
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/input_bg">
+
+                    <ImageView
+                        android:src="@drawable/ic_profile"
+                        app:tint="#922381"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"/>
+
+                    <TextView
+                        android:id="@+id/titleStudents"
+                        android:text="Students"
+                        android:textStyle="bold"
+                        android:textColor="#333333"
+                        android:layout_marginTop="8dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                    <TextView
+                        android:id="@+id/subStudents"
+                        android:text="Send to all students"
+                        android:textColor="#666666"
+                        android:textSize="12sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Staff Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardStaff"
+                android:layout_width="0dp"
+                android:layout_height="140dp"
+                android:layout_columnWeight="1"
+                app:cardCornerRadius="20dp"
+                app:strokeColor="#922381"
+                app:cardBackgroundColor="@android:color/white"
+                android:layout_margin="8dp">
+
+                <LinearLayout
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/input_bg">
+
+                    <ImageView
+                        android:src="@drawable/ic_profile"
+                        app:tint="#922381"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"/>
+
+                    <TextView
+                        android:id="@+id/titleStaff"
+                        android:text="Staff"
+                        android:textStyle="bold"
+                        android:textColor="#333333"
+                        android:layout_marginTop="8dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                    <TextView
+                        android:id="@+id/subStaff"
+                        android:text="Send to all staff"
+                        android:textColor="#666666"
+                        android:textSize="12sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Both Card -->
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardBoth"
+                android:layout_width="0dp"
+                android:layout_height="140dp"
+                app:cardCornerRadius="20dp"
+                android:checkable="true"
+                android:layout_columnWeight="1"
+                app:checkedIcon="@drawable/ic_check"
+                app:strokeColor="#922381"
+
+                app:cardBackgroundColor="@android:color/white"
+                android:foreground="?attr/selectableItemBackground"
+                android:layout_margin="8dp">
+
+                <LinearLayout
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/input_bg">
+
+                    <ImageView
+                        android:src="@drawable/ic_group"
+                        app:tint="#922381"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"/>
+
+                    <TextView
+                        android:id="@+id/titleBoth"
+                        android:text="Both"
+                        android:textStyle="bold"
+                        android:textColor="#333333"
+                        android:layout_marginTop="8dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                    <TextView
+                        android:id="@+id/subBoth"
+                        android:text="Send to both students &amp; staff"
+                        android:textColor="#666666"
+                        android:textSize="12sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+
+        </GridLayout>
+
+        <!-- Spacer -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="72dp"/>
+    </LinearLayout>
+
+    <!-- Continue Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnSelectContinue"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_margin="16dp"
+        android:text="Continue"
+        android:textAllCaps="false"
+        app:cornerRadius="14dp"
+        app:backgroundTint="#922381"
+        android:layout_gravity="bottom"/>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

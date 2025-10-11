@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/rolesel"
+    android:padding="20dp">
+
+    <!-- Logo in top-right corner -->
+
+    <!-- Title -->
+
+    <ImageView
+        android:id="@+id/logoImage"
+        android:layout_width="106dp"
+        android:layout_height="84dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="-13dp"
+        android:contentDescription="EduAlert Logo"
+        android:src="@drawable/final_logo" />
+
+    <TextView
+        android:id="@+id/roleTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Role Selection"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:textColor="#222222"
+        android:layout_marginTop="50dp"
+        android:layout_alignParentStart="true" />
+
+    <!-- Subtitle -->
+    <TextView
+        android:id="@+id/roleSubtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Choose how you'll use EduAlert"
+        android:textSize="16sp"
+        android:textColor="#666666"
+        android:layout_below="@id/roleTitle"
+        android:layout_marginTop="5dp"
+        android:layout_alignParentStart="true" />
+
+    <!-- Roles Container -->
+    <LinearLayout
+        android:id="@+id/roleContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@id/roleSubtitle"
+        android:layout_marginTop="40dp"
+        android:divider="@android:color/transparent"
+        android:showDividers="middle"
+        android:dividerPadding="15dp">
+
+        <!-- Student Card -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="119dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/card_bg"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="16dp">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="16dp"
+                android:contentDescription="Student Icon"
+                android:src="@drawable/stuicon" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Student"
+                    android:textColor="#1A237E"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Access class notifications and campus updates"
+                    android:textColor="#555555"
+                    android:textSize="14sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Staff Card -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="115dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/card_bg"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="16dp">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="16dp"
+                android:contentDescription="Staff Icon"
+                android:src="@drawable/stficon" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Staff"
+                    android:textColor="#1A237E"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Manage class communications and announcements"
+                    android:textColor="#555555"
+                    android:textSize="14sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Admin Card -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="115dp"
+            android:background="@drawable/card_bg"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="16dp">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="16dp"
+                android:contentDescription="Admin Icon"
+                android:src="@drawable/adminicon" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Admin"
+                    android:textColor="#1A237E"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Full system control and management"
+                    android:textColor="#555555"
+                    android:textSize="14sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+</RelativeLayout>

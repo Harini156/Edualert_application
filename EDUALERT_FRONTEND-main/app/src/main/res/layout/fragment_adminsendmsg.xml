@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:fitsSystemWindows="true"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Background -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- Scrollable Content -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Title -->
+            <TextView
+                android:id="@+id/tvFormTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Send Message"
+                android:textSize="28sp"
+                android:textColor="#922381"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp"/>
+
+            <!-- Recipient -->
+            <TextView
+                android:id="@+id/tvRecipient"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="To: Everyone"
+                android:textSize="16sp"
+                android:textColor="#555555"
+                android:layout_marginBottom="16dp"/>
+
+            <!-- Filters -->
+            <LinearLayout
+                android:id="@+id/filterContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <EditText
+                    android:id="@+id/etDepartment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:layout_marginBottom="12dp"
+                    android:hint="Enter Department"
+                    android:background="@drawable/input_bg"
+                    android:padding="12dp"
+                    android:textColor="#333333"
+                    android:textSize="16sp"/>
+
+                <Spinner
+                    android:id="@+id/spinnerStaffType"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:layout_marginBottom="12dp"/>
+
+                <Spinner
+                    android:id="@+id/spinnerDesignation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:layout_marginBottom="12dp"/>
+
+                <Spinner
+                    android:id="@+id/spinnerYear"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:layout_marginBottom="12dp"/>
+
+                <Spinner
+                    android:id="@+id/spinnerStayType"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:layout_marginBottom="12dp"/>
+
+                <Spinner
+                    android:id="@+id/spinnerGender"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:layout_marginBottom="12dp"/>
+
+                <Spinner
+                    android:id="@+id/spinnerCgpa"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:layout_marginBottom="12dp"/>
+
+                <Spinner
+                    android:id="@+id/spinnerBacklogs"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:layout_marginBottom="12dp"/>
+            </LinearLayout>
+
+            <!-- Message Title -->
+            <EditText
+                android:id="@+id/etMessageTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Message Title"
+                android:background="@drawable/input_bg"
+                android:padding="12dp"
+                android:layout_marginTop="16dp"/>
+
+            <!-- Message Content -->
+            <EditText
+                android:id="@+id/etMessageContent"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:hint="Message Content"
+                android:gravity="top"
+                android:inputType="textMultiLine"
+                android:background="@drawable/input_bg"
+                android:padding="12dp"
+                android:layout_marginTop="12dp"/>
+
+            <!-- Attachment -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="16dp">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/attach"
+                    app:tint="#922381"/>
+
+                <TextView
+                    android:id="@+id/tvAddAttachment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" Add Attachment"
+                    android:textSize="16sp"
+                    android:textColor="#333333"
+                    android:layout_marginStart="8dp"/>
+            </LinearLayout>
+
+            <!-- Selected File Container -->
+            <LinearLayout
+                android:id="@+id/layoutFileContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                android:layout_marginStart="32dp"
+                android:paddingTop="4dp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/tvFileName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#555555"
+                    android:textSize="14sp"/>
+
+                <ImageView
+                    android:id="@+id/ivRemoveFile"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginStart="8dp"
+                    android:src="@drawable/ic_cross"
+                    app:tint="#922381"/>
+            </LinearLayout>
+
+            <!-- Send Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSendMessage"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:text="Send Message"
+                android:textAllCaps="false"
+                android:textStyle="bold"
+                android:textColor="@android:color/white"
+                app:cornerRadius="14dp"
+                app:backgroundTint="#922381"
+                android:layout_marginTop="24dp"/>
+        </LinearLayout>
+    </ScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

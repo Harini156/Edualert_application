@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Selected state -->
+    <item android:state_selected="true">
+        <shape android:shape="rectangle">
+            <solid android:color="#922381" /> <!-- solid background -->
+            <corners android:radius="16dp" />
+            <stroke
+                android:width="1dp"
+                android:color="#922381" /> <!-- border same color -->
+            <padding
+                android:left="12dp"
+                android:top="6dp"
+                android:right="12dp"
+                android:bottom="6dp" />
+        </shape>
+    </item>
+
+    <!-- Default (unselected) state -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@android:color/white" />
+            <corners android:radius="16dp" />
+            <stroke
+                android:width="1dp"
+                android:color="#922381" /> <!-- border in same color -->
+            <padding
+                android:left="12dp"
+                android:top="6dp"
+                android:right="12dp"
+                android:bottom="6dp" />
+        </shape>
+    </item>
+
+</selector>

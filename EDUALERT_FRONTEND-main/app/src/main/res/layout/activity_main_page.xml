@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/logo_bg"
+    android:padding="24dp">
+
+    <!-- App Logo (Bell with Graduation Cap) -->
+
+    <!-- App Title and Subtitle -->
+
+    <!-- Get Started Button -->
+    <ImageView
+        android:id="@+id/logoImage"
+        android:layout_width="340dp"
+        android:layout_height="422dp"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="16dp"
+        android:contentDescription="EDUALERT Logo"
+        android:scaleType="centerCrop"
+        android:src="@drawable/logo" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/getStartedBtn"
+        android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="116dp"
+        android:background="@drawable/button_bg"
+        android:text="GET STARTED"
+        android:textAllCaps="true"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold" />
+
+</RelativeLayout>

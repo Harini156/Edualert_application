@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="20dp"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Top Logo -->
+        <ImageView
+            android:id="@+id/logoImage"
+            android:layout_width="117dp"
+            android:layout_height="110dp"
+            android:layout_gravity="end"
+            android:contentDescription="EduAlert Logo"
+            android:src="@drawable/logo" />
+
+        <!-- Page Title -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="-50dp"
+            android:text="Fill Required Details"
+            android:textColor="#922381"
+            android:textSize="25sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Provide the information to complete your profile"
+            android:textSize="13sp"
+            android:textColor="#666666"
+            android:layout_marginBottom="25dp" />
+
+        <!-- Common Fields -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Phone"
+            android:textSize="14sp"
+            android:textColor="#333333"
+            android:layout_marginBottom="5dp" />
+
+        <EditText
+            android:id="@+id/phoneField"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:hint="Enter your phone number"
+            android:drawablePadding="10dp"
+            android:background="@drawable/input_bg"
+            android:paddingStart="15dp"
+            android:textSize="15sp"
+            android:layout_marginBottom="15dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Address"
+            android:textSize="14sp"
+            android:textColor="#333333"
+            android:layout_marginBottom="5dp" />
+
+        <EditText
+            android:id="@+id/addressField"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:hint="Enter your address"
+            android:drawablePadding="10dp"
+            android:background="@drawable/input_bg"
+            android:paddingStart="15dp"
+            android:textSize="15sp"
+            android:layout_marginBottom="20dp" />
+
+        <!-- Student Extra Fields -->
+        <LinearLayout
+            android:id="@+id/studentExtraFields"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="DOB"
+                android:textSize="14sp"
+                android:textColor="#333333"
+                android:layout_marginBottom="5dp" />
+
+            <EditText
+                android:id="@+id/dobField"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:hint="Enter your date of birth"
+                android:drawablePadding="10dp"
+                android:background="@drawable/input_bg"
+                android:paddingStart="15dp"
+                android:textSize="15sp"
+                android:layout_marginBottom="15dp" />
+
+            <!-- Gender Spinner -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Gender"
+                android:textSize="14sp"
+                android:textColor="#333333"
+                android:layout_marginBottom="5dp" />
+
+            <Spinner
+                android:id="@+id/genderSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/input_bg"
+                android:paddingStart="15dp"
+                android:layout_marginBottom="15dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Blood Group"
+                android:textSize="14sp"
+                android:textColor="#333333"
+                android:layout_marginBottom="5dp" />
+
+            <EditText
+                android:id="@+id/bloodGroupField"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:hint="Enter your blood group"
+                android:drawablePadding="10dp"
+                android:background="@drawable/input_bg"
+                android:paddingStart="15dp"
+                android:textSize="15sp"
+                android:layout_marginBottom="15dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Department"
+                android:textSize="14sp"
+                android:textColor="#333333"
+                android:layout_marginBottom="5dp" />
+
+            <EditText
+                android:id="@+id/departmentFieldStudent"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:hint="Enter your department"
+                android:drawablePadding="10dp"
+                android:background="@drawable/input_bg"
+                android:paddingStart="15dp"
+                android:textSize="15sp"
+                android:layout_marginBottom="15dp" />
+
+            <!-- Year Spinner -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Year"
+                android:textSize="14sp"
+                android:textColor="#333333"
+                android:layout_marginBottom="5dp" />
+
+            <Spinner
+                android:id="@+id/yearSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/input_bg"
+                android:paddingStart="15dp"
+                android:layout_marginBottom="15dp" />
+            <!-- CGPA Text Field -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CGPA"
+                android:textSize="14sp"
+                android:textColor="#333333"
+                android:layout_marginBottom="5dp" />
+
+            <EditText
+                android:id="@+id/cgpaField"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:hint="Enter your CGPA"
+                android:drawablePadding="10dp"
+                android:background="@drawable/input_bg"
+                android:paddingStart="15dp"
+                android:textSize="15sp"
+                android:inputType="numberDecimal"
+                android:layout_marginBottom="15dp" />
+
+            <!-- Backlogs Text Field -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Backlogs"
+                android:textSize="14sp"
+                android:textColor="#333333"
+                android:layout_marginBottom="5dp" />
+
+            <EditText
+                android:id="@+id/backlogsField"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:hint="Enter number of backlogs"
+                android:drawablePadding="10dp"
+                android:background="@drawable/input_bg"
+                android:paddingStart="15dp"
+                android:textSize="15sp"
+                android:inputType="number"
+                android:layout_marginBottom="15dp" />
+
+            <!-- Stay Type Spinner -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Stay Type"
+                android:textSize="14sp"
+                android:textColor="#333333"
+                android:layout_marginBottom="5dp" />
+
+            <Spinner
+                android:id="@+id/stayTypeSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/input_bg"
+                android:paddingStart="15dp"
+                android:layout_marginBottom="20dp" />
+        </LinearLayout>
+
+        <!-- Staff Extra Fields -->
+        <LinearLayout
+            android:id="@+id/staffExtraFields"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="DOB"
+                android:textSize="14sp"
+                android:textColor="#333333"
+                android:layout_marginBottom="5dp" />
+
+            <EditText
+                android:id="@+id/dobFieldStaff"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:hint="Enter your date of birth"
+                android:drawablePadding="10dp"
+                android:background="@drawable/input_bg"
+                android:paddingStart="15dp"
+                android:textSize="15sp"
+                android:layout_marginBottom="15dp" />
+
+            <!-- Staff Type Spinner -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Staff Type"
+                android:textSize="14sp"
+                android:textColor="#333333"
+                android:layout_marginBottom="5dp" />
+
+            <Spinner
+                android:id="@+id/staffTypeSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/input_bg"
+                android:paddingStart="15dp"
+                android:layout_marginBottom="15dp" />
+
+            <!-- Wrap Dept & Designation in a container -->
+            <LinearLayout
+                android:id="@+id/staffDeptDesignationLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Department"
+                    android:textSize="14sp"
+                    android:textColor="#333333"
+                    android:layout_marginBottom="5dp" />
+
+                <EditText
+                    android:id="@+id/departmentFieldStaff"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:hint="Enter your department"
+                    android:drawablePadding="10dp"
+                    android:background="@drawable/input_bg"
+                    android:paddingStart="15dp"
+                    android:textSize="15sp"
+                    android:layout_marginBottom="15dp" />
+
+                <!-- Designation Spinner -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Designation"
+                    android:textSize="14sp"
+                    android:textColor="#333333"
+                    android:layout_marginBottom="5dp" />
+
+                <Spinner
+                    android:id="@+id/designationSpinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@drawable/input_bg"
+                    android:paddingStart="15dp"
+                    android:layout_marginBottom="20dp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Continue Button -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/continueButton"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/button_bg"
+            android:text="Continue"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"/>
+    </LinearLayout>
+</ScrollView>

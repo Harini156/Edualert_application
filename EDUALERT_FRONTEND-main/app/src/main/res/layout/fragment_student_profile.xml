@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Title and Logo Row -->
+    <LinearLayout
+        android:id="@+id/headerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="center_vertical">
+
+        <!-- Title -->
+        <TextView
+            android:id="@+id/studentProfileTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Student Profile"
+            android:textColor="#922381"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            android:layout_weight="1"
+            android:gravity="start" />
+
+        <!-- Logo -->
+        <ImageView
+            android:id="@+id/logoImage"
+            android:layout_width="100dp"
+            android:layout_height="70dp"
+            android:src="@drawable/logo"
+            android:contentDescription="EduAlert Logo"
+            android:layout_gravity="end" />
+    </LinearLayout>
+
+    <!-- Scrollable Content -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/headerLayout"
+        android:padding="20dp"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp"
+            android:layout_marginTop="1dp"
+            android:background="@drawable/input_bg"
+            android:elevation="4dp">
+
+            <!-- Profile Icon -->
+            <ImageView
+                android:id="@+id/studentProfilePic"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_profile"
+                android:background="@drawable/circle_bg"
+                android:padding="20dp"
+                android:layout_marginBottom="25dp" />
+
+            <!-- Student ID -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Student ID"
+                android:textSize="14sp"
+                android:textColor="#333333"
+                android:layout_marginBottom="5dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="65dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@drawable/input_bg"
+                android:layout_marginBottom="15dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp">
+
+                <ImageView
+                    android:src="@drawable/ic_id"
+                    app:tint="#922381"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginEnd="12dp" />
+
+                <EditText
+                    android:id="@+id/tvStudentId"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:hint="STU12345"
+                    android:enabled="false"
+                    android:background="@android:color/transparent"
+                    android:textSize="15sp"
+                    android:textColor="#000000"
+                    android:paddingStart="4dp" />
+            </LinearLayout>
+
+            <!-- Email -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Email"
+                android:textSize="14sp"
+                android:textColor="#333333"
+                android:layout_marginBottom="5dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="65dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@drawable/input_bg"
+                android:layout_marginBottom="15dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp">
+
+                <ImageView
+                    android:src="@drawable/ic_email"
+                    app:tint="#922381"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginEnd="12dp" />
+
+                <EditText
+                    android:id="@+id/tvEmail"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:hint="student@edualert.com"
+                    android:enabled="false"
+                    android:background="@android:color/transparent"
+                    android:textSize="15sp"
+                    android:textColor="#000000"
+                    android:paddingStart="4dp" />
+            </LinearLayout>
+
+            <!-- Department -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Department"
+                android:textSize="14sp"
+                android:textColor="#333333"
+                android:layout_marginBottom="5dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="65dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@drawable/input_bg"
+                android:layout_marginBottom="15dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp">
+
+                <ImageView
+                    android:src="@drawable/ic_domain_24"
+                    app:tint="#922381"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginEnd="12dp" />
+
+                <EditText
+                    android:id="@+id/tvDepartment"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:hint="Enter your department"
+                    android:enabled="false"
+                    android:background="@android:color/transparent"
+                    android:textSize="15sp"
+                    android:textColor="#000000"
+                    android:paddingStart="4dp" />
+            </LinearLayout>
+
+            <!-- Year -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Year"
+                android:textSize="14sp"
+                android:textColor="#333333"
+                android:layout_marginBottom="5dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="65dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@drawable/input_bg"
+                android:layout_marginBottom="15dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp">
+
+                <ImageView
+                    android:src="@drawable/ic_year"
+                    app:tint="#922381"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginEnd="12dp" />
+
+                <EditText
+                    android:id="@+id/tvYear"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:hint="Enter your year"
+                    android:enabled="false"
+                    android:background="@android:color/transparent"
+                    android:textSize="15sp"
+                    android:textColor="#000000"
+                    android:paddingStart="4dp" />
+            </LinearLayout>
+
+            <!-- Blood Group -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Blood Group"
+                android:textSize="14sp"
+                android:textColor="#333333"
+                android:layout_marginBottom="5dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="65dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@drawable/input_bg"
+                android:layout_marginBottom="15dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp">
+
+                <ImageView
+                    android:src="@drawable/ic_blood"
+                    app:tint="#922381"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginEnd="12dp" />
+
+                <EditText
+                    android:id="@+id/tvBloodGroup"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:hint="Enter your blood group"
+                    android:enabled="false"
+                    android:background="@android:color/transparent"
+                    android:textSize="15sp"
+                    android:textColor="#000000"
+                    android:paddingStart="4dp" />
+            </LinearLayout>
+
+            <!-- Phone Number -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Phone Number"
+                android:textSize="14sp"
+                android:textColor="#333333"
+                android:layout_marginBottom="5dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="65dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@drawable/input_bg"
+                android:layout_marginBottom="15dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp">
+
+                <ImageView
+                    android:src="@drawable/ic_phone"
+                    app:tint="#922381"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginEnd="12dp" />
+
+                <EditText
+                    android:id="@+id/tvPhone"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:hint="Enter your phone number"
+                    android:enabled="false"
+                    android:background="@android:color/transparent"
+                    android:textSize="15sp"
+                    android:textColor="#000000"
+                    android:paddingStart="4dp" />
+            </LinearLayout>
+
+            <!-- Gender -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Gender"
+                android:textSize="14sp"
+                android:textColor="#333333"
+                android:layout_marginBottom="5dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="65dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@drawable/input_bg"
+                android:layout_marginBottom="15dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp">
+
+                <ImageView
+                    android:src="@drawable/ic_gender_24"
+                    app:tint="#922381"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginEnd="12dp" />
+
+                <EditText
+                    android:id="@+id/tvGender"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:hint="Enter your gender"
+                    android:enabled="false"
+                    android:background="@android:color/transparent"
+                    android:textSize="15sp"
+                    android:textColor="#000000"
+                    android:paddingStart="4dp" />
+            </LinearLayout>
+
+            <!-- Edit Details Button -->
+            <Button
+                android:id="@+id/btnEditDetails"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Edit Details"
+                android:textAllCaps="false"
+                android:backgroundTint="#922381"
+                android:textColor="#FFFFFF"
+                android:layout_marginTop="60dp" />
+
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>

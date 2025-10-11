@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <!-- Title Bar -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="10dp">
+
+        <TextView
+            android:id="@+id/hodTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="HOD Panel"
+            android:textSize="32sp"
+            android:textColor="#922381"
+            android:textStyle="bold"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="10dp" />
+
+        <ImageView
+            android:id="@+id/appLogo"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/logo"
+            android:contentDescription="App Logo"
+            android:scaleType="fitCenter" />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="20dp" />
+
+    <!-- Send Message to Students -->
+    <LinearLayout
+        android:id="@+id/messageStudentsCard"
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:orientation="horizontal"
+        android:background="@drawable/input_bg"
+        android:gravity="center_vertical"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:layout_marginBottom="15dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackground">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Send Message to Students"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#333" />
+
+        <ImageView
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:src="@drawable/stucap"
+            android:contentDescription="Students Icon" />
+    </LinearLayout>
+
+    <!-- Send Message to Staff -->
+    <LinearLayout
+        android:id="@+id/messageStaffCard"
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:orientation="horizontal"
+        android:background="@drawable/input_bg"
+        android:gravity="center_vertical"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:layout_marginBottom="15dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackground">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Send Message to Staff"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#333" />
+
+        <ImageView
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:src="@drawable/stafframe"
+            android:contentDescription="Staff Icon" />
+    </LinearLayout>
+
+    <!-- Messages from Admin -->
+    <LinearLayout
+        android:id="@+id/messagesFromAdminCard"
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:orientation="horizontal"
+        android:background="@drawable/input_bg"
+        android:gravity="center_vertical"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:layout_marginBottom="15dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackground">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Messages from Admin"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#333" />
+
+        <ImageView
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:src="@drawable/adminicon"
+            android:contentDescription="Admin Icon" />
+    </LinearLayout>
+
+
+    <!-- View Sent Messages -->
+    <LinearLayout
+        android:id="@+id/viewSentMessagesCard"
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:orientation="horizontal"
+        android:background="@drawable/input_bg"
+        android:gravity="center_vertical"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackground">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="View Sent Messages"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#333" />
+
+        <ImageView
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:src="@drawable/staffsend"
+            android:contentDescription="Sent Icon" />
+    </LinearLayout>
+
+    <!-- Decorative Image -->
+    <ImageView
+        android:id="@+id/staffDecorativeImage"
+        android:layout_width="280dp"
+        android:layout_height="280dp"
+        android:src="@drawable/adminimage"
+        android:layout_gravity="center"
+        android:scaleType="fitCenter"
+        android:alpha="0.85"
+        android:layout_marginTop="-40dp"
+        android:layout_marginBottom="20dp"
+        android:contentDescription="Decorative Graphic" />
+
+
+</LinearLayout>

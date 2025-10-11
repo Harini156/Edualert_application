@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="purple_500">#6200EE</color>
+    <color name="purple_700">#3700B3</color>
+    <color name="teal_200">#03DAC5</color>
+    <color name="blue_500">#2196F3</color>
+
+        <color name="brandPurple">#7A2C86</color>
+        <color name="brandLavender">#C8A6FF</color>
+        <color name="brandAqua">#7AE4E9</color>
+        <color name="cardBg">#FFFFFFFF</color>
+        <color name="textPrimary">#222222</color>
+        <color name="textSecondary">#7A7A7A</color>
+        <color name="tintPurple">#6C63FF</color>
+        <color name="tintPink">#FF6584</color>
+        <color name="tintGreen">#22C55E</color>
+        <color name="divider">#14000000</color>
+
+
+</resources>
