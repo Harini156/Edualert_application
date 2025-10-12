@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.saveetha.edualert.databinding.FragmentAdminHomeBinding
 
@@ -16,14 +17,26 @@ class AdminHomeFragment : Fragment() {
     ): View {
         val binding = FragmentAdminHomeBinding.inflate(inflater, container, false)
 
+        // Setup notification icon
+        val notificationIconContainer = binding.root.findViewById<View>(R.id.notificationIconContainer)
+        val notificationBadge = binding.root.findViewById<TextView>(R.id.notificationBadge)
+        val userType = "admin"
+        val userId = getUserId() // You'll need to implement this method to get current user ID
+        NotificationManager.setupNotificationIcon(
+            requireContext(),
+            notificationIconContainer,
+            notificationBadge,
+            userType,
+            userId
+        )
 
         // Navigate to Student Message Fragment
-            binding.messageStudentsCard.setOnClickListener {
-                requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.fragmentAdminContainer, AdminStudent())
-                    .addToBackStack(null)
-                    .commit()
-            }
+        binding.messageStudentsCard.setOnClickListener {
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.fragmentAdminContainer, AdminStudent())
+                .addToBackStack(null)
+                .commit()
+        }
 
         // Navigate to Staff Message Fragment
         binding.messageStaffCard.setOnClickListener {
@@ -42,5 +55,11 @@ class AdminHomeFragment : Fragment() {
         }
 
         return binding.root
+    }
+    
+    private fun getUserId(): String {
+        // TODO: Implement method to get current user ID from SharedPreferences or session
+        // For now, return a placeholder
+        return "ADM001"
     }
 }

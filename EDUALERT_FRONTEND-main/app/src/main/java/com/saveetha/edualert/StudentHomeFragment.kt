@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.saveetha.edualert.AdminMessagesFragment
 import com.saveetha.edualert.ReceivedMessagesFragment
@@ -19,6 +20,19 @@ class StudentHomeFragment : Fragment() {
 
         val messagesFromAdminCard = view.findViewById<LinearLayout>(R.id.messagesFromAdminCard)
         val messagesFromHodCard = view.findViewById<LinearLayout>(R.id.messagesFromHodCard)
+        val notificationIconContainer = view.findViewById<View>(R.id.notificationIconContainer)
+        val notificationBadge = view.findViewById<TextView>(R.id.notificationBadge)
+
+        // Setup notification icon
+        val userType = "student"
+        val userId = getUserId() // You'll need to implement this method to get current user ID
+        NotificationManager.setupNotificationIcon(
+            requireContext(),
+            notificationIconContainer,
+            notificationBadge,
+            userType,
+            userId
+        )
 
         // 🔹 Messages from Admin
         messagesFromAdminCard.setOnClickListener {
@@ -37,5 +51,11 @@ class StudentHomeFragment : Fragment() {
         }
 
         return view
+    }
+    
+    private fun getUserId(): String {
+        // TODO: Implement method to get current user ID from SharedPreferences or session
+        // For now, return a placeholder
+        return "STU001"
     }
 }

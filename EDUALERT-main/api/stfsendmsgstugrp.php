@@ -1,6 +1,7 @@
 <?php
 header('Content-Type: application/json');
 include 'db.php';
+include 'notification_helper.php'; // Notification helper functions
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 $sender_id    = $_POST['staff_id'] ?? '';
@@ -37,12 +38,19 @@ if (!empty($_FILES['attachment']['name'])) {
 }
 
 $inserted = 0;
+$notifications_created = 0;
 
 if ($receiver_type === "student") {
     // Send to single student
     $stmt = $conn->prepare("INSERT INTO staffmessages (sender_id, receiver_id, title, message, attachment, is_group_message) VALUES (?, ?, ?, ?, ?, 0)");
     $stmt->bind_param("sssss", $sender_id, $receiver_raw, $title, $message, $attachment_path);
-    $inserted = $stmt->execute() ? 1 : 0;
+    if ($stmt->execute()) {
+        $inserted++;
+        // Create notification for the student
+        if (createNotificationForMessage($conn, "Message from Staff: " . $title, $message, 'student', $receiver_raw)) {
+            $notifications_created++;
+        }
+    }
 
 } elseif ($receiver_type === "group") {
     // Send to group (check if staff owns it)
@@ -54,9 +62,13 @@ if ($receiver_type === "student") {
     if ($res->num_rows > 0) {
         $stmt = $conn->prepare("INSERT INTO staffmessages (sender_id, receiver_id, title, message, attachment, is_group_message) VALUES (?, ?, ?, ?, ?, 1)");
         $stmt->bind_param("sssss", $sender_id, $receiver_raw, $title, $message, $attachment_path);
-        $inserted = $stmt->execute() ? 1 : 0;
+        if ($stmt->execute()) {
+            $inserted++;
+            // Create notifications for all group members
+            $notifications_created += createStaffMessageNotifications($conn, $sender_id, 'group', $receiver_raw, $title, $message);
+        }
     } else {
-        echo json_encode(["status" => "error", "message" => "You don’t have access to this group"]);
+        echo json_encode(["status" => "error", "message" => "You don't have access to this group"]);
         exit;
     }
 
@@ -73,6 +85,9 @@ if ($receiver_type === "student") {
         $s->bind_param("sssss", $sender_id, $receiver_id, $title, $message, $attachment_path);
         if ($s->execute()) $inserted++;
     }
+    
+    // Create notifications for all students in department
+    $notifications_created += createStaffMessageNotifications($conn, $sender_id, 'department', $receiver_raw, $title, $message);
 
 } elseif ($receiver_type === "year") {
     // Send to all students in that year
@@ -87,6 +102,9 @@ if ($receiver_type === "student") {
         $s->bind_param("sssss", $sender_id, $receiver_id, $title, $message, $attachment_path);
         if ($s->execute()) $inserted++;
     }
+    
+    // Create notifications for all students in year
+    $notifications_created += createStaffMessageNotifications($conn, $sender_id, 'year', $receiver_raw, $title, $message);
 
 } elseif ($receiver_type === "dept_year") {
     // receiver_raw like CSE-2
@@ -102,10 +120,17 @@ if ($receiver_type === "student") {
         $s->bind_param("sssss", $sender_id, $receiver_id, $title, $message, $attachment_path);
         if ($s->execute()) $inserted++;
     }
+    
+    // Create notifications for all students in dept_year
+    $notifications_created += createStaffMessageNotifications($conn, $sender_id, 'dept_year', $receiver_raw, $title, $message);
 }
 
 if ($inserted > 0) {
-    echo json_encode(["status" => "success", "message" => "Message sent successfully to $inserted recipient(s)"]);
+    echo json_encode([
+        "status" => "success", 
+        "message" => "Message sent successfully to $inserted recipient(s)",
+        "notifications_created" => $notifications_created
+    ]);
 } else {
     echo json_encode(["status" => "error", "message" => "No messages sent"]);
 }

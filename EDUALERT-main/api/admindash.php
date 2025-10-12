@@ -2,6 +2,7 @@
 header('Content-Type: application/json');
 session_start();
 include 'db.php'; // Database connection
+include 'notification_helper.php'; // Notification helper functions
 
 $response = [];
 
@@ -70,9 +71,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->close();
     }
 
+    // Create notifications for all recipients
+    $notificationsCreated = createAdminMessageNotifications($conn, $sender_id, $recipient_type, $subject, $message);
+
     if ($successCount > 0) {
         $response['status'] = 'success';
         $response['message'] = 'Message sent successfully to ' . implode(' and ', $recipientTypes) . '.';
+        $response['notifications_created'] = $notificationsCreated;
     } else {
         $response['status'] = 'error';
         $response['message'] = 'Message sending failed.';

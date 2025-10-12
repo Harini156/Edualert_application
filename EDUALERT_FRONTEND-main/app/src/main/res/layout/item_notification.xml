@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/notificationTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Notification Title"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#333333" />
+
+            <TextView
+                android:id="@+id/notificationMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Notification message content..."
+                android:textSize="14sp"
+                android:textColor="#666666"
+                android:layout_marginTop="4dp"
+                android:maxLines="2"
+                android:ellipsize="end" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="end">
+
+            <TextView
+                android:id="@+id/notificationTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2h ago"
+                android:textSize="12sp"
+                android:textColor="#999999" />
+
+            <View
+                android:id="@+id/unreadIndicator"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:layout_marginTop="4dp"
+                android:background="@drawable/notification_badge_bg"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="12dp"
+        android:background="#E0E0E0" />
+
+</LinearLayout>
+

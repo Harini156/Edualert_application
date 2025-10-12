@@ -1,6 +1,7 @@
 <?php
 header('Content-Type: application/json');
 include 'db.php';
+include 'notification_helper.php'; // Notification helper functions
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 $student_id = $_POST['student_id'] ?? '';
@@ -50,7 +51,27 @@ $stmt = $conn->prepare("INSERT INTO studgrpmsg (student_id, group_id, title, mes
 $stmt->bind_param("sisss", $student_id, $group_id, $title, $message, $attachment_path);
 
 if ($stmt->execute()) {
-    echo json_encode(["status" => "success", "message" => "Message sent to group"]);
+    // Create notifications for all other group members
+    $notifications_created = 0;
+    
+    // Get all group members except the sender
+    $members_stmt = $conn->prepare("SELECT user_id FROM group_members WHERE group_id = ? AND user_id != ?");
+    $members_stmt->bind_param("is", $group_id, $student_id);
+    $members_stmt->execute();
+    $members_result = $members_stmt->get_result();
+    
+    while ($member_row = $members_result->fetch_assoc()) {
+        if (createNotificationForMessage($conn, "Group Message: " . ($title ?: "No Title"), $message, 'student', $member_row['user_id'])) {
+            $notifications_created++;
+        }
+    }
+    $members_stmt->close();
+    
+    echo json_encode([
+        "status" => "success", 
+        "message" => "Message sent to group",
+        "notifications_created" => $notifications_created
+    ]);
 } else {
     echo json_encode(["status" => "error", "message" => "Failed to send message"]);
 }

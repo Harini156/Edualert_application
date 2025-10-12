@@ -22,14 +22,12 @@
             android:layout_alignParentStart="true"
             android:layout_marginTop="10dp" />
 
-        <ImageView
-            android:id="@+id/appLogo"
+        <include
+            android:id="@+id/notificationIconContainer"
+            layout="@layout/notification_icon_layout"
             android:layout_width="56dp"
             android:layout_height="56dp"
-            android:layout_alignParentEnd="true"
-            android:src="@drawable/logo"
-            android:contentDescription="App Logo"
-            android:scaleType="fitCenter" />
+            android:layout_alignParentEnd="true" />
     </RelativeLayout>
 
     <View

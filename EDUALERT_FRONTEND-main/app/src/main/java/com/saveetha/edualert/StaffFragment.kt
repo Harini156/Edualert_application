@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.saveetha.edualert.AdminMessagesFragment
 import com.saveetha.edualert.ReceivedMessagesFragment
@@ -21,9 +22,22 @@ class StaffFragment : Fragment() {
 
         val messagesFromAdminCard = view.findViewById<LinearLayout>(R.id.messagesFromAdminCard)
         val messagesFromHodCard = view.findViewById<LinearLayout>(R.id.messagesFromHodCard)
+        val notificationIconContainer = view.findViewById<View>(R.id.notificationIconContainer)
+        val notificationBadge = view.findViewById<TextView>(R.id.notificationBadge)
 
         // Get staff type from arguments
         staffType = arguments?.getString("staff_type", "Teaching")
+
+        // Setup notification icon
+        val userType = "staff"
+        val userId = getUserId() // You'll need to implement this method to get current user ID
+        NotificationManager.setupNotificationIcon(
+            requireContext(),
+            notificationIconContainer,
+            notificationBadge,
+            userType,
+            userId
+        )
 
         // Normalize staff type for consistent comparison
         val normalizedStaffType = staffType?.trim()?.lowercase()
@@ -48,5 +62,11 @@ class StaffFragment : Fragment() {
         }
 
         return view
+    }
+    
+    private fun getUserId(): String {
+        // TODO: Implement method to get current user ID from SharedPreferences or session
+        // For now, return a placeholder
+        return "STF001"
     }
 }
