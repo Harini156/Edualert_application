@@ -21,7 +21,8 @@ class AdminHomeFragment : Fragment() {
         val notificationIconContainer = binding.root.findViewById<View>(R.id.notificationIconContainer)
         val notificationBadge = binding.root.findViewById<TextView>(R.id.notificationBadge)
         val userType = "admin"
-        val userId = getUserId() // You'll need to implement this method to get current user ID
+        val userId = getUserId()
+        
         NotificationManager.setupNotificationIcon(
             requireContext(),
             notificationIconContainer,

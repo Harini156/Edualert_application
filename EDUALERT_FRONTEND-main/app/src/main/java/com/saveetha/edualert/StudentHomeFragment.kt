@@ -25,13 +25,18 @@ class StudentHomeFragment : Fragment() {
 
         // Setup notification icon
         val userType = "student"
-        val userId = getUserId() // You'll need to implement this method to get current user ID
+        val userId = getUserId()
+        val department = getDepartment() // You'll need to implement this
+        val year = getYear() // You'll need to implement this
+        
         NotificationManager.setupNotificationIcon(
             requireContext(),
             notificationIconContainer,
             notificationBadge,
             userType,
-            userId
+            userId,
+            department,
+            year
         )
 
         // 🔹 Messages from Admin
@@ -57,5 +62,17 @@ class StudentHomeFragment : Fragment() {
         // TODO: Implement method to get current user ID from SharedPreferences or session
         // For now, return a placeholder
         return "STU001"
+    }
+    
+    private fun getDepartment(): String? {
+        // TODO: Implement method to get current user department from SharedPreferences or session
+        // For now, return a placeholder
+        return "CSE"
+    }
+    
+    private fun getYear(): String? {
+        // TODO: Implement method to get current user year from SharedPreferences or session
+        // For now, return a placeholder
+        return "2"
     }
 }

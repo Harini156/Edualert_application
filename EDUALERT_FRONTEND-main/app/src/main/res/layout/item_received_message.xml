@@ -16,15 +16,39 @@
         android:background="@drawable/input_bg"
         android:clipToOutline="true">
 
-        <!-- Message Title -->
-        <TextView
-            android:id="@+id/tvTitle"
+        <!-- Top Row: Title + Tick Button -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Message Title"
-            android:textStyle="bold"
-            android:textSize="18sp"
-            android:textColor="#000" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <!-- Message Title -->
+            <TextView
+                android:id="@+id/tvTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Message Title"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:textColor="#000" />
+
+            <!-- Tick Button -->
+            <ImageView
+                android:id="@+id/tickButton"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_check"
+                android:background="@drawable/notification_badge_bg"
+                android:padding="6dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                android:contentDescription="Mark as read"
+                android:visibility="visible" />
+
+        </LinearLayout>
 
         <!-- Message Content -->
         <TextView

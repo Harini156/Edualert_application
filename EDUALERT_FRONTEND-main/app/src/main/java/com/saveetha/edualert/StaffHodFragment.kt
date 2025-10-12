@@ -26,13 +26,18 @@ class StaffHodFragment : Fragment() {
 
         // Setup notification icon
         val userType = "staff" // HOD is also staff type
-        val userId = getUserId() // You'll need to implement this method to get current user ID
+        val userId = getUserId()
+        val staffType = getStaffType() // You'll need to implement this
+        val designation = getDesignation() // You'll need to implement this
+        
         NotificationManager.setupNotificationIcon(
             requireContext(),
             notificationIconContainer,
             notificationBadge,
             userType,
-            userId
+            userId,
+            staffType = staffType,
+            designation = designation
         )
 
         // 🔹 Student messages
@@ -80,5 +85,17 @@ class StaffHodFragment : Fragment() {
         // TODO: Implement method to get current user ID from SharedPreferences or session
         // For now, return a placeholder
         return "STF001"
+    }
+    
+    private fun getStaffType(): String? {
+        // TODO: Implement method to get current user staff type from SharedPreferences or session
+        // For now, return a placeholder
+        return "Teaching"
+    }
+    
+    private fun getDesignation(): String? {
+        // TODO: Implement method to get current user designation from SharedPreferences or session
+        // For now, return a placeholder
+        return "HOD"
     }
 }

@@ -6,10 +6,12 @@ import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.saveetha.edualert.ImageViewerActivity
+import com.saveetha.edualert.NotificationManager
 import com.saveetha.edualert.R
 import com.saveetha.edualert.models.Receivedmsg
 
@@ -23,6 +25,7 @@ class ReceivedMessageAdapter(
         val tvContent: TextView = itemView.findViewById(R.id.tvContent)
         val tvAttachment: TextView = itemView.findViewById(R.id.tvAttachment)
         val tvCreatedAt: TextView = itemView.findViewById(R.id.tvCreatedAt)
+        val tickButton: ImageView = itemView.findViewById(R.id.tickButton)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
@@ -38,6 +41,35 @@ class ReceivedMessageAdapter(
         // Set title and content
         holder.tvTitle.text = msg.title
         holder.tvContent.text = msg.content
+
+        // Handle tick button click
+        holder.tickButton.setOnClickListener {
+            // Determine which table this message belongs to
+            // For now, we'll assume it's from messages table (admin messages)
+            // You might need to add a field to distinguish between admin and staff messages
+            val tableName = "messages" // or determine based on message source
+            val messageId = try {
+                msg.id.toInt()
+            } catch (e: NumberFormatException) {
+                0
+            }
+            
+            if (messageId > 0) {
+                NotificationManager.markMessageAsRead(
+                    context,
+                    messageId,
+                    tableName,
+                    onSuccess = {
+                        // Hide tick button after marking as read
+                        holder.tickButton.visibility = View.GONE
+                        Toast.makeText(context, "Message marked as read", Toast.LENGTH_SHORT).show()
+                    },
+                    onError = {
+                        Toast.makeText(context, "Failed to mark as read", Toast.LENGTH_SHORT).show()
+                    }
+                )
+            }
+        }
 
         // Handle attachment if available
         if (!msg.attachment.isNullOrEmpty()) {

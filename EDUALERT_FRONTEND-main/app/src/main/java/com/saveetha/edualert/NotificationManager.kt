@@ -1,7 +1,6 @@
 package com.saveetha.edualert
 
 import android.content.Context
-import android.content.Intent
 import android.view.View
 import android.widget.TextView
 import com.android.volley.Request
@@ -18,31 +17,39 @@ class NotificationManager {
             notificationIcon: View,
             notificationBadge: TextView,
             userType: String,
-            userId: String
+            userId: String,
+            department: String? = null,
+            year: String? = null,
+            staffType: String? = null,
+            designation: String? = null
         ) {
-            // Set click listener to open notification activity
-            notificationIcon.setOnClickListener {
-                val intent = Intent(context, NotificationActivity::class.java).apply {
-                    putExtra("user_type", userType)
-                    putExtra("user_id", userId)
-                }
-                context.startActivity(intent)
-            }
-            
+            // No click listener - bell icon only shows count
             // Load notification count
-            loadNotificationCount(context, notificationBadge, userType, userId)
+            loadMessageCount(context, notificationBadge, userType, userId, department, year, staffType, designation)
         }
         
-        private fun loadNotificationCount(
+        private fun loadMessageCount(
             context: Context,
             badge: TextView,
             userType: String,
-            userId: String
+            userId: String,
+            department: String? = null,
+            year: String? = null,
+            staffType: String? = null,
+            designation: String? = null
         ) {
-            val url = "http://your-server-url/api/get_notification_count.php"
+            // TODO: Replace with your computer's IP address
+            // Find your IP by running 'ipconfig' in Command Prompt
+            val url = "http://YOUR_COMPUTER_IP/edualert/api/get_message_count.php" // For real device
+            // Example: "http://192.168.1.100/edualert/api/get_message_count.php"
+            
             val requestBody = JSONObject().apply {
                 put("user_type", userType)
                 put("user_id", userId)
+                department?.let { put("department", it) }
+                year?.let { put("year", it) }
+                staffType?.let { put("staff_type", it) }
+                designation?.let { put("designation", it) }
             }
             
             val request = JsonObjectRequest(
@@ -50,15 +57,19 @@ class NotificationManager {
                 url,
                 requestBody,
                 { response ->
-                    if (response.getString("status") == "success") {
-                        val count = response.getInt("unread_count")
-                        if (count > 0) {
-                            badge.text = count.toString()
-                            badge.visibility = View.VISIBLE
+                    try {
+                        if (response.getString("status") == "success") {
+                            val count = response.getInt("unread_count")
+                            if (count > 0) {
+                                badge.text = count.toString()
+                                badge.visibility = View.VISIBLE
+                            } else {
+                                badge.visibility = View.GONE
+                            }
                         } else {
                             badge.visibility = View.GONE
                         }
-                    } else {
+                    } catch (e: Exception) {
                         badge.visibility = View.GONE
                     }
                 },
@@ -70,13 +81,49 @@ class NotificationManager {
             Volley.newRequestQueue(context).add(request)
         }
         
-        fun refreshNotificationCount(
+        fun refreshMessageCount(
             context: Context,
             badge: TextView,
             userType: String,
-            userId: String
+            userId: String,
+            department: String? = null,
+            year: String? = null,
+            staffType: String? = null,
+            designation: String? = null
         ) {
-            loadNotificationCount(context, badge, userType, userId)
+            loadMessageCount(context, badge, userType, userId, department, year, staffType, designation)
+        }
+        
+        fun markMessageAsRead(
+            context: Context,
+            messageId: Int,
+            tableName: String,
+            onSuccess: () -> Unit = {},
+            onError: () -> Unit = {}
+        ) {
+            val url = "http://YOUR_COMPUTER_IP/edualert/api/mark_message_read.php" // For real device
+            val requestBody = JSONObject().apply {
+                put("message_id", messageId)
+                put("table_name", tableName)
+            }
+            
+            val request = JsonObjectRequest(
+                Request.Method.POST,
+                url,
+                requestBody,
+                { response ->
+                    if (response.getString("status") == "success") {
+                        onSuccess()
+                    } else {
+                        onError()
+                    }
+                },
+                { error ->
+                    onError()
+                }
+            )
+            
+            Volley.newRequestQueue(context).add(request)
         }
     }
 }

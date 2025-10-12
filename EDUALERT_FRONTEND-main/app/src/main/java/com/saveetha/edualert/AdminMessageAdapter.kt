@@ -6,6 +6,7 @@ import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
@@ -23,6 +24,7 @@ class AdminMessageAdapter(
         val tvContent: TextView = itemView.findViewById(R.id.tvDescription)
         val tvAttachment: TextView = itemView.findViewById(R.id.tvAttachment)
         val tvCreatedAt: TextView = itemView.findViewById(R.id.tvCreatedAt)
+        val tickButton: ImageView = itemView.findViewById(R.id.tickButton)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
@@ -36,6 +38,33 @@ class AdminMessageAdapter(
         val msg = messages[position]
         holder.tvTitle.text = msg.title
         holder.tvContent.text = msg.content
+
+        // Handle tick button click
+        holder.tickButton.setOnClickListener {
+            // Admin messages are stored in messages table
+            val tableName = "messages"
+            val messageId = try {
+                msg.id.toInt()
+            } catch (e: NumberFormatException) {
+                0
+            }
+            
+            if (messageId > 0) {
+                NotificationManager.markMessageAsRead(
+                    context,
+                    messageId,
+                    tableName,
+                    onSuccess = {
+                        // Hide tick button after marking as read
+                        holder.tickButton.visibility = View.GONE
+                        Toast.makeText(context, "Message marked as read", Toast.LENGTH_SHORT).show()
+                    },
+                    onError = {
+                        Toast.makeText(context, "Failed to mark as read", Toast.LENGTH_SHORT).show()
+                    }
+                )
+            }
+        }
 
         if (!msg.attachment.isNullOrEmpty()) {
             holder.tvAttachment.visibility = View.VISIBLE
