@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -27,7 +26,6 @@ class StudentHomeFragment : Fragment() {
         val notificationIcon = notificationIconContainer.findViewById<ImageView>(R.id.notificationIcon)
         val notificationBadge = notificationIconContainer.findViewById<TextView>(R.id.notificationBadge)
         notificationBadgeRef = notificationBadge
-        val debugButton = view.findViewById<Button>(R.id.debugButton)
 
         // Setup notification icon
         val userType = "student"
@@ -45,11 +43,7 @@ class StudentHomeFragment : Fragment() {
             year
         )
 
-        // Setup debug button
-        debugButton.setOnClickListener {
-            val intent = android.content.Intent(requireContext(), DebugActivity::class.java)
-            startActivity(intent)
-        }
+        // Debug button removed as per request
 
         // 🔹 Messages from Admin
         messagesFromAdminCard.setOnClickListener {
