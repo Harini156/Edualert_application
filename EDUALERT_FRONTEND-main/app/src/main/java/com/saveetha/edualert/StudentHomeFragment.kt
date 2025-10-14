@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
@@ -22,7 +23,8 @@ class StudentHomeFragment : Fragment() {
         val messagesFromAdminCard = view.findViewById<LinearLayout>(R.id.messagesFromAdminCard)
         val messagesFromHodCard = view.findViewById<LinearLayout>(R.id.messagesFromHodCard)
         val notificationIconContainer = view.findViewById<View>(R.id.notificationIconContainer)
-        val notificationBadge = view.findViewById<TextView>(R.id.notificationBadge)
+        val notificationIcon = notificationIconContainer.findViewById<ImageView>(R.id.notificationIcon)
+        val notificationBadge = notificationIconContainer.findViewById<TextView>(R.id.notificationBadge)
         val debugButton = view.findViewById<Button>(R.id.debugButton)
 
         // Setup notification icon
@@ -33,7 +35,7 @@ class StudentHomeFragment : Fragment() {
         
         NotificationManager.setupNotificationIcon(
             requireContext(),
-            notificationIconContainer,
+            notificationIcon,
             notificationBadge,
             userType,
             userId,

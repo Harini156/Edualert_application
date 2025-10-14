@@ -2,6 +2,7 @@ package com.saveetha.edualert
 
 import android.content.Context
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
@@ -22,6 +23,7 @@ class DebugActivity : AppCompatActivity() {
     private lateinit var debugLog: TextView
     private lateinit var runTestsButton: Button
     private lateinit var testTickButton: Button
+    private lateinit var testBellCountButton: Button
     private lateinit var closeDebugButton: Button
     
     private val debugMessages = mutableListOf<String>()
@@ -44,6 +46,7 @@ class DebugActivity : AppCompatActivity() {
         debugLog = findViewById(R.id.debugLog)
         runTestsButton = findViewById(R.id.runTestsButton)
         testTickButton = findViewById(R.id.testTickButton)
+        testBellCountButton = findViewById(R.id.testBellCountButton)
         closeDebugButton = findViewById(R.id.closeDebugButton)
     }
     
@@ -54,6 +57,17 @@ class DebugActivity : AppCompatActivity() {
         
         testTickButton.setOnClickListener {
             testTickButtonFunctionality()
+        }
+        
+        testBellCountButton.setOnClickListener {
+            testBellIconCount()
+        }
+        
+        // Add a direct API test button
+        val directApiTestButton = Button(this)
+        directApiTestButton.text = "Test API Directly"
+        directApiTestButton.setOnClickListener {
+            testApiDirectly()
         }
         
         closeDebugButton.setOnClickListener {
@@ -135,6 +149,9 @@ class DebugActivity : AppCompatActivity() {
             put("user_id", "STU001")
         }
         
+        addDebugMessage("Request URL: $url")
+        addDebugMessage("Request Body: $requestBody")
+        
         val request = JsonObjectRequest(
             Request.Method.POST,
             url,
@@ -142,12 +159,26 @@ class DebugActivity : AppCompatActivity() {
             { response ->
                 val status = response.getString("status")
                 val count = response.optInt("unread_count", 0)
-                addDebugMessage("✅ Message count API successful: $count unread messages")
-                messageCountStatus.text = "Message Count: ✅ $count unread messages"
+                val messagesCount = response.optInt("messages_count", 0)
+                val staffMessagesCount = response.optInt("staffmessages_count", 0)
+                
+                addDebugMessage("✅ Message count API successful:")
+                addDebugMessage("  - Total unread: $count")
+                addDebugMessage("  - Messages count: $messagesCount")
+                addDebugMessage("  - Staff messages count: $staffMessagesCount")
+                
+                messageCountStatus.text = "Message Count: ✅ $count unread messages (Admin: $messagesCount, Staff: $staffMessagesCount)"
                 messageCountStatus.setTextColor(resources.getColor(android.R.color.holo_green_dark))
+                
+                // Show debug info if available
+                if (response.has("debug")) {
+                    val debug = response.getJSONObject("debug")
+                    addDebugMessage("Debug Info: $debug")
+                }
             },
             { error ->
                 addDebugMessage("❌ Message count API failed: ${error.message}")
+                addDebugMessage("Error details: ${error.networkResponse?.statusCode}")
                 messageCountStatus.text = "Message Count: ❌ Failed - ${error.message}"
                 messageCountStatus.setTextColor(resources.getColor(android.R.color.holo_red_dark))
             }
@@ -207,6 +238,90 @@ class DebugActivity : AppCompatActivity() {
                 addDebugMessage("Error details: ${error.networkResponse?.statusCode}")
                 apiTestResults.text = "API Test Results: ❌ Failed - ${error.message}"
                 apiTestResults.setTextColor(resources.getColor(android.R.color.holo_red_dark))
+            }
+        )
+        
+        Volley.newRequestQueue(this).add(request)
+    }
+    
+    private fun testBellIconCount() {
+        addDebugMessage("Testing bell icon count functionality...")
+        
+        // Test the NotificationManager directly
+        val testBadge = TextView(this)
+        testBadge.visibility = View.GONE
+        
+        addDebugMessage("Initial badge state - Visibility: ${if (testBadge.visibility == View.VISIBLE) "VISIBLE" else "GONE"}, Text: '${testBadge.text}'")
+        addDebugMessage("Calling NotificationManager.setupNotificationIcon...")
+        
+        // This will test the actual NotificationManager logic
+        NotificationManager.setupNotificationIcon(
+            this,
+            testBadge,
+            testBadge,
+            "student",
+            "STU001",
+            "CSE",
+            "2"
+        )
+        
+        addDebugMessage("NotificationManager call completed")
+        addDebugMessage("Badge visibility: ${if (testBadge.visibility == View.VISIBLE) "VISIBLE" else "GONE"}")
+        addDebugMessage("Badge text: '${testBadge.text}'")
+        
+        // Wait a bit for the network request to complete
+        addDebugMessage("Waiting for network request to complete...")
+        
+        // Use a handler to check the badge state after a delay
+        android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+            addDebugMessage("After 3 seconds - Badge visibility: ${if (testBadge.visibility == View.VISIBLE) "VISIBLE" else "GONE"}, Text: '${testBadge.text}'")
+            
+            // Also test the refresh function
+            addDebugMessage("Testing refresh function...")
+            NotificationManager.refreshMessageCount(
+                this,
+                testBadge,
+                "student",
+                "STU001",
+                "CSE",
+                "2"
+            )
+            
+            addDebugMessage("Refresh call completed")
+            
+            // Check again after refresh
+            android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+                addDebugMessage("Final badge state - Visibility: ${if (testBadge.visibility == View.VISIBLE) "VISIBLE" else "GONE"}, Text: '${testBadge.text}'")
+            }, 2000)
+            
+        }, 3000)
+    }
+    
+    private fun testApiDirectly() {
+        addDebugMessage("Testing API directly...")
+        
+        val url = "http://192.168.1.7/get_message_count.php"
+        val requestBody = JSONObject().apply {
+            put("user_type", "student")
+            put("user_id", "STU001")
+        }
+        
+        addDebugMessage("Request URL: $url")
+        addDebugMessage("Request Body: $requestBody")
+        
+        val request = JsonObjectRequest(
+            Request.Method.POST,
+            url,
+            requestBody,
+            { response ->
+                addDebugMessage("✅ Direct API call successful: $response")
+                val status = response.getString("status")
+                val count = response.optInt("unread_count", 0)
+                addDebugMessage("Status: $status, Count: $count")
+            },
+            { error ->
+                addDebugMessage("❌ Direct API call failed: ${error.message}")
+                addDebugMessage("Error details: ${error.networkResponse?.statusCode}")
             }
         )
         

@@ -5,6 +5,7 @@ import android.view.View
 import android.widget.TextView
 import com.android.volley.Request
 import com.android.volley.Response
+import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import org.json.JSONObject
@@ -23,6 +24,11 @@ class NotificationManager {
             staffType: String? = null,
             designation: String? = null
         ) {
+            // Debug logging
+            android.util.Log.d("NOTIFICATION_MANAGER", "setupNotificationIcon called")
+            android.util.Log.d("NOTIFICATION_MANAGER", "Badge initial visibility: ${notificationBadge.visibility}")
+            android.util.Log.d("NOTIFICATION_MANAGER", "Badge initial text: '${notificationBadge.text}'")
+            
             // No click listener - bell icon only shows count
             // Load notification count
             loadMessageCount(context, notificationBadge, userType, userId, department, year, staffType, designation)
@@ -39,42 +45,67 @@ class NotificationManager {
             designation: String? = null
         ) {
             // Your computer's IP address from ipconfig
-            val url = "http://192.168.1.7/get_message_count.php" // For real device
+            val url = "http://192.168.1.7/get_message_count.php"
             
-            val requestBody = JSONObject().apply {
-                put("user_type", userType)
-                put("user_id", userId)
-                department?.let { put("department", it) }
-                year?.let { put("year", it) }
-                staffType?.let { put("staff_type", it) }
-                designation?.let { put("designation", it) }
-            }
+            // Debug logging
+            android.util.Log.d("NOTIFICATION_MANAGER", "Loading message count for user: $userType, ID: $userId")
+            android.util.Log.d("NOTIFICATION_MANAGER", "Request URL: $url")
+            android.util.Log.d("NOTIFICATION_MANAGER", "Request Body: will send as form fields")
             
-            val request = JsonObjectRequest(
-                Request.Method.POST,
+            val request = object : StringRequest(
+                Method.POST,
                 url,
-                requestBody,
-                { response ->
+                Response.Listener { responseString ->
                     try {
-                        if (response.getString("status") == "success") {
-                            val count = response.getInt("unread_count")
+                        android.util.Log.d("NOTIFICATION_MANAGER", "Raw response: $responseString")
+                        val response = JSONObject(responseString)
+                        if (response.optString("status") == "success") {
+                            val count = response.optInt("unread_count", 0)
+                            val messagesCount = response.optInt("messages_count", 0)
+                            val staffMessagesCount = response.optInt("staffmessages_count", 0)
+
+                            android.util.Log.d(
+                                "NOTIFICATION_MANAGER",
+                                "Count: $count, Messages: $messagesCount, Staff: $staffMessagesCount"
+                            )
+
                             if (count > 0) {
                                 badge.text = count.toString()
                                 badge.visibility = View.VISIBLE
+                                android.util.Log.d("NOTIFICATION_MANAGER", "Badge visible with count: $count")
                             } else {
+                                badge.text = ""
                                 badge.visibility = View.GONE
+                                android.util.Log.d("NOTIFICATION_MANAGER", "No unread, badge hidden")
                             }
                         } else {
                             badge.visibility = View.GONE
+                            android.util.Log.e(
+                                "NOTIFICATION_MANAGER",
+                                "API error status: ${response.optString("status")}"
+                            )
                         }
                     } catch (e: Exception) {
                         badge.visibility = View.GONE
+                        android.util.Log.e("NOTIFICATION_MANAGER", "JSON parse error: ${e.message}")
                     }
                 },
-                { error ->
+                Response.ErrorListener { error ->
                     badge.visibility = View.GONE
+                    android.util.Log.e("NOTIFICATION_MANAGER", "Network error: ${error.message}")
                 }
-            )
+            ) {
+                override fun getParams(): MutableMap<String, String> {
+                    val params = HashMap<String, String>()
+                    params["user_type"] = userType
+                    params["user_id"] = userId
+                    department?.let { params["department"] = it }
+                    year?.let { params["year"] = it }
+                    staffType?.let { params["staff_type"] = it }
+                    designation?.let { params["designation"] = it }
+                    return params
+                }
+            }
             
             Volley.newRequestQueue(context).add(request)
         }

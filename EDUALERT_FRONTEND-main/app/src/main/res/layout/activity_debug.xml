@@ -115,17 +115,28 @@
             android:text="Run All Tests"
             android:textColor="#FFFFFF"
             android:background="#4CAF50"
-            android:layout_marginEnd="8dp" />
+            android:layout_marginEnd="4dp" />
 
         <Button
             android:id="@+id/testTickButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Test Tick Button"
+            android:text="Test Tick"
             android:textColor="#FFFFFF"
             android:background="#2196F3"
-            android:layout_marginStart="8dp" />
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp" />
+
+        <Button
+            android:id="@+id/testBellCountButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Test Bell Count"
+            android:textColor="#FFFFFF"
+            android:background="#FF9800"
+            android:layout_marginStart="4dp" />
 
     </LinearLayout>
 
