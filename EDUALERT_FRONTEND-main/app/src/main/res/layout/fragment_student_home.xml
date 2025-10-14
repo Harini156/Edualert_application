@@ -109,6 +109,19 @@
         android:scaleType="fitCenter"
         android:src="@drawable/adminimage" />
 
+    <!-- Debug Button -->
+    <Button
+        android:id="@+id/debugButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="🐛 DEBUG - Check Issues"
+        android:textColor="#FFFFFF"
+        android:background="#FF6B6B"
+        android:layout_marginBottom="10dp"
+        android:padding="15dp"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
     <!-- Container for inner fragments -->
     <FrameLayout
         android:id="@+id/fragment_container"

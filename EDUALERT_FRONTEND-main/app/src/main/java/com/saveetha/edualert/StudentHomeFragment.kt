@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
@@ -22,6 +23,7 @@ class StudentHomeFragment : Fragment() {
         val messagesFromHodCard = view.findViewById<LinearLayout>(R.id.messagesFromHodCard)
         val notificationIconContainer = view.findViewById<View>(R.id.notificationIconContainer)
         val notificationBadge = view.findViewById<TextView>(R.id.notificationBadge)
+        val debugButton = view.findViewById<Button>(R.id.debugButton)
 
         // Setup notification icon
         val userType = "student"
@@ -38,6 +40,12 @@ class StudentHomeFragment : Fragment() {
             department,
             year
         )
+
+        // Setup debug button
+        debugButton.setOnClickListener {
+            val intent = android.content.Intent(requireContext(), DebugActivity::class.java)
+            startActivity(intent)
+        }
 
         // 🔹 Messages from Admin
         messagesFromAdminCard.setOnClickListener {

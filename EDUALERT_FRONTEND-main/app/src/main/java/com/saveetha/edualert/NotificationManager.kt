@@ -38,10 +38,8 @@ class NotificationManager {
             staffType: String? = null,
             designation: String? = null
         ) {
-            // TODO: Replace with your computer's IP address
-            // Find your IP by running 'ipconfig' in Command Prompt
-            val url = "http://YOUR_COMPUTER_IP/edualert/api/get_message_count.php" // For real device
-            // Example: "http://192.168.1.100/edualert/api/get_message_count.php"
+            // Your computer's IP address from ipconfig
+            val url = "http://192.168.1.7/get_message_count.php" // For real device
             
             val requestBody = JSONObject().apply {
                 put("user_type", userType)
@@ -101,24 +99,50 @@ class NotificationManager {
             onSuccess: () -> Unit = {},
             onError: () -> Unit = {}
         ) {
-            val url = "http://YOUR_COMPUTER_IP/edualert/api/mark_message_read.php" // For real device
+            // Show detailed debug info
+            val debugInfo = "ID: $messageId (${messageId::class.simpleName}), Table: '$tableName' (${tableName::class.simpleName})"
+            android.widget.Toast.makeText(context, debugInfo, android.widget.Toast.LENGTH_LONG).show()
+            
+            // Check if messageId is valid
+            if (messageId <= 0) {
+                android.widget.Toast.makeText(context, "ERROR: Invalid message ID: $messageId", android.widget.Toast.LENGTH_LONG).show()
+                onError()
+                return
+            }
+            
+            // Check if tableName is valid
+            if (tableName.isBlank()) {
+                android.widget.Toast.makeText(context, "ERROR: Empty table name", android.widget.Toast.LENGTH_LONG).show()
+                onError()
+                return
+            }
+            
+            // Direct API call to mark message as read
+            val url = "http://192.168.1.7/mark_message_read.php"
             val requestBody = JSONObject().apply {
-                put("message_id", messageId)
+                put("message_id", messageId.toString()) // Convert to string
                 put("table_name", tableName)
             }
+            
+            android.widget.Toast.makeText(context, "Sending to API...", android.widget.Toast.LENGTH_SHORT).show()
             
             val request = JsonObjectRequest(
                 Request.Method.POST,
                 url,
                 requestBody,
                 { response ->
-                    if (response.getString("status") == "success") {
+                    val message = response.getString("message")
+                    val status = response.getString("status")
+                    android.widget.Toast.makeText(context, "Status: $status, Message: $message", android.widget.Toast.LENGTH_LONG).show()
+                    
+                    if (status == "success") {
                         onSuccess()
                     } else {
                         onError()
                     }
                 },
                 { error ->
+                    android.widget.Toast.makeText(context, "Network Error: ${error.message}", android.widget.Toast.LENGTH_LONG).show()
                     onError()
                 }
             )

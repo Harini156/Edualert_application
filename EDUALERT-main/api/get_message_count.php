@@ -9,13 +9,21 @@ include('db.php');
 $response = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Debug: Log received data
+    error_log("Message Count API - Received POST data: " . print_r($_POST, true));
+    
     $user_type = isset($_POST['user_type']) ? trim($_POST['user_type']) : '';
     $user_id = isset($_POST['user_id']) ? trim($_POST['user_id']) : '';
     
     if (empty($user_type) || empty($user_id)) {
         echo json_encode([
             "status" => "error",
-            "message" => "User type and user ID are required."
+            "message" => "User type and user ID are required.",
+            "debug" => [
+                "user_type" => $user_type,
+                "user_id" => $user_id,
+                "raw_post" => $_POST
+            ]
         ]);
         exit;
     }
@@ -24,7 +32,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!in_array($user_type, ['student', 'staff', 'admin'])) {
         echo json_encode([
             "status" => "error",
-            "message" => "Invalid user type."
+            "message" => "Invalid user type.",
+            "debug" => [
+                "received_user_type" => $user_type
+            ]
         ]);
         exit;
     }
@@ -94,14 +105,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         "debug" => [
             "user_type" => $user_type,
             "user_id" => $user_id,
-            "total_unread" => $total_unread_count
+            "total_unread" => $total_unread_count,
+            "messages_count" => $messages_count,
+            "staffmessages_count" => $staffmessages_count
         ]
     ]);
     
 } else {
     echo json_encode([
         "status" => "error",
-        "message" => "Invalid request method."
+        "message" => "Invalid request method. Expected POST, got " . $_SERVER['REQUEST_METHOD']
     ]);
 }
 

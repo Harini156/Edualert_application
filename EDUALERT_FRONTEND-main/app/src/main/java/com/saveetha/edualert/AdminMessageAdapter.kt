@@ -43,9 +43,21 @@ class AdminMessageAdapter(
         holder.tickButton.setOnClickListener {
             // Admin messages are stored in messages table
             val tableName = "messages"
+            
+            // Debug: Show what we're working with
+            val debugMsg = "Raw ID: '${msg.id}' (${msg.id::class.simpleName})"
+            Toast.makeText(context, debugMsg, Toast.LENGTH_LONG).show()
+            
             val messageId = try {
-                msg.id.toInt()
-            } catch (e: NumberFormatException) {
+                // Try different parsing methods
+                when {
+                    msg.id is String -> msg.id.toInt()
+                    msg.id is Int -> msg.id
+                    msg.id is Long -> msg.id.toInt()
+                    else -> msg.id.toString().toInt()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(context, "Parse Error: ${e.message}", Toast.LENGTH_LONG).show()
                 0
             }
             
@@ -60,9 +72,11 @@ class AdminMessageAdapter(
                         Toast.makeText(context, "Message marked as read", Toast.LENGTH_SHORT).show()
                     },
                     onError = {
-                        Toast.makeText(context, "Failed to mark as read", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Failed to mark as read", Toast.LENGTH_LONG).show()
                     }
                 )
+            } else {
+                Toast.makeText(context, "Invalid message ID: ${msg.id}", Toast.LENGTH_LONG).show()
             }
         }
 

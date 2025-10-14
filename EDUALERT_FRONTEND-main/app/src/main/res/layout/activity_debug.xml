@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="#F5F5F5">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="🐛 DEBUG INFORMATION"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="#FF6B6B"
+        android:gravity="center"
+        android:layout_marginBottom="20dp" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Server Connection Test -->
+            <TextView
+                android:id="@+id/serverStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Server Status: Testing..."
+                android:textSize="16sp"
+                android:textColor="#333"
+                android:background="#FFFFFF"
+                android:padding="12dp"
+                android:layout_marginBottom="8dp" />
+
+            <!-- Database Test -->
+            <TextView
+                android:id="@+id/databaseStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Database Status: Testing..."
+                android:textSize="16sp"
+                android:textColor="#333"
+                android:background="#FFFFFF"
+                android:padding="12dp"
+                android:layout_marginBottom="8dp" />
+
+            <!-- Message Count Test -->
+            <TextView
+                android:id="@+id/messageCountStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Message Count: Testing..."
+                android:textSize="16sp"
+                android:textColor="#333"
+                android:background="#FFFFFF"
+                android:padding="12dp"
+                android:layout_marginBottom="8dp" />
+
+            <!-- Sample Message Data -->
+            <TextView
+                android:id="@+id/sampleMessageData"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Sample Message Data: Loading..."
+                android:textSize="16sp"
+                android:textColor="#333"
+                android:background="#FFFFFF"
+                android:padding="12dp"
+                android:layout_marginBottom="8dp" />
+
+            <!-- API Test Results -->
+            <TextView
+                android:id="@+id/apiTestResults"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="API Test Results: Ready to test..."
+                android:textSize="16sp"
+                android:textColor="#333"
+                android:background="#FFFFFF"
+                android:padding="12dp"
+                android:layout_marginBottom="8dp" />
+
+            <!-- Debug Log -->
+            <TextView
+                android:id="@+id/debugLog"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Debug Log:\n"
+                android:textSize="14sp"
+                android:textColor="#666"
+                android:background="#FFFFFF"
+                android:padding="12dp"
+                android:layout_marginBottom="8dp" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="16dp">
+
+        <Button
+            android:id="@+id/runTestsButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Run All Tests"
+            android:textColor="#FFFFFF"
+            android:background="#4CAF50"
+            android:layout_marginEnd="8dp" />
+
+        <Button
+            android:id="@+id/testTickButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Test Tick Button"
+            android:textColor="#FFFFFF"
+            android:background="#2196F3"
+            android:layout_marginStart="8dp" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/closeDebugButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Close Debug"
+        android:textColor="#FFFFFF"
+        android:background="#FF6B6B"
+        android:layout_marginTop="8dp" />
+
+</LinearLayout>
