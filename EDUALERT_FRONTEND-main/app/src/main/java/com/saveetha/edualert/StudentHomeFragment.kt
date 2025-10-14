@@ -13,6 +13,7 @@ import com.saveetha.edualert.AdminMessagesFragment
 import com.saveetha.edualert.ReceivedMessagesFragment
 
 class StudentHomeFragment : Fragment() {
+    private var notificationBadgeRef: TextView? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -25,6 +26,7 @@ class StudentHomeFragment : Fragment() {
         val notificationIconContainer = view.findViewById<View>(R.id.notificationIconContainer)
         val notificationIcon = notificationIconContainer.findViewById<ImageView>(R.id.notificationIcon)
         val notificationBadge = notificationIconContainer.findViewById<TextView>(R.id.notificationBadge)
+        notificationBadgeRef = notificationBadge
         val debugButton = view.findViewById<Button>(R.id.debugButton)
 
         // Setup notification icon
@@ -66,6 +68,20 @@ class StudentHomeFragment : Fragment() {
         }
 
         return view
+    }
+    
+    override fun onResume() {
+        super.onResume()
+        // Auto-refresh count whenever this screen is visible again
+        val badge = notificationBadgeRef ?: return
+        NotificationManager.refreshMessageCount(
+            requireContext(),
+            badge,
+            "student",
+            getUserId(),
+            getDepartment(),
+            getYear()
+        )
     }
     
     private fun getUserId(): String {

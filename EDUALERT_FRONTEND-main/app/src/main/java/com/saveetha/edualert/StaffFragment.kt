@@ -13,6 +13,7 @@ import com.saveetha.edualert.ReceivedMessagesFragment
 class StaffFragment : Fragment() {
 
     private var staffType: String? = null  // Teaching / Non-Teaching
+    private var notificationBadgeRef: TextView? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -24,6 +25,7 @@ class StaffFragment : Fragment() {
         val messagesFromHodCard = view.findViewById<LinearLayout>(R.id.messagesFromHodCard)
         val notificationIconContainer = view.findViewById<View>(R.id.notificationIconContainer)
         val notificationBadge = view.findViewById<TextView>(R.id.notificationBadge)
+        notificationBadgeRef = notificationBadge
 
         // Get staff type from arguments
         staffType = arguments?.getString("staff_type", "Teaching")
@@ -67,6 +69,19 @@ class StaffFragment : Fragment() {
         }
 
         return view
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val badge = notificationBadgeRef ?: return
+        NotificationManager.refreshMessageCount(
+            requireContext(),
+            badge,
+            "staff",
+            getUserId(),
+            staffType = getStaffType(),
+            designation = getDesignation()
+        )
     }
     
     private fun getUserId(): String {
