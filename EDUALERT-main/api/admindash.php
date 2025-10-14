@@ -44,6 +44,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         $filename = basename($_FILES['attachment']['name']);
+        $ext = pathinfo($filename, PATHINFO_EXTENSION);
+        if ($ext === '' || $ext === null) {
+            $mime = mime_content_type($_FILES['attachment']['tmp_name']);
+            $map = [
+                'image/jpeg' => 'jpg',
+                'image/png' => 'png',
+                'application/pdf' => 'pdf',
+                'application/msword' => 'doc',
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'docx',
+                'application/vnd.ms-excel' => 'xls',
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'xlsx'
+            ];
+            $guessed = $map[$mime] ?? '';
+            if ($guessed !== '') {
+                $filename .= '.' . $guessed;
+            }
+        }
         $targetFile = $uploadDir . time() . '_' . $filename;
 
         if (move_uploaded_file($_FILES['attachment']['tmp_name'], $targetFile)) {

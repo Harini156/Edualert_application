@@ -89,33 +89,33 @@ class AdminMessageAdapter(
                 try {
                     when {
                         // ✅ Images
-                        msg.attachment.endsWith(".jpg", true) ||
+                        UrlUtils.resolveAttachmentUrl(msg.attachment).endsWith(".jpg", true) ||
                                 msg.attachment.endsWith(".jpeg", true) ||
                                 msg.attachment.endsWith(".png", true) -> {
                             val intent = Intent(context, ImageViewerActivity::class.java)
-                            intent.putExtra("IMAGE_URL", msg.attachment)
+                            intent.putExtra("IMAGE_URL", UrlUtils.resolveAttachmentUrl(msg.attachment))
                             context.startActivity(intent)
                         }
 
                         // ✅ PDFs
                         msg.attachment.endsWith(".pdf", true) -> {
-                            val uri = Uri.parse(msg.attachment)
+                            val uri = Uri.parse(UrlUtils.resolveAttachmentUrl(msg.attachment))
                             viewSelectedFile(context, uri)
                         }
 
                         // ✅ Word files (open in Chrome → Google Docs)
                         msg.attachment.endsWith(".doc", true) ||
                                 msg.attachment.endsWith(".docx", true) -> {
-                            openInChrome(context, msg.attachment)
+                            openInChrome(context, UrlUtils.resolveAttachmentUrl(msg.attachment))
                         }
 
                         // ✅ Excel files (open in Chrome → Google Sheets)
                         msg.attachment.endsWith(".xls", true) ||
                                 msg.attachment.endsWith(".xlsx", true) -> {
-                            openInChrome(context, msg.attachment)
+                            openInChrome(context, UrlUtils.resolveAttachmentUrl(msg.attachment))
                         }
 
-                        else -> openFileInBrowser(msg.attachment)
+                        else -> openFileInBrowser(UrlUtils.resolveAttachmentUrl(msg.attachment))
                     }
                 } catch (e: Exception) {
                     Toast.makeText(context, "Cannot open attachment", Toast.LENGTH_SHORT).show()
