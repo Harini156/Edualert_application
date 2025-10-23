@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit
 
 object ApiClient {
 
-    private const val BASE_URL = "http://192.168.1.7/EDUALERT/"
+    const val BASE_URL = "http://14.139.187.229:8081/PDD-2025(9thmonth)/edualert/"
 
     private val interceptor : HttpLoggingInterceptor = HttpLoggingInterceptor().apply {
         this.level = HttpLoggingInterceptor.Level.BODY

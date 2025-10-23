@@ -44,8 +44,8 @@ class NotificationManager {
             staffType: String? = null,
             designation: String? = null
         ) {
-            // Your computer's IP address from ipconfig
-            val url = "http://192.168.1.7/get_message_count.php"
+            // Build from global BASE_URL
+            val url = ApiClient.BASE_URL + "api/get_message_count.php"
             
             // Debug logging
             android.util.Log.d("NOTIFICATION_MANAGER", "Loading message count for user: $userType, ID: $userId")
@@ -149,7 +149,7 @@ class NotificationManager {
             }
             
             // Direct API call to mark message as read
-            val url = "http://192.168.1.7/mark_message_read.php"
+            val url = ApiClient.BASE_URL + "api/mark_message_read.php"
             val requestBody = JSONObject().apply {
                 put("message_id", messageId.toString()) // Convert to string
                 put("table_name", tableName)
