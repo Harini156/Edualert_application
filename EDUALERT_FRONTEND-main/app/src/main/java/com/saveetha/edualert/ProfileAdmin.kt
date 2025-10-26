@@ -56,7 +56,7 @@ class ProfileAdmin : Fragment() {
     }
 
     private fun fetchAdminProfile(adminId: String, email: String) {
-        val url = "https://7nthnfkb-80.inc1.devtunnels.ms/edualert/api/adminprofile.php"
+        val url = ApiClient.BASE_URL + "api/adminprofile.php"
         val requestQueue = Volley.newRequestQueue(requireContext())
 
         val stringRequest = object : StringRequest(

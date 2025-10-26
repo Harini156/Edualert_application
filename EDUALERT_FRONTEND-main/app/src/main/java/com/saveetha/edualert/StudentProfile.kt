@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import com.saveetha.edualert.ApiClient
 import com.saveetha.edualert.Details
 import com.saveetha.edualert.R
 import org.json.JSONObject
@@ -84,7 +85,7 @@ class StudentProfileFragment : Fragment() {
     }
 
     private fun fetchStudentProfile(studentId: String, email: String) {
-        val url = "https://7nthnfkb-80.inc1.devtunnels.ms/edualert/api/studentprofile.php"
+        val url = ApiClient.BASE_URL + "api/studentprofile.php"
         val requestQueue = Volley.newRequestQueue(requireContext())
 
         val stringRequest = object : StringRequest(

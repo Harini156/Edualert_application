@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import com.saveetha.edualert.ApiClient
 import com.saveetha.edualert.Details
 import com.saveetha.edualert.R
 import org.json.JSONObject
@@ -80,7 +81,7 @@ class StaffProfileFragment : Fragment() {
 
     private fun fetchStaffProfile(staffId: String, email: String) {
         val ctx = context ?: return  // Safe check
-        val url = "https://7nthnfkb-80.inc1.devtunnels.ms/edualert/api/staffprofile.php"
+        val url = ApiClient.BASE_URL + "api/staffprofile.php"
         val requestQueue = Volley.newRequestQueue(ctx)
 
         val stringRequest = object : StringRequest(

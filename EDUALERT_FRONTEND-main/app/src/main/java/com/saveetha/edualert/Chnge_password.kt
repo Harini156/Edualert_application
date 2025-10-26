@@ -102,7 +102,7 @@ class ChangePasswordFragment : Fragment() {
     }
 
     private fun changePassword(oldPassword: String, newPassword: String) {
-        val url = "https://7nthnfkb-80.inc1.devtunnels.ms/edualert/api/change_password.php"
+        val url = ApiClient.BASE_URL + "api/change_password.php"
         val requestQueue = Volley.newRequestQueue(requireContext())
 
         // ✅ Get email from SharedPreferences (not hardcoded)

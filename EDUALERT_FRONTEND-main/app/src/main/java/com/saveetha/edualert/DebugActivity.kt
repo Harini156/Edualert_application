@@ -96,7 +96,7 @@ class DebugActivity : AppCompatActivity() {
     
     private fun testServerConnection() {
         addDebugMessage("Testing server connection...")
-        val url = "http://192.168.1.7/test_database.php"
+        val url = ApiClient.BASE_URL + "test_database.php"
         
         val request = JsonObjectRequest(
             Request.Method.GET,
@@ -119,7 +119,7 @@ class DebugActivity : AppCompatActivity() {
     
     private fun testDatabaseConnection() {
         addDebugMessage("Testing database connection...")
-        val url = "http://192.168.1.7/test_database.php"
+        val url = ApiClient.BASE_URL + "test_database.php"
         
         val request = JsonObjectRequest(
             Request.Method.GET,
@@ -142,7 +142,7 @@ class DebugActivity : AppCompatActivity() {
     
     private fun testMessageCountAPI() {
         addDebugMessage("Testing message count API...")
-        val url = "http://192.168.1.7/get_message_count.php"
+        val url = ApiClient.BASE_URL + "api/get_message_count.php"
         
         val requestBody = JSONObject().apply {
             put("user_type", "student")
@@ -205,9 +205,9 @@ class DebugActivity : AppCompatActivity() {
         val testTableName = "messages"
         
         addDebugMessage("Testing with Message ID: $testMessageId, Table: $testTableName")
-        addDebugMessage("Request URL: http://192.168.1.7/mark_message_read.php")
+        addDebugMessage("Request URL: ${ApiClient.BASE_URL}api/mark_message_read.php")
         
-        val url = "http://192.168.1.7/mark_message_read.php"
+        val url = ApiClient.BASE_URL + "api/mark_message_read.php"
         val requestBody = JSONObject().apply {
             put("message_id", testMessageId.toString())
             put("table_name", testTableName)
@@ -300,7 +300,7 @@ class DebugActivity : AppCompatActivity() {
     private fun testApiDirectly() {
         addDebugMessage("Testing API directly...")
         
-        val url = "http://192.168.1.7/get_message_count.php"
+        val url = ApiClient.BASE_URL + "api/get_message_count.php"
         val requestBody = JSONObject().apply {
             put("user_type", "student")
             put("user_id", "STU001")
