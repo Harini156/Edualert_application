@@ -16,6 +16,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit;
     }
 
+    // Handle optional filters
     $department = isset($_POST['department']) ? trim($_POST['department']) : null;
     $staff_type = isset($_POST['staff_type']) ? trim($_POST['staff_type']) : null;
     $designation = isset($_POST['designation']) ? trim($_POST['designation']) : null;
@@ -25,6 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $cgpa = isset($_POST['cgpa']) ? trim($_POST['cgpa']) : null;
     $backlogs = isset($_POST['backlogs']) ? trim($_POST['backlogs']) : null;
 
+    // Clean "Select..." values
     if ($department && stripos($department, 'select') !== false) $department = null;
     if ($staff_type && stripos($staff_type, 'select') !== false) $staff_type = null;
     if ($designation && stripos($designation, 'select') !== false) $designation = null;
@@ -34,6 +36,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($cgpa && stripos($cgpa, 'select') !== false) $cgpa = null;
     if ($backlogs && stripos($backlogs, 'select') !== false) $backlogs = null;
 
+    // Handle file attachment
     $attachment_path = null;
     if (!empty($_FILES['attachment']['name'])) {
         $upload_dir = 'uploads/';
@@ -72,6 +75,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
+    // Insert into database
     $sql = "INSERT INTO messages (title, content, recipient_type, department, staff_type, designation, year, stay_type, gender, cgpa, backlogs, attachment, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'unread')";
     
     $stmt = $conn->prepare($sql);
