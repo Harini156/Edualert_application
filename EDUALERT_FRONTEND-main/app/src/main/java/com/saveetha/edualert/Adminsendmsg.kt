@@ -1,6 +1,9 @@
 package com.saveetha.edualert
 
 import android.app.Activity
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -18,6 +21,7 @@ import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import org.json.JSONObject
 
 class AdminSendMsg : Fragment() {
 
@@ -174,13 +178,22 @@ class AdminSendMsg : Fragment() {
                         Toast.makeText(requireContext(), response.body()?.message ?: "Message Sent!", Toast.LENGTH_LONG).show()
                         requireActivity().supportFragmentManager.popBackStack()
                     } else {
-                        Log.d("API_ERROR", "Error: ${response.errorBody()?.string()}")
-                        Toast.makeText(requireContext(), "Error sending message", Toast.LENGTH_LONG).show()
+                        val errorBody = response.errorBody()?.string() ?: "Unknown error"
+                        val debugInfo = generateDebugInfo("API_RESPONSE_ERROR", "HTTP ${response.code()}", errorBody, null)
+                        Log.e("API_ERROR", debugInfo)
+                        showErrorWithDebug("Error sending message", debugInfo)
                     }
                 }
 
                 override fun onFailure(call: Call<MessageResponse>, t: Throwable) {
-                    Toast.makeText(requireContext(), "Failed: ${t.message}", Toast.LENGTH_LONG).show()
+                    // Handle JSON parsing errors specifically
+                    if (t is com.google.gson.JsonSyntaxException || t.message?.contains("malformed JSON") == true) {
+                        handleMalformedJsonResponse(call, t)
+                    } else {
+                        val debugInfo = generateDebugInfo("NETWORK_FAILURE", t.javaClass.simpleName, t.message ?: "Unknown error", t)
+                        Log.e("API_FAILURE", debugInfo)
+                        showErrorWithDebug("Failed to send message", debugInfo)
+                    }
                 }
             })
         }
@@ -276,5 +289,110 @@ class AdminSendMsg : Fragment() {
 
         spinnerDesignation.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item,
             listOf("Select Designation", "HOD", "Professor", "Assistant Professor", "Research Scholar"))
+    }
+
+    private fun generateDebugInfo(errorType: String, exceptionType: String, message: String, throwable: Throwable?): String {
+        val timestamp = System.currentTimeMillis()
+        val stackTrace = throwable?.stackTrace?.take(10)?.joinToString("\n") { it.toString() } ?: "No stack trace"
+        
+        return """
+=== API FAILURE DEBUG ===
+Timestamp: $timestamp
+Exception Type: $exceptionType
+Exception Message: $message
+Cause: ${throwable?.cause?.message ?: "null"}
+Stack Trace: $stackTrace
+RESULT: $errorType
+        """.trimIndent()
+    }
+
+    private fun showErrorWithDebug(userMessage: String, debugInfo: String) {
+        val alertDialog = android.app.AlertDialog.Builder(requireContext())
+            .setTitle("Message Send Failed")
+            .setMessage("$userMessage\n\nTap 'Copy Debug Info' to copy technical details to clipboard.")
+            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+            .setNeutralButton("Copy Debug Info") { _, _ ->
+                copyToClipboard(debugInfo)
+                Toast.makeText(requireContext(), "Debug info copied to clipboard", Toast.LENGTH_SHORT).show()
+            }
+            .create()
+        
+        alertDialog.show()
+    }
+
+    private fun copyToClipboard(text: String) {
+        val clipboard = requireContext().getSystemService(android.content.Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
+        val clip = android.content.ClipData.newPlainText("Debug Info", text)
+        clipboard.setPrimaryClip(clip)
+    }
+
+    private fun handleMalformedJsonResponse(call: Call<MessageResponse>, t: Throwable) {
+        // Make a raw HTTP request to get the actual response
+        val request = call.request()
+        val client = okhttp3.OkHttpClient()
+        
+        client.newCall(request).enqueue(object : okhttp3.Callback {
+            override fun onFailure(call: okhttp3.Call, e: java.io.IOException) {
+                requireActivity().runOnUiThread {
+                    val debugInfo = generateDebugInfo("RAW_REQUEST_FAILURE", e.javaClass.simpleName, e.message ?: "Unknown error", e)
+                    Log.e("RAW_REQUEST_ERROR", debugInfo)
+                    showErrorWithDebug("Network request failed", debugInfo)
+                }
+            }
+
+            override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
+                val rawResponse = response.body?.string() ?: ""
+                requireActivity().runOnUiThread {
+                    Log.d("RAW_RESPONSE", "Raw response: $rawResponse")
+                    
+                    // Try to extract JSON from the response
+                    val jsonMatch = extractJsonFromResponse(rawResponse)
+                    if (jsonMatch != null) {
+                        try {
+                            val jsonObject = org.json.JSONObject(jsonMatch)
+                            val success = jsonObject.optBoolean("success", false)
+                            val message = jsonObject.optString("message", "Unknown response")
+                            
+                            if (success) {
+                                Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
+                                requireActivity().supportFragmentManager.popBackStack()
+                            } else {
+                                Toast.makeText(requireContext(), "Error: $message", Toast.LENGTH_LONG).show()
+                            }
+                        } catch (e: Exception) {
+                            showRawResponseDialog(rawResponse)
+                        }
+                    } else {
+                        showRawResponseDialog(rawResponse)
+                    }
+                }
+            }
+        })
+    }
+
+    private fun extractJsonFromResponse(response: String): String? {
+        // Try to find JSON in the response
+        val jsonStart = response.indexOf("{")
+        val jsonEnd = response.lastIndexOf("}")
+        
+        return if (jsonStart != -1 && jsonEnd != -1 && jsonEnd > jsonStart) {
+            response.substring(jsonStart, jsonEnd + 1)
+        } else {
+            null
+        }
+    }
+
+    private fun showRawResponseDialog(rawResponse: String) {
+        val alertDialog = android.app.AlertDialog.Builder(requireContext())
+            .setTitle("Server Response")
+            .setMessage("Raw server response:\n\n$rawResponse")
+            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+            .setNeutralButton("Copy Response") { _, _ ->
+                copyToClipboard(rawResponse)
+                Toast.makeText(requireContext(), "Response copied to clipboard", Toast.LENGTH_SHORT).show()
+            }
+            .create()
+        
+        alertDialog.show()
     }
 }

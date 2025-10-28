@@ -1,10 +1,32 @@
 <?php
+// Suppress all PHP warnings and errors to prevent JSON corruption
+error_reporting(0);
+ini_set('display_errors', 0);
+ini_set('log_errors', 0);
+
+// Start output buffering to catch any unexpected output
+ob_start();
+
 header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: POST, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type');
+
+// Handle preflight OPTIONS request
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
+
+// Clear any previous output
+ob_clean();
+
 include 'db.php';
 
 $response = [];
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+try {
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $title = isset($_POST['title']) ? trim($_POST['title']) : '';
     $content = isset($_POST['content']) ? trim($_POST['content']) : '';
     $recipient_type = isset($_POST['recipient_type']) ? trim($_POST['recipient_type']) : '';
@@ -98,11 +120,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     
     $stmt->close();
-    $conn->close();
 } else {
     $response['success'] = false;
     $response['message'] = 'Invalid request method.';
 }
+} catch (Exception $e) {
+    $response['success'] = false;
+    $response['message'] = 'Server error occurred.';
+}
 
+if (isset($conn)) {
+    $conn->close();
+}
+
+// Clear any buffered output and send clean JSON
+ob_clean();
 echo json_encode($response);
+ob_end_flush();
 ?>
