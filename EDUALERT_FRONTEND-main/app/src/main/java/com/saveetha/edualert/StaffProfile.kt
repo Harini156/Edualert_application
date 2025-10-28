@@ -17,6 +17,7 @@ import com.android.volley.toolbox.Volley
 import com.saveetha.edualert.ApiClient
 import com.saveetha.edualert.Details
 import com.saveetha.edualert.R
+import com.saveetha.edualert.UserSession
 import org.json.JSONObject
 
 class StaffProfileFragment : Fragment() {
@@ -48,22 +49,22 @@ class StaffProfileFragment : Fragment() {
         departmentLayout = view.findViewById(R.id.departmentLayout)
         designationLayout = view.findViewById(R.id.designationLayout)
 
-        val sharedPref = requireContext().getSharedPreferences("EduAlertPrefs", Context.MODE_PRIVATE)
-        staffUserId = sharedPref.getString("USER_ID", "") ?: ""
-        staffEmail = sharedPref.getString("EMAIL", "") ?: ""
+        // ✅ Use UserSession instead of SharedPreferences
+        staffUserId = UserSession.getUserId(requireContext()) ?: ""
+        staffEmail = UserSession.getEmail(requireContext()) ?: ""
 
         if (staffUserId.isEmpty() && staffEmail.isEmpty()) {
             Toast.makeText(requireContext(), "Staff details not found. Please login again.", Toast.LENGTH_LONG).show()
             return view
         }
 
-        // Show cached values
+        // Show cached values from UserSession
         tvStaffId.setText(staffUserId)
         tvEmail.setText(staffEmail)
-        tvDepartment.setText(sharedPref.getString("DEPARTMENT", "") ?: "")
-        tvDesignation.setText(sharedPref.getString("DESIGNATION", "") ?: "")
+        tvDepartment.setText(UserSession.getDepartment(requireContext()) ?: "")
+        tvDesignation.setText(UserSession.getDesignation(requireContext()) ?: "")
 
-        val cachedType = sharedPref.getString("STAFF_TYPE", "")
+        val cachedType = UserSession.getStaffType(requireContext())
         toggleFields(cachedType)
 
         fetchStaffProfile(staffUserId, staffEmail)
@@ -102,11 +103,17 @@ class StaffProfileFragment : Fragment() {
 
                             toggleFields(staffType)
 
-                            ctx.getSharedPreferences("EduAlertPrefs", Context.MODE_PRIVATE).edit()
-                                .putString("DEPARTMENT", staff.optString("department", ""))
-                                .putString("DESIGNATION", staff.optString("designation", ""))
-                                .putString("STAFF_TYPE", staffType)
-                                .apply()
+                            // ✅ Update UserSession with complete staff data
+                            UserSession.saveUserSession(
+                                context = ctx,
+                                userId = staffUserId,
+                                userType = "staff",
+                                name = UserSession.getName(ctx) ?: "",
+                                email = staffEmail,
+                                department = staff.optString("department", ""),
+                                staffType = staffType,
+                                designation = staff.optString("designation", "")
+                            )
                         } else {
                             Toast.makeText(ctx, json.getString("message"), Toast.LENGTH_SHORT).show()
                         }

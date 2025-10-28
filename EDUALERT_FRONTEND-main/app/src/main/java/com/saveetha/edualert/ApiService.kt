@@ -178,5 +178,25 @@ interface ApiService {
         @Field("sender_id") senderId: String
     ): Call<StaffDeleteMessageResponse>
 
+    // ✅ Message Count API
+    @FormUrlEncoded
+    @POST("api/get_message_count.php")
+    fun getMessageCount(
+        @Field("user_type") userType: String,
+        @Field("user_id") userId: String,
+        @Field("department") department: String? = null,
+        @Field("year") year: String? = null,
+        @Field("staff_type") staffType: String? = null,
+        @Field("designation") designation: String? = null
+    ): Call<MessageCountResponse>
+
+    // ✅ Mark Message as Read API
+    @FormUrlEncoded
+    @POST("api/mark_message_read.php")
+    fun markMessageAsRead(
+        @Field("message_id") messageId: String,
+        @Field("table_name") tableName: String
+    ): Call<GenericResponse>
+
 
 }

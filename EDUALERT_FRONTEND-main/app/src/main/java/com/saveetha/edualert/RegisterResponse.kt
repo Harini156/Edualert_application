@@ -138,3 +138,12 @@ data class ReceivedMessagesResponse(
     val messages: List<Receivedmsg>?,
     val message: String? = null  // Add this line
 )
+
+// ✅ Message Count Response
+data class MessageCountResponse(
+    val status: String,
+    val message: String? = null,
+    val unread_count: Int = 0,
+    val messages_count: Int = 0,
+    val staffmessages_count: Int = 0
+)

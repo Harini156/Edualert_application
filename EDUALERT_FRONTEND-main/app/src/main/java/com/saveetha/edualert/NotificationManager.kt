@@ -3,12 +3,6 @@ package com.saveetha.edualert
 import android.content.Context
 import android.view.View
 import android.widget.TextView
-import com.android.volley.Request
-import com.android.volley.Response
-import com.android.volley.toolbox.StringRequest
-import com.android.volley.toolbox.JsonObjectRequest
-import com.android.volley.toolbox.Volley
-import org.json.JSONObject
 
 class NotificationManager {
     
@@ -44,30 +38,31 @@ class NotificationManager {
             staffType: String? = null,
             designation: String? = null
         ) {
-            // Build from global BASE_URL
-            val url = ApiClient.BASE_URL + "api/get_message_count.php"
-            
             // Debug logging
             android.util.Log.d("NOTIFICATION_MANAGER", "Loading message count for user: $userType, ID: $userId")
-            android.util.Log.d("NOTIFICATION_MANAGER", "Request URL: $url")
-            android.util.Log.d("NOTIFICATION_MANAGER", "Request Body: will send as form fields")
+            android.util.Log.d("NOTIFICATION_MANAGER", "Department: $department, Year: $year")
+            android.util.Log.d("NOTIFICATION_MANAGER", "StaffType: $staffType, Designation: $designation")
             
-            val request = object : StringRequest(
-                Method.POST,
-                url,
-                Response.Listener { responseString ->
-                    try {
-                        android.util.Log.d("NOTIFICATION_MANAGER", "Raw response: $responseString")
-                        val response = JSONObject(responseString)
-                        if (response.optString("status") == "success") {
-                            val count = response.optInt("unread_count", 0)
-                            val messagesCount = response.optInt("messages_count", 0)
-                            val staffMessagesCount = response.optInt("staffmessages_count", 0)
-
-                            android.util.Log.d(
-                                "NOTIFICATION_MANAGER",
-                                "Count: $count, Messages: $messagesCount, Staff: $staffMessagesCount"
-                            )
+            // ✅ Use Retrofit instead of Volley
+            ApiClient.instance.getMessageCount(
+                userType = userType,
+                userId = userId,
+                department = department,
+                year = year,
+                staffType = staffType,
+                designation = designation
+            ).enqueue(object : retrofit2.Callback<MessageCountResponse> {
+                override fun onResponse(
+                    call: retrofit2.Call<MessageCountResponse>,
+                    response: retrofit2.Response<MessageCountResponse>
+                ) {
+                    if (response.isSuccessful && response.body() != null) {
+                        val body = response.body()!!
+                        android.util.Log.d("NOTIFICATION_MANAGER", "API Response: ${body}")
+                        
+                        if (body.status == "success") {
+                            val count = body.unread_count
+                            android.util.Log.d("NOTIFICATION_MANAGER", "Unread count: $count")
 
                             if (count > 0) {
                                 badge.text = count.toString()
@@ -80,34 +75,19 @@ class NotificationManager {
                             }
                         } else {
                             badge.visibility = View.GONE
-                            android.util.Log.e(
-                                "NOTIFICATION_MANAGER",
-                                "API error status: ${response.optString("status")}"
-                            )
+                            android.util.Log.e("NOTIFICATION_MANAGER", "API error: ${body.message}")
                         }
-                    } catch (e: Exception) {
+                    } else {
                         badge.visibility = View.GONE
-                        android.util.Log.e("NOTIFICATION_MANAGER", "JSON parse error: ${e.message}")
+                        android.util.Log.e("NOTIFICATION_MANAGER", "Response not successful: ${response.code()}")
                     }
-                },
-                Response.ErrorListener { error ->
+                }
+
+                override fun onFailure(call: retrofit2.Call<MessageCountResponse>, t: Throwable) {
                     badge.visibility = View.GONE
-                    android.util.Log.e("NOTIFICATION_MANAGER", "Network error: ${error.message}")
+                    android.util.Log.e("NOTIFICATION_MANAGER", "Network error: ${t.message}")
                 }
-            ) {
-                override fun getParams(): MutableMap<String, String> {
-                    val params = HashMap<String, String>()
-                    params["user_type"] = userType
-                    params["user_id"] = userId
-                    department?.let { params["department"] = it }
-                    year?.let { params["year"] = it }
-                    staffType?.let { params["staff_type"] = it }
-                    designation?.let { params["designation"] = it }
-                    return params
-                }
-            }
-            
-            Volley.newRequestQueue(context).add(request)
+            })
         }
         
         fun refreshMessageCount(
@@ -130,55 +110,53 @@ class NotificationManager {
             onSuccess: () -> Unit = {},
             onError: () -> Unit = {}
         ) {
-            // Show detailed debug info
-            val debugInfo = "ID: $messageId (${messageId::class.simpleName}), Table: '$tableName' (${tableName::class.simpleName})"
-            android.widget.Toast.makeText(context, debugInfo, android.widget.Toast.LENGTH_LONG).show()
+            // Debug logging
+            android.util.Log.d("NOTIFICATION_MANAGER", "Marking message as read: ID=$messageId, Table=$tableName")
             
             // Check if messageId is valid
             if (messageId <= 0) {
-                android.widget.Toast.makeText(context, "ERROR: Invalid message ID: $messageId", android.widget.Toast.LENGTH_LONG).show()
+                android.util.Log.e("NOTIFICATION_MANAGER", "Invalid message ID: $messageId")
                 onError()
                 return
             }
             
             // Check if tableName is valid
             if (tableName.isBlank()) {
-                android.widget.Toast.makeText(context, "ERROR: Empty table name", android.widget.Toast.LENGTH_LONG).show()
+                android.util.Log.e("NOTIFICATION_MANAGER", "Empty table name")
                 onError()
                 return
             }
             
-            // Direct API call to mark message as read
-            val url = ApiClient.BASE_URL + "api/mark_message_read.php"
-            val requestBody = JSONObject().apply {
-                put("message_id", messageId.toString()) // Convert to string
-                put("table_name", tableName)
-            }
-            
-            android.widget.Toast.makeText(context, "Sending to API...", android.widget.Toast.LENGTH_SHORT).show()
-            
-            val request = JsonObjectRequest(
-                Request.Method.POST,
-                url,
-                requestBody,
-                { response ->
-                    val message = response.getString("message")
-                    val status = response.getString("status")
-                    android.widget.Toast.makeText(context, "Status: $status, Message: $message", android.widget.Toast.LENGTH_LONG).show()
-                    
-                    if (status == "success") {
-                        onSuccess()
+            // ✅ Use Retrofit instead of Volley
+            ApiClient.instance.markMessageAsRead(
+                messageId = messageId.toString(),
+                tableName = tableName
+            ).enqueue(object : retrofit2.Callback<GenericResponse> {
+                override fun onResponse(
+                    call: retrofit2.Call<GenericResponse>,
+                    response: retrofit2.Response<GenericResponse>
+                ) {
+                    if (response.isSuccessful && response.body() != null) {
+                        val body = response.body()!!
+                        android.util.Log.d("NOTIFICATION_MANAGER", "Mark read response: ${body.status} - ${body.message}")
+                        
+                        if (body.status == "success") {
+                            onSuccess()
+                        } else {
+                            android.util.Log.e("NOTIFICATION_MANAGER", "Mark read failed: ${body.message}")
+                            onError()
+                        }
                     } else {
+                        android.util.Log.e("NOTIFICATION_MANAGER", "Mark read response not successful: ${response.code()}")
                         onError()
                     }
-                },
-                { error ->
-                    android.widget.Toast.makeText(context, "Network Error: ${error.message}", android.widget.Toast.LENGTH_LONG).show()
+                }
+
+                override fun onFailure(call: retrofit2.Call<GenericResponse>, t: Throwable) {
+                    android.util.Log.e("NOTIFICATION_MANAGER", "Mark read network error: ${t.message}")
                     onError()
                 }
-            )
-            
-            Volley.newRequestQueue(context).add(request)
+            })
         }
     }
 }

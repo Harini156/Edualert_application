@@ -42,8 +42,8 @@ class ReceivedMessagesFragment : Fragment() {
 
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        val sharedPref = requireContext().getSharedPreferences("EduAlertPrefs", Context.MODE_PRIVATE)
-        userId = sharedPref.getString("USER_ID", null)
+        // ✅ Get user ID from UserSession
+        userId = com.saveetha.edualert.UserSession.getUserId(requireContext())
 
         // Adapter only takes context and messages now
         adapter = ReceivedMessageAdapter(requireContext(), messages)

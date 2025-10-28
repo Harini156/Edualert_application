@@ -59,8 +59,6 @@ class AdminHomeFragment : Fragment() {
     }
     
     private fun getUserId(): String {
-        // TODO: Implement method to get current user ID from SharedPreferences or session
-        // For now, return a placeholder
-        return "ADM001"
+        return UserSession.getUserId(requireContext()) ?: "ADM001"
     }
 }

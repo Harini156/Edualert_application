@@ -47,8 +47,8 @@ class AdminMessagesFragment : Fragment() {
 
     private fun fetchAdminMessages() {
         context?.let { ctx ->  // Safe context check
-            val sharedPref = ctx.getSharedPreferences("EduAlertPrefs", Context.MODE_PRIVATE)
-            val userId = sharedPref.getString("USER_ID", null)
+            // ✅ Get user ID from UserSession
+            val userId = com.saveetha.edualert.UserSession.getUserId(ctx)
 
             if (userId.isNullOrEmpty()) {
                 showEmpty("User ID not found.")

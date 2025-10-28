@@ -38,10 +38,9 @@ class ProfileAdmin : Fragment() {
             parentFragmentManager.popBackStack()
         }
 
-        // 🔹 Get logged-in admin details from SharedPreferences
-        val sharedPref = requireContext().getSharedPreferences("EduAlertPrefs", Context.MODE_PRIVATE)
-        val adminId = sharedPref.getString("USER_ID", "") ?: ""
-        val email = sharedPref.getString("EMAIL", "") ?: ""
+        // ✅ Get logged-in admin details from UserSession
+        val adminId = com.saveetha.edualert.UserSession.getUserId(requireContext()) ?: ""
+        val email = com.saveetha.edualert.UserSession.getEmail(requireContext()) ?: ""
 
         if (adminId.isEmpty() || email.isEmpty()) {
             Toast.makeText(requireContext(), "Admin details not found. Please login again.", Toast.LENGTH_LONG).show()

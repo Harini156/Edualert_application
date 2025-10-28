@@ -33,9 +33,8 @@ class StaffSentFragment : Fragment() {
         progressBar = view.findViewById(R.id.progressBar)
         recyclerView.layoutManager = LinearLayoutManager(context)
 
-        // ✅ Get logged-in staff ID from SharedPreferences
-        val sharedPref = requireContext().getSharedPreferences("EduAlertPrefs", Context.MODE_PRIVATE)
-        senderId = sharedPref.getString("USER_ID", "") ?: ""
+        // ✅ Get logged-in staff ID from UserSession
+        senderId = com.saveetha.edualert.UserSession.getUserId(requireContext()) ?: ""
 
         // ✅ Pass senderId to adapter
         adapter = MessageAdapter(requireContext(), sentList, senderId)

@@ -9,21 +9,17 @@ include('db.php');
 $response = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Debug: Log received data
-    error_log("Message Count API - Received POST data: " . print_r($_POST, true));
-    
     $user_type = isset($_POST['user_type']) ? trim($_POST['user_type']) : '';
     $user_id = isset($_POST['user_id']) ? trim($_POST['user_id']) : '';
+    $department = isset($_POST['department']) ? trim($_POST['department']) : null;
+    $year = isset($_POST['year']) ? trim($_POST['year']) : null;
+    $staff_type = isset($_POST['staff_type']) ? trim($_POST['staff_type']) : null;
+    $designation = isset($_POST['designation']) ? trim($_POST['designation']) : null;
     
     if (empty($user_type) || empty($user_id)) {
         echo json_encode([
             "status" => "error",
-            "message" => "User type and user ID are required.",
-            "debug" => [
-                "user_type" => $user_type,
-                "user_id" => $user_id,
-                "raw_post" => $_POST
-            ]
+            "message" => "User type and user ID are required."
         ]);
         exit;
     }
@@ -32,49 +28,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!in_array($user_type, ['student', 'staff', 'admin'])) {
         echo json_encode([
             "status" => "error",
-            "message" => "Invalid user type.",
-            "debug" => [
-                "received_user_type" => $user_type
-            ]
+            "message" => "Invalid user type."
         ]);
         exit;
     }
     
     $total_unread_count = 0;
-    
-    // Count from messages table (Admin messages)
     $messages_count = 0;
-    $messages_sql = "SELECT COUNT(*) as count FROM messages WHERE recipient_type = ? AND status = 'unread'";
-    $stmt = $conn->prepare($messages_sql);
-    if ($stmt) {
-        $stmt->bind_param("s", $user_type);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $row = $result->fetch_assoc();
-        $messages_count = (int)$row['count'];
-        $stmt->close();
-    }
-    
-    // Count from staffmessages table (Staff messages)
     $staffmessages_count = 0;
     
+    // Count from messages table (Admin broadcast messages)
     if ($user_type === 'student') {
-        // For students: count messages sent to them specifically or to groups they belong to
+        // For students: count admin messages targeted to students with matching filters
+        $messages_sql = "
+            SELECT COUNT(*) as count 
+            FROM messages 
+            WHERE status = 'unread' 
+            AND (recipient_type = 'student' OR recipient_type = 'both')
+            AND (department IS NULL OR department = '' OR department = ?)
+            AND (year IS NULL OR year = '' OR year = ?)
+        ";
+        $stmt = $conn->prepare($messages_sql);
+        if ($stmt) {
+            $stmt->bind_param("ss", $department, $year);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $row = $result->fetch_assoc();
+            $messages_count = (int)$row['count'];
+            $stmt->close();
+        }
+        
+        // For students: count staff messages targeted to students
         $staffmessages_sql = "
             SELECT COUNT(*) as count 
             FROM staffmessages 
             WHERE status = 'unread' 
-            AND (
-                (receiver_id = ? AND is_group_message = 0) 
-                OR 
-                (receiver_id IN (
-                    SELECT group_id FROM group_members WHERE user_id = ?
-                ) AND is_group_message = 1)
-            )
+            AND recipient_type = 'student'
+            AND (department IS NULL OR department = '' OR department = ?)
+            AND (year IS NULL OR year = '' OR year = ?)
         ";
         $stmt = $conn->prepare($staffmessages_sql);
         if ($stmt) {
-            $stmt->bind_param("ss", $user_id, $user_id);
+            $stmt->bind_param("ss", $department, $year);
             $stmt->execute();
             $result = $stmt->get_result();
             $row = $result->fetch_assoc();
@@ -83,16 +78,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         
     } elseif ($user_type === 'staff') {
-        // For staff: count messages sent to staff type
-        $staffmessages_sql = "SELECT COUNT(*) as count FROM staffmessages WHERE recipient_type = 'staff' AND status = 'unread'";
+        // For staff: count admin messages targeted to staff with matching filters
+        $messages_sql = "
+            SELECT COUNT(*) as count 
+            FROM messages 
+            WHERE status = 'unread' 
+            AND (recipient_type = 'staff' OR recipient_type = 'both')
+            AND (department IS NULL OR department = '' OR department = ?)
+            AND (staff_type IS NULL OR staff_type = '' OR staff_type = ?)
+            AND (designation IS NULL OR designation = '' OR designation = ?)
+        ";
+        $stmt = $conn->prepare($messages_sql);
+        if ($stmt) {
+            $stmt->bind_param("sss", $department, $staff_type, $designation);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $row = $result->fetch_assoc();
+            $messages_count = (int)$row['count'];
+            $stmt->close();
+        }
+        
+        // For staff: count staff messages targeted to staff
+        $staffmessages_sql = "
+            SELECT COUNT(*) as count 
+            FROM staffmessages 
+            WHERE status = 'unread' 
+            AND recipient_type = 'staff'
+            AND (department IS NULL OR department = '' OR department = ?)
+            AND (designation IS NULL OR designation = '' OR designation = ?)
+        ";
         $stmt = $conn->prepare($staffmessages_sql);
         if ($stmt) {
+            $stmt->bind_param("ss", $department, $designation);
             $stmt->execute();
             $result = $stmt->get_result();
             $row = $result->fetch_assoc();
             $staffmessages_count = (int)$row['count'];
             $stmt->close();
         }
+        
+    } elseif ($user_type === 'admin') {
+        // Admins don't receive messages, they only send them
+        $messages_count = 0;
+        $staffmessages_count = 0;
     }
     
     $total_unread_count = $messages_count + $staffmessages_count;
@@ -105,16 +133,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         "debug" => [
             "user_type" => $user_type,
             "user_id" => $user_id,
-            "total_unread" => $total_unread_count,
-            "messages_count" => $messages_count,
-            "staffmessages_count" => $staffmessages_count
+            "department" => $department,
+            "year" => $year,
+            "staff_type" => $staff_type,
+            "designation" => $designation
         ]
     ]);
     
 } else {
     echo json_encode([
         "status" => "error",
-        "message" => "Invalid request method. Expected POST, got " . $_SERVER['REQUEST_METHOD']
+        "message" => "Invalid request method. Expected POST."
     ]);
 }
 

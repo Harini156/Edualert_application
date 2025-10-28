@@ -82,20 +82,14 @@ class StaffHodFragment : Fragment() {
     }
     
     private fun getUserId(): String {
-        // TODO: Implement method to get current user ID from SharedPreferences or session
-        // For now, return a placeholder
-        return "STF001"
+        return UserSession.getUserId(requireContext()) ?: "STF001"
     }
     
     private fun getStaffType(): String? {
-        // TODO: Implement method to get current user staff type from SharedPreferences or session
-        // For now, return a placeholder
-        return "Teaching"
+        return UserSession.getStaffType(requireContext())
     }
     
     private fun getDesignation(): String? {
-        // TODO: Implement method to get current user designation from SharedPreferences or session
-        // For now, return a placeholder
-        return "HOD"
+        return UserSession.getDesignation(requireContext())
     }
 }

@@ -16,6 +16,7 @@ import com.android.volley.toolbox.Volley
 import com.saveetha.edualert.ApiClient
 import com.saveetha.edualert.Details
 import com.saveetha.edualert.R
+import com.saveetha.edualert.UserSession
 import org.json.JSONObject
 
 class StudentProfileFragment : Fragment() {
@@ -28,8 +29,6 @@ class StudentProfileFragment : Fragment() {
     private lateinit var tvPhone: EditText
     private lateinit var tvGender: EditText   // ✅ Gender field
     private lateinit var btnEditDetails: Button
-
-    private lateinit var sharedPref: android.content.SharedPreferences
 
     private var studentId: String = ""
     private var studentEmail: String = ""
@@ -50,24 +49,23 @@ class StudentProfileFragment : Fragment() {
         tvGender = view.findViewById(R.id.tvGender)
         btnEditDetails = view.findViewById(R.id.btnEditDetails)
 
-        // SharedPreferences
-        sharedPref = requireContext().getSharedPreferences("EduAlertPrefs", Context.MODE_PRIVATE)
-        studentId = sharedPref.getString("USER_ID", "") ?: ""
-        studentEmail = sharedPref.getString("EMAIL", "") ?: ""
+        // ✅ Use UserSession instead of SharedPreferences
+        studentId = UserSession.getUserId(requireContext()) ?: ""
+        studentEmail = UserSession.getEmail(requireContext()) ?: ""
 
         if (studentId.isEmpty() && studentEmail.isEmpty()) {
             Toast.makeText(requireContext(), "Student details not found. Please login again.", Toast.LENGTH_LONG).show()
             return view
         }
 
-        // Load cached values
+        // Load cached values from UserSession
         tvStudentId.setText(studentId)
         tvEmail.setText(studentEmail)
-        tvDepartment.setText(sharedPref.getString("DEPARTMENT", "") ?: "")
-        tvYear.setText(sharedPref.getString("YEAR", "") ?: "")
-        tvBloodGroup.setText(sharedPref.getString("BLOOD_GROUP", "") ?: "")
-        tvPhone.setText(sharedPref.getString("PHONE", "") ?: "")
-        tvGender.setText(sharedPref.getString("GENDER", "") ?: "")
+        tvDepartment.setText(UserSession.getDepartment(requireContext()) ?: "")
+        tvYear.setText(UserSession.getYear(requireContext()) ?: "")
+        tvBloodGroup.setText(UserSession.getBloodGroup(requireContext()) ?: "")
+        tvPhone.setText(UserSession.getPhone(requireContext()) ?: "")
+        tvGender.setText(UserSession.getGender(requireContext()) ?: "")
 
         // Fetch latest details from server
         fetchStudentProfile(studentId, studentEmail)
@@ -111,14 +109,19 @@ class StudentProfileFragment : Fragment() {
                         tvPhone.setText(student.optString("phone", ""))
                         tvGender.setText(gender)  // ✅ capitalized
 
-                        // Save to SharedPreferences
-                        sharedPref.edit()
-                            .putString("DEPARTMENT", student.optString("department", ""))
-                            .putString("YEAR", student.optString("year", ""))
-                            .putString("BLOOD_GROUP", student.optString("blood_group", ""))
-                            .putString("PHONE", student.optString("phone", ""))
-                            .putString("GENDER", gender)
-                            .apply()
+                        // ✅ Update UserSession with complete student data
+                        UserSession.saveUserSession(
+                            context = requireContext(),
+                            userId = studentId,
+                            userType = "student",
+                            name = UserSession.getName(requireContext()) ?: "",
+                            email = studentEmail,
+                            department = student.optString("department", ""),
+                            year = student.optString("year", ""),
+                            bloodGroup = student.optString("blood_group", ""),
+                            phone = student.optString("phone", ""),
+                            gender = gender
+                        )
                     } else {
                         Toast.makeText(requireContext(), json.getString("message"), Toast.LENGTH_SHORT).show()
                     }

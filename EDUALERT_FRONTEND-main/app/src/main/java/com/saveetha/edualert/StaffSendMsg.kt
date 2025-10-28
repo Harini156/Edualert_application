@@ -60,10 +60,9 @@ class StaffSendMsg : Fragment() {
         super.onCreate(savedInstanceState)
         recipientType = arguments?.getString("recipientType")
 
-        // Fetch logged-in user ID from SharedPreferences and department
-        val sharedPref = requireContext().getSharedPreferences("EduAlertPrefs", Context.MODE_PRIVATE)
-        senderId = sharedPref.getString("USER_ID", null)
-        hodDept = sharedPref.getString("DEPARTMENT", null) // ✅ corrected key
+        // ✅ Fetch logged-in user ID and department from UserSession
+        senderId = com.saveetha.edualert.UserSession.getUserId(requireContext())
+        hodDept = com.saveetha.edualert.UserSession.getDepartment(requireContext())
     }
 
     override fun onCreateView(

@@ -105,9 +105,8 @@ class ChangePasswordFragment : Fragment() {
         val url = ApiClient.BASE_URL + "api/change_password.php"
         val requestQueue = Volley.newRequestQueue(requireContext())
 
-        // ✅ Get email from SharedPreferences (not hardcoded)
-        val sharedPref = requireContext().getSharedPreferences("EduAlertPrefs", Context.MODE_PRIVATE)
-        val email = sharedPref.getString("EMAIL", null)
+        // ✅ Get email from UserSession
+        val email = com.saveetha.edualert.UserSession.getEmail(requireContext())
 
         if (email.isNullOrEmpty()) {
             Toast.makeText(requireContext(), "Email not found in session", Toast.LENGTH_SHORT).show()

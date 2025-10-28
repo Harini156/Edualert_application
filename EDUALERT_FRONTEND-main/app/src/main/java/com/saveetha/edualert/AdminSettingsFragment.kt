@@ -66,6 +66,9 @@ class AdminSettingsFragment : Fragment() {
         // 🚪 Logout → LoginActivity + Pass flag
         val logout: LinearLayout = view.findViewById(R.id.logoutLayout)
         logout.setOnClickListener {
+            // ✅ Clear UserSession on logout
+            com.saveetha.edualert.UserSession.clearSession(requireContext())
+            
             val intent = Intent(requireContext(), Login::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             intent.putExtra("LOGOUT_MSG", true) // ✅ pass flag

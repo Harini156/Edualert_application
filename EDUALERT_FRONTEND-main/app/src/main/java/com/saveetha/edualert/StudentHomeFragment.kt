@@ -79,20 +79,14 @@ class StudentHomeFragment : Fragment() {
     }
     
     private fun getUserId(): String {
-        // TODO: Implement method to get current user ID from SharedPreferences or session
-        // For now, return a placeholder
-        return "STU001"
+        return UserSession.getUserId(requireContext()) ?: "STU001"
     }
     
     private fun getDepartment(): String? {
-        // TODO: Implement method to get current user department from SharedPreferences or session
-        // For now, return a placeholder
-        return "CSE"
+        return UserSession.getDepartment(requireContext())
     }
     
     private fun getYear(): String? {
-        // TODO: Implement method to get current user year from SharedPreferences or session
-        // For now, return a placeholder
-        return "2"
+        return UserSession.getYear(requireContext())
     }
 }

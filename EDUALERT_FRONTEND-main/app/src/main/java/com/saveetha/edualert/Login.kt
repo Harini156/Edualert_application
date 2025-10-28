@@ -108,14 +108,14 @@ class Login : AppCompatActivity() {
                                 val userType = user.user_type.lowercase()
                                 val userId = user.user_id
 
-                                // Save session for ALL roles
-                                val sharedPref = getSharedPreferences("EduAlertPrefs", MODE_PRIVATE)
-                                with(sharedPref.edit()) {
-                                    putString("USER_ID", userId)
-                                    putString("EMAIL", user.email)
-                                    putString("NAME", user.name)
-                                    apply()
-                                }
+                                // ✅ Save basic user session data
+                                UserSession.saveUserSession(
+                                    context = this@Login,
+                                    userId = userId,
+                                    userType = userType,
+                                    name = user.name,
+                                    email = user.email
+                                )
 
                                 // 🔹 Open dashboard immediately
                                 when (userType) {
@@ -167,14 +167,17 @@ class Login : AppCompatActivity() {
                             val designation = staff.designation?.lowercase() ?: ""
                             val staffType = staff.staff_type.lowercase()
 
-                            val sharedPref = getSharedPreferences("EduAlertPrefs", MODE_PRIVATE)
-                            with(sharedPref.edit()) {
-                                putString("USER_DEPT", staff.department) // ✅ department saved here
-                                putString("DESIGNATION", staff.designation)
-                                putString("STAFF_TYPE", staff.staff_type)
-                                apply()
-                            }
-
+                            // ✅ Update UserSession with staff details
+                            UserSession.saveUserSession(
+                                context = this@Login,
+                                userId = userId,
+                                userType = "staff",
+                                name = UserSession.getName(this@Login) ?: "",
+                                email = UserSession.getEmail(this@Login) ?: "",
+                                department = staff.department,
+                                staffType = staff.staff_type,
+                                designation = staff.designation
+                            )
 
                             val intent = Intent(this@Login, StaffNavActivity::class.java)
                             intent.putExtra("designation", designation)
@@ -210,21 +213,24 @@ class Login : AppCompatActivity() {
                     if (response.isSuccessful && response.body() != null) {
                         val student = response.body()!!.data
                         if (student != null) {
-                            // Save student-specific details in SharedPreferences
-                            val sharedPref = getSharedPreferences("EduAlertPrefs", MODE_PRIVATE)
-                            with(sharedPref.edit()) {
-                                putString("DEPARTMENT", student.department)
-                                putString("YEAR", student.year)
-                                putString("GENDER", student.gender)
-                                putString("CGPA", student.cgpa)
-                                putString("STAY_TYPE", student.stay_type)
-                                putString("DOB", student.dob)
-                                putString("BLOOD_GROUP", student.blood_group)
-                                putString("PHONE", student.phone)
-                                putString("ADDRESS", student.address)
-                                putString("BACKLOGS", student.backlogs)
-                                apply()
-                            }
+                            // ✅ Update UserSession with complete student details
+                            UserSession.saveUserSession(
+                                context = this@Login,
+                                userId = userId,
+                                userType = "student",
+                                name = UserSession.getName(this@Login) ?: "",
+                                email = UserSession.getEmail(this@Login) ?: "",
+                                department = student.department,
+                                year = student.year,
+                                bloodGroup = student.blood_group,
+                                phone = student.phone,
+                                gender = student.gender,
+                                dob = student.dob,
+                                cgpa = student.cgpa,
+                                backlogs = student.backlogs,
+                                stayType = student.stay_type,
+                                address = student.address
+                            )
 
                             val intent = Intent(this@Login, StudentNavActivity::class.java)
                             intent.putExtra("user_id", student.user_id)
