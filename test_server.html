@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Server API Test</title>
+</head>
+<body>
+    <h1>Testing Server API Endpoints</h1>
+    <div id="results"></div>
+    
+    <script>
+        async function testEndpoint(url, name) {
+            try {
+                const response = await fetch(url, { method: 'HEAD' });
+                return `${name}: ${response.status} ${response.statusText}`;
+            } catch (error) {
+                return `${name}: ERROR - ${error.message}`;
+            }
+        }
+        
+        async function runTests() {
+            const baseUrl = 'http://14.139.187.229:8081/PDD-2025(9thmonth)/edualert/api/';
+            const endpoints = [
+                'test_notifications.php',
+                'get_message_count.php',
+                'mark_message_read.php',
+                'adminsendmsg.php',
+                'login.php'
+            ];
+            
+            const results = [];
+            for (const endpoint of endpoints) {
+                const result = await testEndpoint(baseUrl + endpoint, endpoint);
+                results.push(result);
+            }
+            
+            document.getElementById('results').innerHTML = results.join('<br>');
+        }
+        
+        runTests();
+    </script>
+</body>
+</html>

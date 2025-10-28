@@ -1,4 +1,5 @@
 <?php
+// Updated: <?php echo date('Y-m-d H:i:s'); ?> - Testing deployment
 header("Content-Type: application/json");
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");

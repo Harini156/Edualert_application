@@ -110,11 +110,19 @@ class NotificationManager {
             onSuccess: () -> Unit = {},
             onError: () -> Unit = {}
         ) {
-            // Debug logging
-            android.util.Log.d("NOTIFICATION_MANAGER", "Marking message as read: ID=$messageId, Table=$tableName")
+            // ✅ Enhanced debug info for tick button issues
+            val debugInfo = StringBuilder()
+            debugInfo.append("=== MARK MESSAGE AS READ DEBUG ===\n")
+            debugInfo.append("Message ID: $messageId (Type: ${messageId::class.simpleName})\n")
+            debugInfo.append("Table Name: '$tableName' (Type: ${tableName::class.simpleName})\n")
+            debugInfo.append("API URL: ${ApiClient.BASE_URL}api/mark_message_read.php\n")
+            
+            android.util.Log.d("NOTIFICATION_MANAGER", debugInfo.toString())
             
             // Check if messageId is valid
             if (messageId <= 0) {
+                debugInfo.append("ERROR: Invalid message ID: $messageId\n")
+                android.widget.Toast.makeText(context, debugInfo.toString(), android.widget.Toast.LENGTH_LONG).show()
                 android.util.Log.e("NOTIFICATION_MANAGER", "Invalid message ID: $messageId")
                 onError()
                 return
@@ -122,10 +130,14 @@ class NotificationManager {
             
             // Check if tableName is valid
             if (tableName.isBlank()) {
+                debugInfo.append("ERROR: Empty table name\n")
+                android.widget.Toast.makeText(context, debugInfo.toString(), android.widget.Toast.LENGTH_LONG).show()
                 android.util.Log.e("NOTIFICATION_MANAGER", "Empty table name")
                 onError()
                 return
             }
+            
+            debugInfo.append("Sending API request...\n")
             
             // ✅ Use Retrofit instead of Volley
             ApiClient.instance.markMessageAsRead(
@@ -136,23 +148,39 @@ class NotificationManager {
                     call: retrofit2.Call<GenericResponse>,
                     response: retrofit2.Response<GenericResponse>
                 ) {
+                    debugInfo.append("API Response Code: ${response.code()}\n")
+                    debugInfo.append("Is Successful: ${response.isSuccessful}\n")
+                    
                     if (response.isSuccessful && response.body() != null) {
                         val body = response.body()!!
+                        debugInfo.append("Response Status: ${body.status}\n")
+                        debugInfo.append("Response Message: ${body.message}\n")
+                        
                         android.util.Log.d("NOTIFICATION_MANAGER", "Mark read response: ${body.status} - ${body.message}")
                         
                         if (body.status == "success") {
+                            debugInfo.append("SUCCESS: Message marked as read\n")
+                            android.widget.Toast.makeText(context, "✅ Message marked as read successfully!", android.widget.Toast.LENGTH_SHORT).show()
                             onSuccess()
                         } else {
+                            debugInfo.append("FAILED: ${body.message}\n")
+                            android.widget.Toast.makeText(context, debugInfo.toString(), android.widget.Toast.LENGTH_LONG).show()
                             android.util.Log.e("NOTIFICATION_MANAGER", "Mark read failed: ${body.message}")
                             onError()
                         }
                     } else {
+                        debugInfo.append("ERROR: Response not successful or body is null\n")
+                        debugInfo.append("Error Body: ${response.errorBody()?.string()}\n")
+                        android.widget.Toast.makeText(context, debugInfo.toString(), android.widget.Toast.LENGTH_LONG).show()
                         android.util.Log.e("NOTIFICATION_MANAGER", "Mark read response not successful: ${response.code()}")
                         onError()
                     }
                 }
 
                 override fun onFailure(call: retrofit2.Call<GenericResponse>, t: Throwable) {
+                    debugInfo.append("NETWORK ERROR: ${t.message}\n")
+                    debugInfo.append("Cause: ${t.cause}\n")
+                    android.widget.Toast.makeText(context, debugInfo.toString(), android.widget.Toast.LENGTH_LONG).show()
                     android.util.Log.e("NOTIFICATION_MANAGER", "Mark read network error: ${t.message}")
                     onError()
                 }
