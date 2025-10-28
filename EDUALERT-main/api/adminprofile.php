@@ -17,8 +17,8 @@ if (empty($admin_id)) {
     exit;
 }
 
-// Fetch admin details
-$sql = "SELECT id, name, email, user_id, usertype FROM admins WHERE user_id = ? AND usertype = 'admin'";
+// Fetch admin details from users table
+$sql = "SELECT id, name, email, user_id, user_type, dept, year, created_at FROM users WHERE user_id = ? AND user_type = 'admin'";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $admin_id);
 $stmt->execute();
@@ -26,7 +26,7 @@ $result = $stmt->get_result();
 
 if ($result->num_rows === 0) {
     $response['status'] = 'error';
-    $response['message'] = 'Admin not found.';
+    $response['message'] = 'Admin details are not found. Please login.';
 } else {
     $admin = $result->fetch_assoc();
     $response['status'] = 'success';

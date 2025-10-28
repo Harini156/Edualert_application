@@ -1,0 +1,166 @@
+# MyEdu (EduAlert) - Actual Database Structure Report
+
+## Database Information
+- **Database Name:** `edualert`
+- **Database Type:** MySQL (via XAMPP)
+- **Host:** localhost
+- **Default User:** root (no password)
+- **Current Data:** 26 total users (7 students, 15 staff, 4 admins)
+
+## Complete Database Tables Structure
+
+### 1. Core User Management
+
+#### 1.1 `users` Table
+**Purpose:** Central user management table for all user types
+**Columns:**
+- `id` - INT(11), Primary Key, Auto Increment
+- `user_id` - VARCHAR(10), Unique Key, NOT NULL (Generated user ID)
+- `name` - VARCHAR(100), NOT NULL (User's full name)
+- `email` - VARCHAR(100), Unique Key, NOT NULL (User's email)
+- `password` - VARCHAR(255), NOT NULL (Hashed password)
+- `user_type` - ENUM('student','staff','admin'), NOT NULL (User role)
+- `dept` - VARCHAR(50), NULL (Department - for students/staff)
+- `year` - VARCHAR(20), NULL (Academic year - for students)
+- `created_at` - TIMESTAMP, NOT NULL, Default: current_timestamp()
+
+#### 1.2 `student_details` Table
+**Purpose:** Extended student information
+**Columns:**
+- `id` - INT(11), Primary Key, Auto Increment
+- `user_id` - VARCHAR(10), Foreign Key to users.user_id, NOT NULL
+- `dob` - DATE, NULL (Date of birth)
+- `gender` - ENUM('male','female','other'), NULL
+- `blood_group` - VARCHAR(5), NULL
+- `department` - VARCHAR(50), NOT NULL
+- `year` - INT(11), NOT NULL (Academic year as integer)
+- `cgpa` - DECIMAL(4,2), NULL (Grade point average)
+- `backlogs` - INT(11), NULL, Default: 0 (Number of backlogs)
+- `stay_type` - ENUM('Hosteller','Day Scholar'), NOT NULL
+- `phone` - VARCHAR(15), NULL
+- `address` - TEXT, NULL
+
+#### 1.3 `staff_details` Table
+**Purpose:** Extended staff information
+**Columns:**
+- `id` - INT(11), Primary Key, Auto Increment
+- `user_id` - VARCHAR(10), Foreign Key to users.user_id, NOT NULL
+- `dob` - DATE, NULL (Date of birth)
+- `staff_type` - ENUM('teaching','non-teaching'), NOT NULL
+- `department` - VARCHAR(50), NULL
+- `designation` - VARCHAR(50), NULL (Job title/position)
+- `phone` - VARCHAR(15), NULL
+- `address` - TEXT, NULL
+
+### 2. Messaging System
+
+#### 2.1 `messages` Table
+**Purpose:** Admin broadcast messages to students/staff
+**Columns:**
+- `id` - INT(11), Primary Key, Auto Increment
+- `title` - VARCHAR(255), NOT NULL (Message title)
+- `content` - TEXT, NOT NULL (Message content)
+- `recipient_type` - ENUM('student','staff','both'), NOT NULL (Target audience)
+- `department` - VARCHAR(100), NULL (Filter by department)
+- `staff_type` - VARCHAR(50), NULL (Filter by staff type)
+- `designation` - VARCHAR(100), NULL (Filter by designation)
+- `year` - VARCHAR(50), NULL (Filter by academic year)
+- `stay_type` - VARCHAR(50), NULL (Filter by hosteller/day scholar)
+- `gender` - VARCHAR(20), NULL (Filter by gender)
+- `cgpa` - VARCHAR(20), NULL (Filter by CGPA range)
+- `backlogs` - VARCHAR(20), NULL (Filter by backlogs)
+- `attachment` - VARCHAR(255), NULL (File attachment path)
+- `created_at` - TIMESTAMP, NOT NULL, Default: current_timestamp()
+- `status` - ENUM('read','unread'), NULL, Default: 'unread'
+
+#### 2.2 `staffmessages` Table
+**Purpose:** Staff messages to students/other staff
+**Columns:**
+- `id` - INT(11), Primary Key, Auto Increment
+- `sender_id` - VARCHAR(20), NOT NULL (Staff user_id who sent message)
+- `title` - VARCHAR(255), NOT NULL (Message title)
+- `content` - TEXT, NOT NULL (Message content)
+- `recipient_type` - ENUM('student','staff'), NOT NULL (Target type)
+- `department` - VARCHAR(100), NULL (Filter by department)
+- `year` - VARCHAR(20), NULL (Filter by academic year)
+- `designation` - VARCHAR(50), NULL (Filter by designation)
+- `attachment` - VARCHAR(255), NULL (File attachment path)
+- `created_at` - TIMESTAMP, NOT NULL, Default: current_timestamp()
+- `status` - ENUM('read','unread'), NULL, Default: 'unread'
+
+### 3. Notification System
+
+#### 3.1 `notifications` Table
+**Purpose:** System notifications for users
+**Columns:**
+- `id` - INT(11), Primary Key, Auto Increment
+- `title` - VARCHAR(255), NOT NULL (Notification title)
+- `message` - TEXT, NOT NULL (Notification content)
+- `user_type` - ENUM('student','admin','hod','teaching','nonteaching'), NOT NULL (Target user type)
+- `user_id` - INT(11), NULL (Specific user ID for targeted notifications)
+- `status` - ENUM('unread','read'), NULL, Default: 'unread'
+- `created_at` - TIMESTAMP, NOT NULL, Default: current_timestamp()
+
+### 4. Security & Authentication
+
+#### 4.1 `password_reset` Table
+**Purpose:** OTP-based password reset functionality
+**Columns:**
+- `id` - INT(11), Primary Key, Auto Increment
+- `user_id` - INT(11), Foreign Key, NOT NULL (Reference to users.id)
+- `otp` - VARCHAR(6), NOT NULL (6-digit OTP code)
+- `expiry` - DATETIME, NOT NULL (OTP expiration time)
+- `created_at` - TIMESTAMP, NOT NULL, Default: current_timestamp()
+
+## Database Relationships
+
+### Primary Relationships
+1. **users.user_id** ↔ **student_details.user_id** (One-to-One)
+2. **users.user_id** ↔ **staff_details.user_id** (One-to-One)
+3. **users.id** ↔ **password_reset.user_id** (One-to-Many)
+4. **users.user_id** ↔ **staffmessages.sender_id** (One-to-Many)
+
+### Message Targeting Logic
+- **Admin Messages (`messages`)**: Use filtering columns to target specific user groups
+- **Staff Messages (`staffmessages`)**: Direct targeting by recipient_type and filters
+- **Notifications**: Can target specific users or user types
+
+## Key Features & Constraints
+
+### User Management
+- **Unified Authentication**: Single `users` table for all user types
+- **Extended Profiles**: Separate detail tables for students and staff
+- **Unique Constraints**: user_id and email are unique across the system
+
+### Advanced Filtering System
+The `messages` table supports sophisticated filtering:
+- **Academic Filters**: department, year, cgpa, backlogs
+- **Personal Filters**: gender, stay_type
+- **Professional Filters**: staff_type, designation
+- **Status Tracking**: read/unread message status
+
+### Security Features
+- **Password Hashing**: Stored in users.password (VARCHAR 255)
+- **OTP System**: Time-limited password reset with expiry
+- **Role-based Access**: user_type enum controls permissions
+
+### Notification System
+- **Flexible Targeting**: Support for both broadcast and individual notifications
+- **Extended User Types**: Includes HOD, teaching, non-teaching categories
+- **Status Tracking**: Read/unread notification status
+
+## Current Database Statistics
+- **Total Users**: 26
+  - Students: 7
+  - Staff: 15
+  - Admins: 4
+
+## Data Types & Constraints Summary
+- **Primary Keys**: All tables use INT(11) auto-increment
+- **User IDs**: VARCHAR(10) for generated user identifiers
+- **Text Content**: TEXT for message content, VARCHAR for titles
+- **Timestamps**: Automatic timestamp tracking for all records
+- **Enums**: Strict value constraints for user types, status, etc.
+- **Nullability**: Strategic use of NULL/NOT NULL based on business logic
+
+This database structure supports a comprehensive educational management system with role-based messaging, advanced filtering, and detailed user profiling capabilities.

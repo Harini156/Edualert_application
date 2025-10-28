@@ -40,7 +40,7 @@ class ProfileAdmin : Fragment() {
 
         // 🔹 Get logged-in admin details from SharedPreferences
         val sharedPref = requireContext().getSharedPreferences("EduAlertPrefs", Context.MODE_PRIVATE)
-        val adminId = sharedPref.getString("ADMIN_ID", "") ?: ""
+        val adminId = sharedPref.getString("USER_ID", "") ?: ""
         val email = sharedPref.getString("EMAIL", "") ?: ""
 
         if (adminId.isEmpty() || email.isEmpty()) {

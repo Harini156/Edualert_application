@@ -17,8 +17,12 @@ if (empty($staff_id)) {
     exit;
 }
 
-// Fetch staff details
-$sql = "SELECT id, name, email, user_id, usertype FROM staffs WHERE user_id = ? AND usertype = 'staff'";
+// Fetch staff details from users table and join with staff_details
+$sql = "SELECT u.id, u.name, u.email, u.user_id, u.user_type, u.dept as department, 
+               sd.dob, sd.staff_type, sd.designation, sd.phone, sd.address
+        FROM users u 
+        LEFT JOIN staff_details sd ON u.user_id = sd.user_id 
+        WHERE u.user_id = ? AND u.user_type = 'staff'";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $staff_id);
 $stmt->execute();

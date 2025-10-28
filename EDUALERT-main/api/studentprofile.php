@@ -6,8 +6,9 @@ include('db.php');
 
 $response = [];
 
-// Accepting input from both JSON and GET
-$student_id = $_GET['student_id'] ?? '';
+// Support both JSON input and form input
+$input = json_decode(file_get_contents("php://input"), true);
+$student_id = isset($input['student_id']) ? trim($input['student_id']) : (isset($_POST['student_id']) ? trim($_POST['student_id']) : (isset($_GET['student_id']) ? trim($_GET['student_id']) : ''));
 
 // Validate input
 if (empty($student_id)) {
@@ -18,8 +19,12 @@ if (empty($student_id)) {
     exit;
 }
 
-// Query to get student profile
-$sql = "SELECT id, name, department, year, email, user_id, usertype FROM students WHERE user_id = ?";
+// Query to get student profile from users table and join with student_details
+$sql = "SELECT u.id, u.name, u.email, u.user_id, u.user_type, u.dept as department, u.year, 
+               sd.dob, sd.gender, sd.blood_group, sd.cgpa, sd.backlogs, sd.stay_type, sd.phone, sd.address
+        FROM users u 
+        LEFT JOIN student_details sd ON u.user_id = sd.user_id 
+        WHERE u.user_id = ? AND u.user_type = 'student'";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $student_id);
 $stmt->execute();

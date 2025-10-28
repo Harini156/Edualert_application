@@ -35,8 +35,9 @@
         <activity
             android:name=".Details"
             android:exported="false" />
-
-
+        <activity
+            android:name=".CreateAccount"
+            android:exported="false" />
         <activity
             android:name=".AdminNavActivity"
             android:exported="false" />
