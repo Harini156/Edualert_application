@@ -125,18 +125,15 @@ class ChangePasswordFragment : Fragment() {
 
                     if (status == "success") {
                         // ✅ Show success toast
-                        Toast.makeText(requireContext(), "Password updated successfully", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), "Password updated successfully!", Toast.LENGTH_LONG).show()
 
                         // ✅ Clear fields
                         oldPasswordField.text.clear()
                         newPasswordField.text.clear()
                         confirmNewPasswordField.text.clear()
 
-                        // ✅ Navigate to AdminSettingsFragment
-                        parentFragmentManager.beginTransaction()
-                            .replace(R.id.fragmentContainer, AdminSettingsFragment()) // Correct container ID
-                            .addToBackStack(null)
-                            .commit()
+                        // ✅ Just go back to previous screen instead of forcing navigation
+                        requireActivity().supportFragmentManager.popBackStack()
                     }
                 } catch (e: Exception) {
                     e.printStackTrace()
