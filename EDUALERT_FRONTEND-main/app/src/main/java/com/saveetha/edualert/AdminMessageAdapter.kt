@@ -87,6 +87,9 @@ class AdminMessageAdapter(
 
             holder.tvAttachment.setOnClickListener {
                 try {
+                    val resolvedUrl = UrlUtils.resolveAttachmentUrl(msg.attachment)
+                    android.util.Log.d("AdminMessageAdapter", "Opening attachment: ${msg.attachment} -> $resolvedUrl")
+                    
                     when {
                         // ✅ Images
                         UrlUtils.resolveAttachmentUrl(msg.attachment).endsWith(".jpg", true) ||

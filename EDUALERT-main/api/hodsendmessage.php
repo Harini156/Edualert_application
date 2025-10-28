@@ -79,7 +79,7 @@ try {
             }
             
             if (move_uploaded_file($_FILES['attachment']['tmp_name'], $target_path)) {
-                $attachment_path = 'api/uploads/' . $unique_filename;
+                $attachment_path = 'uploads/' . $unique_filename;
             } else {
                 $response['success'] = false;
                 $response['message'] = 'Failed to upload attachment.';
