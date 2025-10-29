@@ -30,22 +30,23 @@ class Admineveryone : Fragment() {
         cardBoth = view.findViewById(R.id.cardBoth)
 
         cardStudents.setOnClickListener {
+            resetAllCards()
             cardStudents.isChecked = true
-            cardStaff.isChecked = false
-            cardBoth.isChecked = false
             selectedRecipient = "student"
         }
 
         cardStaff.setOnClickListener {
-            cardStudents.isChecked = false
+            resetAllCards()
             cardStaff.isChecked = true
-            cardBoth.isChecked = false
             selectedRecipient = "staff"
+            
+            // Force UI update for staff card
+            cardStaff.invalidate()
+            cardStaff.requestLayout()
         }
 
         cardBoth.setOnClickListener {
-            cardStudents.isChecked = false
-            cardStaff.isChecked = false
+            resetAllCards()
             cardBoth.isChecked = true
             selectedRecipient = "both"
         }
@@ -68,5 +69,16 @@ class Admineveryone : Fragment() {
         }
 
         return view
+    }
+    
+    private fun resetAllCards() {
+        cardStudents.isChecked = false
+        cardStaff.isChecked = false
+        cardBoth.isChecked = false
+        
+        // Force UI refresh for all cards
+        cardStudents.invalidate()
+        cardStaff.invalidate()
+        cardBoth.invalidate()
     }
 }

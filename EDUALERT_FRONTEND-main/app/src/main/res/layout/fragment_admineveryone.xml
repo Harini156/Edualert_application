@@ -107,8 +107,11 @@
                 android:layout_height="140dp"
                 android:layout_columnWeight="1"
                 app:cardCornerRadius="20dp"
+                android:checkable="true"
+                app:checkedIcon="@drawable/ic_check"
                 app:strokeColor="#922381"
                 app:cardBackgroundColor="@android:color/white"
+                android:foreground="?attr/selectableItemBackground"
                 android:layout_margin="8dp">
 
                 <LinearLayout
