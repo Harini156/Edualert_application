@@ -108,7 +108,12 @@ class AdminSendMsg : Fragment() {
             selectedFileUri = null
             layoutFileContainer.visibility = View.GONE
             tvAddAttachment.text = " Add Attachment"
+            Toast.makeText(requireContext(), "Attachment removed", Toast.LENGTH_SHORT).show()
         }
+        
+        // Make X button more prominent
+        ivRemoveFile.setBackgroundColor(android.graphics.Color.parseColor("#FF6B6B"))
+        ivRemoveFile.setPadding(8, 8, 8, 8)
 
         btnSendMessage.setOnClickListener {
             val title = etMessageTitle.text.toString().trim()
@@ -217,7 +222,24 @@ class AdminSendMsg : Fragment() {
             }
             if (!fileName.isNullOrEmpty()) {
                 layoutFileContainer.visibility = View.VISIBLE
-                tvFileName.text = "📎 $fileName"
+                
+                // Truncate filename if too long to ensure X button is always visible
+                val displayName = if (fileName.length > 25) {
+                    fileName.take(22) + "..."
+                } else {
+                    fileName
+                }
+                tvFileName.text = "📎 $displayName"
+                
+                // Force X button to be visible and clickable
+                ivRemoveFile.visibility = View.VISIBLE
+                ivRemoveFile.isClickable = true
+                ivRemoveFile.isEnabled = true
+                
+                // Ensure X button stays on the right side
+                ivRemoveFile.bringToFront()
+                
+
             }
         }
     }
