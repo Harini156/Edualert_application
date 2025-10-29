@@ -165,7 +165,7 @@ class Login : AppCompatActivity() {
                         val staff = response.body()!!.data
                         if (staff != null) {
                             val designation = staff.designation?.lowercase() ?: ""
-                            val staffType = staff.staff_type.lowercase()
+                            val staffType = staff.staff_type?.lowercase() ?: ""
 
                             // ✅ Update UserSession with staff details
                             UserSession.saveUserSession(

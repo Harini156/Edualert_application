@@ -58,38 +58,44 @@ data class StaffMessagesResponse(
 data class StaffDetailsResponse(
     val status: String,
     val message: String,
-    val data: StaffData?   // nested object
+    val data: StaffData? = null,   // For login API
+    val staff: StaffData? = null   // For profile API
 )
 
 data class StaffData(
     val user_id: String,
-    val dob: String?,
-    val staff_type: String,
-    val department: String?,
-    val designation: String?,
-    val phone: String?,
-    val address: String?
+    val name: String? = null,
+    val email: String? = null,
+    val dob: String? = null,
+    val staff_type: String? = null,
+    val department: String? = null,
+    val designation: String? = null,
+    val phone: String? = null,
+    val address: String? = null
 )
 
 
 data class StudentDetailsResponse(
     val status: String,
     val message: String,
-    val data: StudentData?  // Nested object containing student details
+    val data: StudentData? = null,  // For login API
+    val student: StudentData? = null  // For profile API
 )
 
 data class StudentData(
     val user_id: String,
-    val department: String?,
-    val year: String?,
-    val gender: String?,
-    val cgpa: String?,
-    val stay_type: String?,
-    val dob: String?,
-    val blood_group: String?,
-    val phone: String?,
-    val address: String?,
-    val backlogs: String?
+    val name: String? = null,
+    val email: String? = null,
+    val department: String? = null,
+    val year: String? = null,
+    val gender: String? = null,
+    val cgpa: String? = null,
+    val stay_type: String? = null,
+    val dob: String? = null,
+    val blood_group: String? = null,
+    val phone: String? = null,
+    val address: String? = null,
+    val backlogs: String? = null
 )
 
 

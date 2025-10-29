@@ -198,5 +198,18 @@ interface ApiService {
         @Field("table_name") tableName: String
     ): Call<GenericResponse>
 
+    // ✅ Get Student Profile for Edit Mode
+    @FormUrlEncoded
+    @POST("api/studentprofile.php")
+    fun getStudentProfile(
+        @Field("student_id") userId: String
+    ): Call<StudentDetailsResponse>
+
+    // ✅ Get Staff Profile for Edit Mode
+    @FormUrlEncoded
+    @POST("api/staffprofile.php")
+    fun getStaffProfile(
+        @Field("staff_id") userId: String
+    ): Call<StaffDetailsResponse>
 
 }

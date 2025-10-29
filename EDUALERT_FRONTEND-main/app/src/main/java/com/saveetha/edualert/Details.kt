@@ -54,8 +54,18 @@ class Details : AppCompatActivity() {
         continueButton.text = if (isEditMode) "Save" else "Continue"
 
         when (userType) {
-            "student" -> setupStudentFields()
-            "staff" -> setupStaffFields()
+            "student" -> {
+                setupStudentFields()
+                if (isEditMode) {
+                    fetchAndPopulateStudentData(userId)
+                }
+            }
+            "staff" -> {
+                setupStaffFields()
+                if (isEditMode) {
+                    fetchAndPopulateStaffData(userId)
+                }
+            }
             else -> {
                 startActivity(Intent(this, Login::class.java))
                 finish()
@@ -213,5 +223,116 @@ class Details : AppCompatActivity() {
                     Toast.makeText(this@Details, "Failed: ${t.message}", Toast.LENGTH_SHORT).show()
                 }
             })
+    }
+
+    // -------------------------
+    // Fetch and Populate Student Data for Edit Mode
+    // -------------------------
+    private fun fetchAndPopulateStudentData(userId: String) {
+        ApiClient.instance.getStudentProfile(userId)
+            .enqueue(object : Callback<StudentDetailsResponse> {
+                override fun onResponse(call: Call<StudentDetailsResponse>, response: Response<StudentDetailsResponse>) {
+                    if (response.isSuccessful && response.body() != null) {
+                        val responseBody = response.body()!!
+                        if (responseBody.status == "success" && responseBody.student != null) {
+                            val student = responseBody.student!!
+                            
+                            // Populate all fields with existing data
+                            findViewById<EditText>(R.id.dobField).setText(student.dob ?: "")
+                            findViewById<EditText>(R.id.bloodGroupField).setText(student.blood_group ?: "")
+                            findViewById<EditText>(R.id.departmentFieldStudent).setText(student.department ?: "")
+                            cgpaField.setText(student.cgpa ?: "")
+                            backlogsField.setText(student.backlogs ?: "")
+                            findViewById<EditText>(R.id.phoneField).setText(student.phone ?: "")
+                            findViewById<EditText>(R.id.addressField).setText(student.address ?: "")
+
+                            // Set spinner selections
+                            setSpinnerSelection(genderSpinner, student.gender ?: "")
+                            setYearSpinnerSelection(yearSpinner, student.year ?: "")
+                            setSpinnerSelection(stayTypeSpinner, student.stay_type ?: "")
+                            
+                            Toast.makeText(this@Details, "Profile data loaded", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(this@Details, "No student data found", Toast.LENGTH_SHORT).show()
+                        }
+                    } else {
+                        Toast.makeText(this@Details, "Failed to load student data", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                override fun onFailure(call: Call<StudentDetailsResponse>, t: Throwable) {
+                    Toast.makeText(this@Details, "Error loading data: ${t.message}", Toast.LENGTH_SHORT).show()
+                }
+            })
+    }
+
+    // -------------------------
+    // Fetch and Populate Staff Data for Edit Mode
+    // -------------------------
+    private fun fetchAndPopulateStaffData(userId: String) {
+        ApiClient.instance.getStaffProfile(userId)
+            .enqueue(object : Callback<StaffDetailsResponse> {
+                override fun onResponse(call: Call<StaffDetailsResponse>, response: Response<StaffDetailsResponse>) {
+                    if (response.isSuccessful && response.body() != null) {
+                        val responseBody = response.body()!!
+                        if (responseBody.status == "success" && responseBody.staff != null) {
+                            val staff = responseBody.staff!!
+                            
+                            // Populate staff fields
+                            findViewById<EditText>(R.id.dobFieldStaff).setText(staff.dob ?: "")
+                            findViewById<EditText>(R.id.phoneField).setText(staff.phone ?: "")
+                            findViewById<EditText>(R.id.addressField).setText(staff.address ?: "")
+
+                            // Set staff type spinner
+                            setSpinnerSelection(staffTypeSpinner, staff.staff_type ?: "")
+
+                            // If teaching staff, populate department and designation
+                            if (staff.staff_type?.equals("Teaching", true) == true) {
+                                departmentStaffField.setText(staff.department ?: "")
+                                setSpinnerSelection(designationSpinner, staff.designation ?: "")
+                                staffDeptDesignationLayout.visibility = LinearLayout.VISIBLE
+                            }
+                            
+                            Toast.makeText(this@Details, "Staff data loaded", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(this@Details, "No staff data found", Toast.LENGTH_SHORT).show()
+                        }
+                    } else {
+                        Toast.makeText(this@Details, "Failed to load staff data", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                override fun onFailure(call: Call<StaffDetailsResponse>, t: Throwable) {
+                    Toast.makeText(this@Details, "Error loading data: ${t.message}", Toast.LENGTH_SHORT).show()
+                }
+            })
+    }
+
+    // -------------------------
+    // Helper method to set spinner selection
+    // -------------------------
+    private fun setSpinnerSelection(spinner: Spinner, value: String) {
+        val adapter = spinner.adapter
+        for (i in 0 until adapter.count) {
+            if (adapter.getItem(i).toString().equals(value, ignoreCase = true)) {
+                spinner.setSelection(i)
+                break
+            }
+        }
+    }
+    
+    // -------------------------
+    // Helper method to set year spinner with number to roman conversion
+    // -------------------------
+    private fun setYearSpinnerSelection(yearSpinner: Spinner, yearValue: String?) {
+        if (yearValue.isNullOrEmpty()) return
+        
+        val yearMapping = mapOf(
+            "1" to "I Year",
+            "2" to "II Year", 
+            "3" to "III Year",
+            "4" to "IV Year"
+        )
+        
+        val displayValue = yearMapping[yearValue] ?: yearValue
+        setSpinnerSelection(yearSpinner, displayValue)
     }
 }
