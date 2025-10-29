@@ -26,6 +26,8 @@ class Details : AppCompatActivity() {
     // Student EditTexts for CGPA and Backlogs
     private lateinit var cgpaField: EditText
     private lateinit var backlogsField: EditText
+    
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,12 +48,16 @@ class Details : AppCompatActivity() {
         stayTypeSpinner = findViewById(R.id.stayTypeSpinner)
         cgpaField = findViewById(R.id.cgpaField)        // updated
         backlogsField = findViewById(R.id.backlogsField) // updated
+        
+
 
         val userType = intent.getStringExtra("userType")?.lowercase()
         val userId = intent.getStringExtra("userId") ?: ""
         val isEditMode = intent.getBooleanExtra("isEditMode", false)
 
         continueButton.text = if (isEditMode) "Save" else "Continue"
+        
+
 
         when (userType) {
             "student" -> {
@@ -159,6 +165,8 @@ class Details : AppCompatActivity() {
             return
         }
 
+
+        
         ApiClient.instance.saveStudentDetails(
             userId, dob, gender, bloodGroup, department, year, cgpa,
             backlogs, stayType, phone, address
@@ -238,7 +246,16 @@ class Details : AppCompatActivity() {
                             val student = responseBody.student!!
                             
                             // Populate all fields with existing data
-                            findViewById<EditText>(R.id.dobField).setText(student.dob ?: "")
+                            val dobValue = student.dob ?: ""
+                            val dobField = findViewById<EditText>(R.id.dobField)
+                            
+                            if (dobValue.isEmpty()) {
+                                dobField.setText("")
+                                dobField.hint = "Enter Date of Birth (YYYY-MM-DD) e.g., 2000-12-25"
+                                Toast.makeText(this@Details, "Please enter your Date of Birth in format: YYYY-MM-DD", Toast.LENGTH_LONG).show()
+                            } else {
+                                dobField.setText(dobValue)
+                            }
                             findViewById<EditText>(R.id.bloodGroupField).setText(student.blood_group ?: "")
                             findViewById<EditText>(R.id.departmentFieldStudent).setText(student.department ?: "")
                             cgpaField.setText(student.cgpa ?: "")
@@ -335,4 +352,5 @@ class Details : AppCompatActivity() {
         val displayValue = yearMapping[yearValue] ?: yearValue
         setSpinnerSelection(yearSpinner, displayValue)
     }
+
 }
