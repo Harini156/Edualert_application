@@ -1,9 +1,32 @@
 <?php
+// Suppress all PHP errors to prevent JSON corruption
+error_reporting(0);
+ini_set('display_errors', 0);
+
+// Start output buffering to catch any unexpected output
+ob_start();
+
 header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: POST, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type');
+
+// Handle preflight OPTIONS request
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
+
 session_start();
+
+// Clear any previous output
+ob_clean();
+
 include 'db.php'; // Ensure this connects to your MySQL database
 
 $response = [];
+
+try {
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $login_id = trim($_POST['login_id']); // can be email or user_id
@@ -66,5 +89,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $response['message'] = 'Invalid request method.';
 }
 
+} catch (Exception $e) {
+    $response['status'] = 'error';
+    $response['message'] = 'Server error occurred.';
+    $response['debug'] = $e->getMessage();
+}
+
+// Clear any buffered output and send clean JSON
+ob_clean();
 echo json_encode($response);
+ob_end_flush();
 ?>
