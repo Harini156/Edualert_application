@@ -344,10 +344,23 @@ class Login : AppCompatActivity() {
         debugInfo.append("Base URL: ${ApiClient.BASE_URL}\n")
         debugInfo.append("Login Endpoint: ${ApiClient.BASE_URL}api/login.php\n\n")
         
-        // Test with dummy credentials to see server response
-        debugInfo.append("Testing connection with dummy credentials...\n\n")
+        // Get actual form data
+        val emailField = findViewById<EditText>(R.id.emailField)
+        val passwordField = findViewById<EditText>(R.id.passwordField)
+        val actualEmail = emailField.text.toString().trim()
+        val actualPassword = passwordField.text.toString().trim()
         
-        ApiClient.instance.loginUser("test@test.com", "test123", "student")
+        debugInfo.append("=== FORM DATA ANALYSIS ===\n")
+        debugInfo.append("Email field content: '$actualEmail'\n")
+        debugInfo.append("Email field length: ${actualEmail.length}\n")
+        debugInfo.append("Password field content: '${if (actualPassword.isEmpty()) "EMPTY" else "***PROVIDED***"}'\n")
+        debugInfo.append("Password field length: ${actualPassword.length}\n")
+        debugInfo.append("Selected role: $selectedRole\n\n")
+        
+        // Test with actual form data
+        debugInfo.append("Testing with ACTUAL form data...\n\n")
+        
+        ApiClient.instance.loginUser(actualEmail, actualPassword, selectedRole.lowercase())
             .enqueue(object : Callback<LoginResponse> {
                 override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                     debugInfo.append("=== SERVER RESPONSE ===\n")

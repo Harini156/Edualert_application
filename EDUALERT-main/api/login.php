@@ -29,16 +29,28 @@ $response = [];
 try {
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $login_id = trim($_POST['login_id']); // can be email or user_id
-    $password = $_POST['password'];
+    // Android app sends 'email', 'password', and 'role'
+    $login_id = trim($_POST['email'] ?? $_POST['login_id'] ?? ''); // Accept both email and login_id
+    $password = $_POST['password'] ?? '';
+    $role = $_POST['role'] ?? ''; // Role from Android app
 
     if (empty($login_id) || empty($password)) {
         $response['status'] = 'error';
         $response['message'] = 'Email/User ID and password are required.';
+        $response['debug'] = [
+            'received_email' => $_POST['email'] ?? 'not_sent',
+            'received_login_id' => $_POST['login_id'] ?? 'not_sent', 
+            'received_password' => empty($_POST['password']) ? 'empty' : 'provided',
+            'received_role' => $_POST['role'] ?? 'not_sent',
+            'all_post_data' => array_keys($_POST)
+        ];
         echo json_encode($response);
         exit;
     }
 
+    // Debug: Log what we received (remove this after testing)
+    error_log("Login attempt - Email: $login_id, Role: $role, POST data: " . json_encode($_POST));
+    
     $userTables = ['admins', 'staffs', 'students'];
     $userFound = false;
 
