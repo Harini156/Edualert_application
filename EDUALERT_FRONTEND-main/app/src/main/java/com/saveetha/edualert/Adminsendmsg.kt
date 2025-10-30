@@ -38,6 +38,11 @@ class AdminSendMsg : Fragment() {
     private var selectedOptions: ArrayList<String>? = null
     private var mainSendOption: String = "everyone"
     private var selectedRecipientInsideEveryone: String = "both"
+    
+    // AGGRESSIVE DUPLICATE PREVENTION - Based on timestamp analysis
+    private var isMessageSending = false
+    private var lastSendTime = 0L
+    private var lastMessageHash = ""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -124,6 +129,35 @@ class AdminSendMsg : Fragment() {
                 return@setOnClickListener
             }
 
+            // AGGRESSIVE DUPLICATE PREVENTION - Multiple layers
+            val currentTime = System.currentTimeMillis()
+            val messageHash = "$title|$content|$mainSendOption|$selectedRecipientInsideEveryone"
+            
+            // Layer 1: Check if already sending
+            if (isMessageSending) {
+                Toast.makeText(requireContext(), "Message is already being sent, please wait...", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+            
+            // Layer 2: Prevent rapid clicking (within 3 seconds)
+            if (currentTime - lastSendTime < 3000) {
+                Toast.makeText(requireContext(), "Please wait 3 seconds between messages", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+            
+            // Layer 3: Prevent identical message content (within 10 seconds)
+            if (messageHash == lastMessageHash && currentTime - lastSendTime < 10000) {
+                Toast.makeText(requireContext(), "Identical message sent recently, please wait", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+            
+            // Set all prevention flags
+            isMessageSending = true
+            lastSendTime = currentTime
+            lastMessageHash = messageHash
+            btnSendMessage.isEnabled = false
+            btnSendMessage.text = "Sending..."
+
             fun createPart(value: String?) =
                 value?.takeIf { it.isNotEmpty() }?.let { RequestBody.create(MultipartBody.FORM, it) }
 
@@ -179,6 +213,11 @@ class AdminSendMsg : Fragment() {
                 filePart
             ).enqueue(object : Callback<MessageResponse> {
                 override fun onResponse(call: Call<MessageResponse>, response: Response<MessageResponse>) {
+                    // Reset all prevention flags
+                    isMessageSending = false
+                    btnSendMessage.isEnabled = true
+                    btnSendMessage.text = "Send Message"
+                    
                     if (response.isSuccessful) {
                         Toast.makeText(requireContext(), response.body()?.message ?: "Message Sent!", Toast.LENGTH_LONG).show()
                         requireActivity().supportFragmentManager.popBackStack()
@@ -191,6 +230,11 @@ class AdminSendMsg : Fragment() {
                 }
 
                 override fun onFailure(call: Call<MessageResponse>, t: Throwable) {
+                    // Reset all prevention flags on failure
+                    isMessageSending = false
+                    btnSendMessage.isEnabled = true
+                    btnSendMessage.text = "Send Message"
+                    
                     // Handle JSON parsing errors specifically
                     if (t is com.google.gson.JsonSyntaxException || t.message?.contains("malformed JSON") == true) {
                         handleMalformedJsonResponse(call, t)

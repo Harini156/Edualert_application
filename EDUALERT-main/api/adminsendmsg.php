@@ -97,6 +97,25 @@ try {
         }
     }
 
+    // DUPLICATE PREVENTION: Check if identical message exists within last 10 seconds
+    $duplicate_check_sql = "SELECT id FROM messages WHERE title = ? AND content = ? AND recipient_type = ? AND created_at > DATE_SUB(NOW(), INTERVAL 10 SECOND) LIMIT 1";
+    $duplicate_stmt = $conn->prepare($duplicate_check_sql);
+    
+    if ($duplicate_stmt) {
+        $duplicate_stmt->bind_param("sss", $title, $content, $recipient_type);
+        $duplicate_stmt->execute();
+        $duplicate_result = $duplicate_stmt->get_result();
+        
+        if ($duplicate_result->num_rows > 0) {
+            $response['success'] = false;
+            $response['message'] = 'Duplicate message detected. Please wait before sending the same message again.';
+            $duplicate_stmt->close();
+            echo json_encode($response);
+            exit;
+        }
+        $duplicate_stmt->close();
+    }
+
     // Insert into database
     $sql = "INSERT INTO messages (title, content, recipient_type, department, staff_type, designation, year, stay_type, gender, cgpa, backlogs, attachment, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'unread')";
     
