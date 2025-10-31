@@ -66,8 +66,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             include 'db.php';
             $response['database_test'] = 'Connected successfully';
             
-            // Test if user exists (without password check)
-            $stmt = $conn->prepare("SELECT user_id, name, email, usertype FROM students WHERE email = ? LIMIT 1");
+            // Test if user exists (without password check) - using correct 'users' table
+            $stmt = $conn->prepare("SELECT user_id, name, email, user_type FROM users WHERE email = ? LIMIT 1");
             $stmt->bind_param("s", $email);
             $stmt->execute();
             $result = $stmt->get_result();
@@ -78,12 +78,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     'user_found' => true,
                     'user_id' => $user['user_id'],
                     'name' => $user['name'],
-                    'usertype' => $user['usertype']
+                    'user_type' => $user['user_type'],
+                    'table_used' => 'users (correct table)'
                 ];
             } else {
                 $response['user_test'] = [
                     'user_found' => false,
-                    'message' => 'No user found with this email in students table'
+                    'message' => 'No user found with this email in users table',
+                    'table_used' => 'users (correct table)'
                 ];
             }
             $stmt->close();

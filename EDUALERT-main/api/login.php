@@ -48,52 +48,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit;
     }
 
-    // Debug: Log what we received (remove this after testing)
-    error_log("Login attempt - Email: $login_id, Role: $role, POST data: " . json_encode($_POST));
-    
-    $userTables = ['admins', 'staffs', 'students'];
-    $userFound = false;
+    // Query the single 'users' table (not separate tables)
+    $stmt = $conn->prepare("SELECT id, name, email, password, user_type, user_id FROM users WHERE email = ? OR user_id = ?");
+    $stmt->bind_param("ss", $login_id, $login_id);
+    $stmt->execute();
+    $stmt->store_result();
 
-    foreach ($userTables as $table) {
-        $stmt = $conn->prepare("SELECT id, name, email, password, usertype, user_id FROM $table WHERE email = ? OR user_id = ?");
-        $stmt->bind_param("ss", $login_id, $login_id);
-        $stmt->execute();
-        $stmt->store_result();
+    if ($stmt->num_rows > 0) {
+        $stmt->bind_result($id, $name, $email, $hashedPassword, $user_type, $user_id);
+        $stmt->fetch();
 
-        if ($stmt->num_rows > 0) {
-            $stmt->bind_result($id, $name, $email, $hashedPassword, $usertype, $user_id);
-            $stmt->fetch();
+        if (password_verify($password, $hashedPassword)) {
+            $_SESSION['user_id']  = $user_id;
+            $_SESSION['name']     = $name;
+            $_SESSION['email']    = $email;
+            $_SESSION['usertype'] = $user_type;
 
-            if (password_verify($password, $hashedPassword)) {
-                $_SESSION['user_id']  = $user_id;
-                $_SESSION['name']     = $name;
-                $_SESSION['email']    = $email;
-                $_SESSION['usertype'] = $usertype;
-
-                $response['status']  = 'success';
-                $response['message'] = 'Login successful.';
-                $response['user'] = [
-                    'user_id'  => $user_id,
-                    'email'    => $email,
-                    'name'     => $name,
-                    'usertype' => $usertype
-                ];
-                $userFound = true;
-                break;
-            } else {
-                $response['status'] = 'error';
-                $response['message'] = 'Incorrect password.';
-                echo json_encode($response);
-                exit;
-            }
+            $response['status']  = 'success';
+            $response['message'] = 'Login successful.';
+            $response['user'] = [
+                'user_id'  => $user_id,
+                'email'    => $email,
+                'name'     => $name,
+                'user_type' => $user_type
+            ];
+        } else {
+            $response['status'] = 'error';
+            $response['message'] = 'Incorrect password.';
         }
-        $stmt->close();
-    }
-
-    if (!$userFound) {
+    } else {
         $response['status'] = 'error';
         $response['message'] = 'No user found with this Email or User ID.';
     }
+    
+    $stmt->close();
 
     $conn->close();
 } else {
