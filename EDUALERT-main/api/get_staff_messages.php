@@ -5,7 +5,7 @@ ini_set('display_errors', 0);
 
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST, OPTIONS');
+header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -18,8 +18,8 @@ include 'db.php';
 $response = [];
 
 try {
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        $user_id = trim($_POST['user_id'] ?? '');
+    if ($_SERVER["REQUEST_METHOD"] == "POST" || $_SERVER["REQUEST_METHOD"] == "GET") {
+        $user_id = trim($_POST['user_id'] ?? $_GET['user_id'] ?? '');
 
         if (empty($user_id)) {
             $response['status'] = false;

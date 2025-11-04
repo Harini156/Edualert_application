@@ -182,59 +182,86 @@ echo "<div class='test-title'>🔧 API Endpoint Testing</div>";
 
 // Test getadminmsg.php
 runTest("getadminmsg.php - Student Test", function() use ($conn) {
-    $_POST['user_id'] = 'STU001';
-    ob_start();
-    include 'getadminmsg.php';
-    $output = ob_get_clean();
-    $response = json_decode($output, true);
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, "http://" . $_SERVER['HTTP_HOST'] . dirname($_SERVER['REQUEST_URI']) . "/getadminmsg.php");
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query(['user_id' => 'STU001']));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
     
-    if ($response && isset($response['status'])) {
-        if ($response['status']) {
-            $count = count($response['messages'] ?? []);
-            return ['success' => true, 'message' => "Student can retrieve admin messages. Found: $count messages"];
+    if ($httpCode == 200) {
+        $data = json_decode($response, true);
+        if ($data && isset($data['status'])) {
+            if ($data['status']) {
+                $count = count($data['messages'] ?? []);
+                return ['success' => true, 'message' => "Student can retrieve admin messages. Found: $count messages"];
+            } else {
+                return ['success' => false, 'message' => 'API returned error: ' . ($data['message'] ?? 'Unknown error')];
+            }
         } else {
-            return ['success' => false, 'message' => 'API returned error: ' . ($response['message'] ?? 'Unknown error')];
+            return ['success' => false, 'message' => 'Invalid API response format', 'data' => $response];
         }
     } else {
-        return ['success' => false, 'message' => 'Invalid API response format', 'data' => $output];
+        return ['success' => false, 'message' => "HTTP Error: $httpCode"];
     }
 });
 
 runTest("get_student_messages.php Test", function() use ($conn) {
-    $_POST['user_id'] = 'STU001';
-    ob_start();
-    include 'get_student_messages.php';
-    $output = ob_get_clean();
-    $response = json_decode($output, true);
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, "http://" . $_SERVER['HTTP_HOST'] . dirname($_SERVER['REQUEST_URI']) . "/get_student_messages.php");
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query(['user_id' => 'STU001']));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
     
-    if ($response && isset($response['status'])) {
-        if ($response['status']) {
-            $count = count($response['messages'] ?? []);
-            return ['success' => true, 'message' => "Student can retrieve all messages. Found: $count messages"];
+    if ($httpCode == 200) {
+        $data = json_decode($response, true);
+        if ($data && isset($data['status'])) {
+            if ($data['status']) {
+                $count = count($data['messages'] ?? []);
+                return ['success' => true, 'message' => "Student can retrieve all messages. Found: $count messages"];
+            } else {
+                return ['success' => false, 'message' => 'API returned error: ' . ($data['message'] ?? 'Unknown error')];
+            }
         } else {
-            return ['success' => false, 'message' => 'API returned error: ' . ($response['message'] ?? 'Unknown error')];
+            return ['success' => false, 'message' => 'Invalid API response format', 'data' => $response];
         }
     } else {
-        return ['success' => false, 'message' => 'Invalid API response format', 'data' => $output];
+        return ['success' => false, 'message' => "HTTP Error: $httpCode"];
     }
 });
 
 runTest("get_staff_messages.php Test", function() use ($conn) {
-    $_POST['user_id'] = 'STF001';
-    ob_start();
-    include 'get_staff_messages.php';
-    $output = ob_get_clean();
-    $response = json_decode($output, true);
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, "http://" . $_SERVER['HTTP_HOST'] . dirname($_SERVER['REQUEST_URI']) . "/get_staff_messages.php");
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query(['user_id' => 'STF001']));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
     
-    if ($response && isset($response['status'])) {
-        if ($response['status']) {
-            $count = count($response['messages'] ?? []);
-            return ['success' => true, 'message' => "Staff can retrieve messages from other staff. Found: $count messages"];
+    if ($httpCode == 200) {
+        $data = json_decode($response, true);
+        if ($data && isset($data['status'])) {
+            if ($data['status']) {
+                $count = count($data['messages'] ?? []);
+                return ['success' => true, 'message' => "Staff can retrieve messages from other staff. Found: $count messages"];
+            } else {
+                return ['success' => false, 'message' => 'API returned error: ' . ($data['message'] ?? 'Unknown error')];
+            }
         } else {
-            return ['success' => false, 'message' => 'API returned error: ' . ($response['message'] ?? 'Unknown error')];
+            return ['success' => false, 'message' => 'Invalid API response format', 'data' => $response];
         }
     } else {
-        return ['success' => false, 'message' => 'Invalid API response format', 'data' => $output];
+        return ['success' => false, 'message' => "HTTP Error: $httpCode"];
     }
 });
 
