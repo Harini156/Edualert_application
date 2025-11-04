@@ -1,6 +1,5 @@
 package com.saveetha.edualert
 
-import android.content.Context
 import android.os.Bundle
 import android.text.InputType
 import android.view.LayoutInflater
@@ -11,10 +10,9 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import com.android.volley.Request
-import com.android.volley.toolbox.StringRequest
-import com.android.volley.toolbox.Volley
-import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class ChangePasswordFragment : Fragment() {
 
@@ -102,58 +100,57 @@ class ChangePasswordFragment : Fragment() {
     }
 
     private fun changePassword(oldPassword: String, newPassword: String) {
-        val url = ApiClient.BASE_URL + "api/change_password.php"
-        val requestQueue = Volley.newRequestQueue(requireContext())
-
-        // ✅ Get email from UserSession
-        val email = com.saveetha.edualert.UserSession.getEmail(requireContext())
+        // Get email from UserSession
+        val email = UserSession.getEmail(requireContext())
 
         if (email.isNullOrEmpty()) {
             Toast.makeText(requireContext(), "Email not found in session", Toast.LENGTH_SHORT).show()
             return
         }
 
-        val stringRequest = object : StringRequest(
-            Request.Method.POST, url,
-            { response ->
-                try {
-                    val json = JSONObject(response)
-                    val status = json.getString("status")
-                    val message = json.getString("message")
+        // Disable button to prevent multiple requests
+        changePasswordButton.isEnabled = false
+        changePasswordButton.text = "Changing..."
 
-                    Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+        // Use Retrofit API call
+        ApiClient.instance.changePassword(email, oldPassword, newPassword)
+            .enqueue(object : Callback<ChangePasswordResponse> {
+                override fun onResponse(
+                    call: Call<ChangePasswordResponse>,
+                    response: Response<ChangePasswordResponse>
+                ) {
+                    // Re-enable button
+                    changePasswordButton.isEnabled = true
+                    changePasswordButton.text = "Change Password"
 
-                    if (status == "success") {
-                        // ✅ Show success toast
-                        Toast.makeText(requireContext(), "Password updated successfully!", Toast.LENGTH_LONG).show()
-
-                        // ✅ Clear fields
-                        oldPasswordField.text.clear()
-                        newPasswordField.text.clear()
-                        confirmNewPasswordField.text.clear()
-
-                        // ✅ Just go back to previous screen instead of forcing navigation
-                        requireActivity().supportFragmentManager.popBackStack()
+                    if (response.isSuccessful && response.body() != null) {
+                        val body = response.body()!!
+                        
+                        if (body.status == "success") {
+                            Toast.makeText(requireContext(), "Password changed successfully!", Toast.LENGTH_LONG).show()
+                            
+                            // Clear fields
+                            oldPasswordField.text.clear()
+                            newPasswordField.text.clear()
+                            confirmNewPasswordField.text.clear()
+                            
+                            // Go back to previous screen
+                            requireActivity().supportFragmentManager.popBackStack()
+                        } else {
+                            Toast.makeText(requireContext(), body.message, Toast.LENGTH_LONG).show()
+                        }
+                    } else {
+                        Toast.makeText(requireContext(), "Failed to change password. Please try again.", Toast.LENGTH_SHORT).show()
                     }
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    Toast.makeText(requireContext(), "Parsing error", Toast.LENGTH_SHORT).show()
                 }
-            },
-            { error ->
-                error.printStackTrace()
-                Toast.makeText(requireContext(), "Network error: ${error.message}", Toast.LENGTH_SHORT).show()
-            }
-        ) {
-            override fun getParams(): MutableMap<String, String> {
-                val params = mutableMapOf<String, String>()
-                params["email"] = email   // ✅ Taken from SharedPreferences
-                params["old_password"] = oldPassword
-                params["new_password"] = newPassword
-                return params
-            }
-        }
 
-        requestQueue.add(stringRequest)
+                override fun onFailure(call: Call<ChangePasswordResponse>, t: Throwable) {
+                    // Re-enable button
+                    changePasswordButton.isEnabled = true
+                    changePasswordButton.text = "Change Password"
+                    
+                    Toast.makeText(requireContext(), "Network error: ${t.message}", Toast.LENGTH_LONG).show()
+                }
+            })
     }
 }
