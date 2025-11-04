@@ -5,62 +5,39 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <!-- Top Row: Title + Logo on Right -->
-    <LinearLayout
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginBottom="16dp">
+        android:text="📨 Received Messages"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        android:gravity="center"
+        android:padding="16dp" />
 
-        <TextView
-            android:id="@+id/tvPageTitle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Received Messages"
-            android:textSize="22sp"
-            android:textColor="#922381"
-            android:textStyle="bold"/>
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone" />
 
-        <ImageView
-            android:id="@+id/logoImage"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:src="@drawable/logo"
-            android:contentDescription="EduAlert Logo" />
-    </LinearLayout>
-
-    <!-- RecyclerView -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewMessages"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:overScrollMode="never"
-        android:clipToPadding="false"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
-        android:visibility="gone"/>
-
-    <!-- Empty Text -->
     <TextView
         android:id="@+id/emptyText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="No messages to display"
+        android:text="No messages available"
         android:textSize="16sp"
-        android:textColor="#666"
+        android:textColor="@android:color/darker_gray"
         android:gravity="center"
-        android:layout_marginTop="20dp"
-        android:visibility="gone"/>
+        android:padding="32dp"
+        android:visibility="gone" />
 
-    <!-- ProgressBar -->
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:visibility="visible"/>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewReceivedMessages"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:scrollbars="vertical" />
+
 </LinearLayout>

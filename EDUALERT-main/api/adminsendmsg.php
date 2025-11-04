@@ -72,10 +72,10 @@ try {
         $unique_filename = time() . '_' . uniqid() . '_' . $file_name;
         $target_path = $upload_dir . $unique_filename;
         
-        $allowed_extensions = ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png', 'txt', 'xls', 'xlsx'];
+        $allowed_extensions = ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png', 'gif', 'bmp', 'txt', 'xls', 'xlsx', 'ppt', 'pptx', 'zip', 'rar'];
         if (!in_array($file_ext, $allowed_extensions)) {
             $response['success'] = false;
-            $response['message'] = 'File type not allowed.';
+            $response['message'] = 'File type not allowed. Supported: PDF, DOC, DOCX, JPG, JPEG, PNG, GIF, BMP, TXT, XLS, XLSX, PPT, PPTX, ZIP, RAR';
             echo json_encode($response);
             exit;
         }
