@@ -15,9 +15,7 @@ interface ApiService {
         @Field("email") email: String,
         @Field("password") password: String,
         @Field("cpassword") cpassword: String,
-        @Field("usertype") usertype: String,
-        @Field("dept") department: String? = null,
-        @Field("year") year: String? = null
+        @Field("usertype") usertype: String
     ): Call<RegisterResponse>
 
     // LOGIN
@@ -151,6 +149,20 @@ interface ApiService {
         @Field("user_id") userId: String
     ): Call<ReceivedMessagesResponse>
 
+    // ✅ Get Student Messages (Admin + Staff messages for students)
+    @FormUrlEncoded
+    @POST("api/get_student_messages.php")
+    fun getStudentMessages(
+        @Field("user_id") userId: String
+    ): Call<ReceivedMessagesResponse>
+
+    // ✅ Get Staff Messages (Staff messages for staff members)
+    @FormUrlEncoded
+    @POST("api/get_staff_messages.php")
+    fun getStaffMessages(
+        @Field("user_id") userId: String
+    ): Call<ReceivedMessagesResponse>
+
     @FormUrlEncoded
     @POST("api/staff_details.php")
     fun getStaffDetails(
@@ -190,13 +202,23 @@ interface ApiService {
         @Field("designation") designation: String? = null
     ): Call<MessageCountResponse>
 
-    // ✅ Mark Message as Read API
+    // ✅ Mark Message Status API (read/unread/deleted)
     @FormUrlEncoded
-    @POST("api/mark_message_read.php")
-    fun markMessageAsRead(
+    @POST("api/mark_message_status.php")
+    fun markMessageStatus(
+        @Field("user_id") userId: String,
         @Field("message_id") messageId: String,
-        @Field("table_name") tableName: String
+        @Field("message_table") messageTable: String,
+        @Field("status") status: String
     ): Call<GenericResponse>
+
+    // ✅ Get User Message Count API
+    @FormUrlEncoded
+    @POST("api/get_user_message_count.php")
+    fun getUserMessageCount(
+        @Field("user_id") userId: String,
+        @Field("user_type") userType: String
+    ): Call<MessageCountResponse>
 
     // ✅ Get Student Profile for Edit Mode
     @FormUrlEncoded

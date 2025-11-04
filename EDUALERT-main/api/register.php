@@ -12,10 +12,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $cpassword = $_POST['cpassword'];
     $usertype  = $_POST['usertype'];
 
-    // For students only
-    $department = isset($_POST['department']) ? trim($_POST['department']) : null;
-    $year       = isset($_POST['year']) ? trim($_POST['year']) : null;
-
     $allowedTypes = ['admin', 'staff', 'student'];
     if (!in_array($usertype, $allowedTypes)) {
         echo json_encode(['status' => 'error', 'message' => 'Invalid usertype.']);
@@ -37,15 +33,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit;
     }
 
-    // Validate department and year if student
-    if ($usertype === 'student' && (empty($department) || empty($year))) {
-        echo json_encode(['status' => 'error', 'message' => 'Department and year are required for students.']);
-        exit;
-    }
-
-    $tableName = $usertype . 's'; // students, staff, admins
-
-    $checkStmt = $conn->prepare("SELECT id FROM $tableName WHERE email = ?");
+    // Check if email already exists in users table
+    $checkStmt = $conn->prepare("SELECT id FROM users WHERE email = ?");
     $checkStmt->bind_param("s", $email);
     $checkStmt->execute();
     $checkStmt->store_result();
@@ -59,7 +48,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $prefixMap = ['student' => 'STU', 'staff' => 'STF', 'admin' => 'ADM'];
     $prefix = $prefixMap[$usertype];
 
-    $latestStmt = $conn->prepare("SELECT user_id FROM $tableName ORDER BY id DESC LIMIT 1");
+    $latestStmt = $conn->prepare("SELECT user_id FROM users WHERE user_type = ? ORDER BY id DESC LIMIT 1");
+    $latestStmt->bind_param("s", $usertype);
     $latestStmt->execute();
     $latestStmt->bind_result($lastUserId);
     $latestStmt->fetch();
@@ -70,13 +60,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-    if ($usertype === 'student') {
-        $stmt = $conn->prepare("INSERT INTO students (name, email, password, usertype, user_id, department, year) VALUES (?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("sssssss", $name, $email, $hashedPassword, $usertype, $user_id, $department, $year);
-    } else {
-        $stmt = $conn->prepare("INSERT INTO $tableName (name, email, password, usertype, user_id) VALUES (?, ?, ?, ?, ?)");
-        $stmt->bind_param("sssss", $name, $email, $hashedPassword, $usertype, $user_id);
-    }
+    // Insert into users table only (no department/year here)
+    $stmt = $conn->prepare("INSERT INTO users (name, email, password, user_type, user_id, created_at) VALUES (?, ?, ?, ?, ?, NOW())");
+    $stmt->bind_param("sssss", $name, $email, $hashedPassword, $usertype, $user_id);
 
     if ($stmt->execute()) {
         $_SESSION['user_id']  = $user_id;
@@ -91,12 +77,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             'user_id' => $user_id,
             'session' => $_SESSION
         ];
-
-        // Add dept/year if student
-        if ($usertype === 'student') {
-            $response['department'] = $department;
-            $response['year'] = $year;
-        }
 
         echo json_encode($response);
     } else {

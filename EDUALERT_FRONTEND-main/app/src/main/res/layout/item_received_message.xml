@@ -58,7 +58,40 @@
             android:text="📎 Attachment: file.pdf"
             android:textSize="12sp"
             android:textColor="@android:color/holo_green_dark"
-            android:visibility="gone" />
+            android:visibility="gone"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Action Buttons Layout -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end"
+            android:layout_marginTop="8dp">
+
+            <!-- Tick Button (Mark as Read) -->
+            <ImageView
+                android:id="@+id/tickButton"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@android:drawable/checkbox_off_background"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:padding="4dp"
+                android:layout_marginEnd="8dp"
+                android:contentDescription="Mark as read" />
+
+            <!-- Delete Button -->
+            <ImageView
+                android:id="@+id/deleteButton"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@android:drawable/ic_menu_delete"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:padding="4dp"
+                android:visibility="gone"
+                android:contentDescription="Delete message" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

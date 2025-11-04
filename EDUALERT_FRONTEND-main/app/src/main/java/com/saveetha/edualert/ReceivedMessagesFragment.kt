@@ -34,7 +34,10 @@ class ReceivedMessagesFragment : Fragment() {
         emptyText = view.findViewById(R.id.emptyText)
 
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        adapter = ReceivedMessageAdapter(requireContext(), messages)
+        adapter = ReceivedMessageAdapter(requireContext(), messages) {
+            // Callback when message is updated - refresh the list and count
+            fetchReceivedMessages()
+        }
         recyclerView.adapter = adapter
 
         fetchReceivedMessages()
@@ -44,9 +47,10 @@ class ReceivedMessagesFragment : Fragment() {
     private fun fetchReceivedMessages() {
         context?.let { ctx ->
             val userId = UserSession.getUserId(ctx)
+            val userType = UserSession.getUserType(ctx)
 
-            if (userId.isNullOrEmpty()) {
-                showEmpty("User ID not found.")
+            if (userId.isNullOrEmpty() || userType.isNullOrEmpty()) {
+                showEmpty("User information not found.")
                 return
             }
 
@@ -54,7 +58,17 @@ class ReceivedMessagesFragment : Fragment() {
             recyclerView.visibility = View.GONE
             emptyText.visibility = View.GONE
 
-            ApiClient.instance.getReceivedMessages(userId).enqueue(object : Callback<ReceivedMessagesResponse> {
+            // Call appropriate endpoint based on user type
+            val call = when (userType.lowercase()) {
+                "student" -> ApiClient.instance.getStudentMessages(userId)
+                "staff" -> ApiClient.instance.getStaffMessages(userId)
+                else -> {
+                    showEmpty("Invalid user type: $userType")
+                    return
+                }
+            }
+
+            call.enqueue(object : Callback<ReceivedMessagesResponse> {
                 override fun onResponse(
                     call: Call<ReceivedMessagesResponse>,
                     response: Response<ReceivedMessagesResponse>

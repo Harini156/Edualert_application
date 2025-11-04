@@ -18,11 +18,6 @@ class CreateAccount : AppCompatActivity() {
     private lateinit var emailField: EditText
     private lateinit var passwordField: EditText
     private lateinit var cpasswordField: EditText
-    private lateinit var departmentFieldStudent: EditText
-    private lateinit var yearField: EditText
-    private lateinit var departmentFieldStaff: EditText
-    private lateinit var studentExtraLayout: LinearLayout
-    private lateinit var staffExtraLayout: LinearLayout
     private lateinit var roleTabLayout: TabLayout
     private lateinit var createButton: Button
     private lateinit var togglePassword: ImageView
@@ -40,11 +35,6 @@ class CreateAccount : AppCompatActivity() {
         emailField = findViewById(R.id.emailField)
         passwordField = findViewById(R.id.passwordField)
         cpasswordField = findViewById(R.id.confirmPasswordField)
-        departmentFieldStudent = findViewById(R.id.departmentFieldStudent)
-        yearField = findViewById(R.id.yearField)
-        departmentFieldStaff = findViewById(R.id.departmentFieldStaff)
-        studentExtraLayout = findViewById(R.id.studentExtraFields)
-        staffExtraLayout = findViewById(R.id.staffExtraFields)
         roleTabLayout = findViewById(R.id.roleTabLayout)
         createButton = findViewById(R.id.createAccountButton)
         togglePassword = findViewById(R.id.togglePassword)
@@ -55,8 +45,6 @@ class CreateAccount : AppCompatActivity() {
         roleTabLayout.addTab(roleTabLayout.newTab().setText("Staff"))
         roleTabLayout.addTab(roleTabLayout.newTab().setText("Admin"))
         roleTabLayout.getTabAt(0)?.select()
-        studentExtraLayout.visibility = View.VISIBLE
-        staffExtraLayout.visibility = View.GONE
 
         // Toggle password visibility
         togglePassword.setOnClickListener {
@@ -75,16 +63,7 @@ class CreateAccount : AppCompatActivity() {
             cpasswordField.setSelection(cpasswordField.text.length)
         }
 
-        // Update layouts on tab selection
-        roleTabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab?) {
-                val selectedRole = tab?.text.toString().lowercase()
-                studentExtraLayout.visibility = if (selectedRole == "student") View.VISIBLE else View.GONE
-                staffExtraLayout.visibility = if (selectedRole == "staff") View.VISIBLE else View.GONE
-            }
-            override fun onTabUnselected(tab: TabLayout.Tab?) {}
-            override fun onTabReselected(tab: TabLayout.Tab?) {}
-        })
+        // No extra layouts needed - removed department/year fields
 
         // Create account button
         createButton.setOnClickListener { registerUser() }
@@ -98,11 +77,8 @@ class CreateAccount : AppCompatActivity() {
         val email = emailField.text.toString().trim()
         val password = passwordField.text.toString()
         val cpassword = cpasswordField.text.toString()
-        val departmentStudent = departmentFieldStudent.text.toString().trim()
-        val year = yearField.text.toString().trim()
-        val departmentStaff = departmentFieldStaff.text.toString().trim()
 
-        // Validations
+        // Validations - only basic fields now
         if (name.isEmpty() || email.isEmpty() || password.isEmpty() || cpassword.isEmpty()) {
             Toast.makeText(this, "Please fill all required fields", Toast.LENGTH_SHORT).show()
             return
@@ -111,11 +87,6 @@ class CreateAccount : AppCompatActivity() {
             Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show()
             return
         }
-        if (userType == "student" && (departmentStudent.isEmpty() || year.isEmpty())) {
-            Toast.makeText(this, "Department and Year required for students", Toast.LENGTH_SHORT).show()
-            return
-        }
-        // Staff department is now optional for non-teaching staff → no check
 
         val progressDialog = ProgressDialog(this)
         progressDialog.setMessage("Creating account...")
@@ -127,9 +98,7 @@ class CreateAccount : AppCompatActivity() {
             email,
             password,
             cpassword,
-            userType,
-            if (userType == "student") departmentStudent else if (userType == "staff") departmentStaff else "",
-            if (userType == "student") year else ""
+            userType
         )
 
         call.enqueue(object : Callback<RegisterResponse> {
@@ -139,11 +108,11 @@ class CreateAccount : AppCompatActivity() {
                 if (response.isSuccessful && result?.status == "success") {
                     Toast.makeText(this@CreateAccount, "Account created successfully", Toast.LENGTH_SHORT).show()
 
-                    // Directly go to Details page
+                    // Go to Details page for extended information
                     val intent = Intent(this@CreateAccount, Details::class.java)
                     intent.putExtra("userType", userType)
                     intent.putExtra("userId", result.user_id)
-                    intent.putExtra("isEdit", false)
+                    intent.putExtra("isEditMode", false)
                     startActivity(intent)
                     finish()
                 } else {

@@ -43,14 +43,10 @@ class NotificationManager {
             android.util.Log.d("NOTIFICATION_MANAGER", "Department: $department, Year: $year")
             android.util.Log.d("NOTIFICATION_MANAGER", "StaffType: $staffType, Designation: $designation")
             
-            // ✅ Use Retrofit instead of Volley
-            ApiClient.instance.getMessageCount(
-                userType = userType,
+            // ✅ Use new user-specific message count API
+            ApiClient.instance.getUserMessageCount(
                 userId = userId,
-                department = department,
-                year = year,
-                staffType = staffType,
-                designation = designation
+                userType = userType
             ).enqueue(object : retrofit2.Callback<MessageCountResponse> {
                 override fun onResponse(
                     call: retrofit2.Call<MessageCountResponse>,
