@@ -138,7 +138,7 @@ interface ApiService {
     ): Call<HodMessageResponse>
 
     @GET("api/staffsentmsg.php")
-    fun getStaffMessages(
+    fun getStaffSentMessages(
         @Query("sender_id") senderId: String
     ): Call<StaffMessagesResponse>
 

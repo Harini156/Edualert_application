@@ -49,7 +49,7 @@ class StaffSentFragment : Fragment() {
         progressBar.visibility = View.VISIBLE
         recyclerView.visibility = View.GONE
 
-        ApiClient.instance.getStaffMessages(senderId).enqueue(object : Callback<StaffMessagesResponse> {
+        ApiClient.instance.getStaffSentMessages(senderId).enqueue(object : Callback<StaffMessagesResponse> {
             override fun onResponse(
                 call: Call<StaffMessagesResponse>,
                 response: Response<StaffMessagesResponse>

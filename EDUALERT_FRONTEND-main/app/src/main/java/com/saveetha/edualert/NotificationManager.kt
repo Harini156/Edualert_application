@@ -135,10 +135,15 @@ class NotificationManager {
             
             debugInfo.append("Sending API request...\n")
             
-            // ✅ Use Retrofit instead of Volley
-            ApiClient.instance.markMessageAsRead(
+            // ✅ Use new markMessageStatus method
+            val userId = context.getSharedPreferences("user_session", android.content.Context.MODE_PRIVATE)
+                .getString("user_id", "") ?: ""
+            
+            ApiClient.instance.markMessageStatus(
+                userId = userId,
                 messageId = messageId.toString(),
-                tableName = tableName
+                messageTable = tableName,
+                status = "read"
             ).enqueue(object : retrofit2.Callback<GenericResponse> {
                 override fun onResponse(
                     call: retrofit2.Call<GenericResponse>,
