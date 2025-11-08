@@ -59,19 +59,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->fetch();
 
         if (password_verify($password, $hashedPassword)) {
-            $_SESSION['user_id']  = $user_id;
-            $_SESSION['name']     = $name;
-            $_SESSION['email']    = $email;
-            $_SESSION['usertype'] = $user_type;
+            // ✅ ROLE VALIDATION: Check if selected role matches user's actual type
+            if (!empty($role) && strtolower($role) !== strtolower($user_type)) {
+                $response['status'] = 'error';
+                $response['message'] = 'These credentials do not match the selected role. Please select the correct role or check your login details.';
+                $response['debug'] = [
+                    'selected_role' => $role,
+                    'actual_user_type' => $user_type,
+                    'hint' => 'User account is registered as ' . ucfirst($user_type) . ' but tried to login as ' . ucfirst($role)
+                ];
+            } else {
+                $_SESSION['user_id']  = $user_id;
+                $_SESSION['name']     = $name;
+                $_SESSION['email']    = $email;
+                $_SESSION['usertype'] = $user_type;
 
-            $response['status']  = 'success';
-            $response['message'] = 'Login successful.';
-            $response['user'] = [
-                'user_id'  => $user_id,
-                'email'    => $email,
-                'name'     => $name,
-                'user_type' => $user_type
-            ];
+                $response['status']  = 'success';
+                $response['message'] = 'Login successful.';
+                $response['user'] = [
+                    'user_id'  => $user_id,
+                    'email'    => $email,
+                    'name'     => $name,
+                    'user_type' => $user_type
+                ];
+            }
         } else {
             $response['status'] = 'error';
             $response['message'] = 'Incorrect password.';
