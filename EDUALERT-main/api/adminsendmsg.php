@@ -72,10 +72,14 @@ try {
         $unique_filename = time() . '_' . uniqid() . '_' . $file_name;
         $target_path = $upload_dir . $unique_filename;
         
-        $allowed_extensions = ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png', 'gif', 'bmp', 'txt', 'xls', 'xlsx', 'ppt', 'pptx', 'zip', 'rar'];
-        if (!in_array($file_ext, $allowed_extensions)) {
+        // Support ALL file types - no restrictions
+        $allowed_extensions = ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png', 'gif', 'bmp', 'txt', 'xls', 'xlsx', 'ppt', 'pptx', 'zip', 'rar', 'mp4', 'avi', 'mov', 'mp3', 'wav', 'csv', 'rtf', 'odt', 'ods', 'odp', 'tiff', 'svg', 'webp', '7z', 'tar', 'gz', 'json', 'xml', 'html', 'css', 'js', 'py', 'java', 'cpp', 'c', 'h', 'sql', 'md', 'log'];
+        
+        // Allow any file type - just check for dangerous executable files
+        $dangerous_extensions = ['exe', 'bat', 'cmd', 'com', 'pif', 'scr', 'vbs', 'jar', 'php', 'asp', 'jsp'];
+        if (in_array($file_ext, $dangerous_extensions)) {
             $response['success'] = false;
-            $response['message'] = 'File type not allowed. Supported: PDF, DOC, DOCX, JPG, JPEG, PNG, GIF, BMP, TXT, XLS, XLSX, PPT, PPTX, ZIP, RAR';
+            $response['message'] = 'Executable files are not allowed for security reasons.';
             echo json_encode($response);
             exit;
         }

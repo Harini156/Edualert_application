@@ -53,10 +53,15 @@ class AdminMessageAdapter(
             holder.dateText.text = message.createdAt
         }
         
-        // Handle attachment
+        // Handle attachment with clickable link
         if (!message.attachment.isNullOrEmpty()) {
             holder.attachmentText.visibility = View.VISIBLE
-            holder.attachmentText.text = "📎 Attachment: ${message.attachment}"
+            val fileName = message.attachment.substringAfterLast("/")
+            holder.attachmentText.text = "📎 View Attachment: $fileName"
+            holder.attachmentText.setTextColor(context.getColor(android.R.color.holo_blue_dark))
+            holder.attachmentText.setOnClickListener {
+                openAttachment(message.attachment)
+            }
         } else {
             holder.attachmentText.visibility = View.GONE
         }
@@ -132,6 +137,21 @@ class AdminMessageAdapter(
                 Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
+    }
+
+    private fun openAttachment(attachmentPath: String) {
+        try {
+            val baseUrl = ApiClient.BASE_URL
+            val fileUrl = "${baseUrl}api/get_file.php?file=${attachmentPath}"
+            
+            val intent = android.content.Intent(android.content.Intent.ACTION_VIEW)
+            intent.data = android.net.Uri.parse(fileUrl)
+            intent.flags = android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+            
+            context.startActivity(intent)
+        } catch (e: Exception) {
+            Toast.makeText(context, "Unable to open attachment: ${e.message}", Toast.LENGTH_LONG).show()
+        }
     }
 
     override fun getItemCount(): Int = messages.size
