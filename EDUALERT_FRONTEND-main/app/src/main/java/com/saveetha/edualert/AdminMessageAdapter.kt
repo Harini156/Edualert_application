@@ -98,9 +98,8 @@ class AdminMessageAdapter(
         ).enqueue(object : Callback<GenericResponse> {
             override fun onResponse(call: Call<GenericResponse>, response: Response<GenericResponse>) {
                 if (response.isSuccessful && response.body()?.status == "success") {
-                    // Update local message status to reflect the change
-                    messages[position] = message.copy(userStatus = "read")
-                    notifyItemChanged(position)
+                    // Refresh the entire list to get updated status from server
+                    // This will update the UI with the new read status
                     onMessageUpdated?.invoke() // Refresh count
                     Toast.makeText(context, "Message marked as read", Toast.LENGTH_SHORT).show()
                 } else {
