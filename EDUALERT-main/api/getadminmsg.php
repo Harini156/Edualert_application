@@ -91,13 +91,26 @@ try {
         $result = $stmt->get_result();
         
         while ($row = $result->fetch_assoc()) {
+            // Get user-specific status for this message
+            $status_stmt = $conn->prepare("SELECT status FROM user_message_status WHERE user_id = ? AND message_id = ? AND message_table = 'messages'");
+            $status_stmt->bind_param("si", $user_id, $row['id']);
+            $status_stmt->execute();
+            $status_result = $status_stmt->get_result();
+            $user_status = $status_result->num_rows > 0 ? $status_result->fetch_assoc()['status'] : 'unread';
+            $status_stmt->close();
+
+            // Skip deleted messages
+            if ($user_status === 'deleted') continue;
+
             $messages[] = [
                 'id' => $row['id'],
                 'title' => $row['title'],
                 'content' => $row['content'],
                 'attachment' => $row['attachment'],
                 'created_at' => $row['created_at'],
-                'sender_type' => 'admin'
+                'sender_type' => 'admin',
+                'message_table' => 'messages',
+                'user_status' => $user_status
             ];
         }
         $stmt->close();

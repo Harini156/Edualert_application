@@ -149,6 +149,23 @@ The `messages` table supports sophisticated filtering:
 - **Extended User Types**: Includes HOD, teaching, non-teaching categories
 - **Status Tracking**: Read/unread notification status
 
+### 4. Individual Message Status Tracking
+
+#### 4.1 `user_message_status` Table
+**Purpose:** Track individual user read/unread/deleted status for messages
+**Columns:**
+- `id` - INT(11), Primary Key, Auto Increment
+- `user_id` - VARCHAR(10), NOT NULL (Links to users.user_id)
+- `message_id` - INT(11), NOT NULL (Links to messages.id or staffmessages.id)
+- `message_table` - ENUM('messages','staffmessages'), NOT NULL (Source table)
+- `status` - ENUM('unread','read','deleted'), NOT NULL, Default: 'unread'
+- `marked_at` - TIMESTAMP, NOT NULL, Default: current_timestamp() ON UPDATE current_timestamp()
+
+**Indexes:**
+- UNIQUE KEY `unique_user_message` (`user_id`, `message_id`, `message_table`)
+- KEY `idx_user_status` (`user_id`, `status`)
+- KEY `idx_message_table` (`message_id`, `message_table`)
+
 ## Current Database Statistics
 - **Total Users**: 26
   - Students: 7

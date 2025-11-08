@@ -118,7 +118,9 @@ data class AdminMessage(
     val gender: String? = null,
     val cgpa: String? = null,
     val backlogs: String? = null,
-    @SerializedName("created_at") val createdAt: String
+    @SerializedName("created_at") val createdAt: String,
+    @SerializedName("message_table") val messageTable: String? = null,
+    @SerializedName("user_status") val userStatus: String? = "unread"
 )
 
 

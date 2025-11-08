@@ -26,7 +26,7 @@ class AdminMessagesFragment : Fragment() {
     private lateinit var progressBar: ProgressBar
     private lateinit var emptyText: TextView
     private lateinit var adapter: AdminMessageAdapter
-    private val messages = ArrayList<AdminMessage>()
+    private val messages = mutableListOf<AdminMessage>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -38,7 +38,10 @@ class AdminMessagesFragment : Fragment() {
         emptyText = view.findViewById(R.id.emptyText)
 
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        adapter = AdminMessageAdapter(requireContext(), messages)
+        adapter = AdminMessageAdapter(requireContext(), messages) {
+            // Callback when message is updated - refresh the list and count
+            fetchAdminMessages()
+        }
         recyclerView.adapter = adapter
 
         fetchAdminMessages()
