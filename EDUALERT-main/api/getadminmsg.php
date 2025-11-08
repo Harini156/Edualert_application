@@ -53,7 +53,7 @@ try {
         $messages = [];
 
         if ($user_type == 'student') {
-            // Get admin messages for students
+            // Get ONLY admin messages for students (no staff messages)
             $department = $user_data['student_dept'] ?? $user_data['dept'];
             $year = $user_data['year'];
             

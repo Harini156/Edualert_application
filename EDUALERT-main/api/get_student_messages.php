@@ -1,5 +1,5 @@
 <?php
-// Get Student Messages - For students to receive ALL messages (admin + staff)
+// Get Student Messages - For students to receive ONLY STAFF messages (no admin messages)
 error_reporting(0);
 ini_set('display_errors', 0);
 
@@ -51,44 +51,7 @@ try {
 
         $messages = [];
 
-        // 1. Get admin messages for students
-        $admin_stmt = $conn->prepare("SELECT id, title, content, attachment, created_at, 'admin' as sender_type 
-                                    FROM messages 
-                                    WHERE (recipient_type = 'student' OR recipient_type = 'both') 
-                                    AND (department IS NULL OR department = '' OR department = ?) 
-                                    AND (year IS NULL OR year = '' OR year = ?) 
-                                    ORDER BY created_at DESC");
-        $admin_stmt->bind_param("ss", $department, $year);
-        $admin_stmt->execute();
-        $admin_result = $admin_stmt->get_result();
-        
-        while ($row = $admin_result->fetch_assoc()) {
-            // Get user-specific status for this message
-            $status_stmt = $conn->prepare("SELECT status FROM user_message_status WHERE user_id = ? AND message_id = ? AND message_table = 'messages'");
-            $status_stmt->bind_param("si", $user_id, $row['id']);
-            $status_stmt->execute();
-            $status_result = $status_stmt->get_result();
-            $user_status = $status_result->num_rows > 0 ? $status_result->fetch_assoc()['status'] : 'unread';
-            $status_stmt->close();
-
-            // Skip deleted messages
-            if ($user_status === 'deleted') continue;
-
-            $messages[] = [
-                'id' => $row['id'],
-                'title' => $row['title'],
-                'content' => $row['content'],
-                'attachment' => $row['attachment'],
-                'created_at' => $row['created_at'],
-                'sender_type' => 'admin',
-                'sender_name' => 'Admin',
-                'message_table' => 'messages',
-                'user_status' => $user_status
-            ];
-        }
-        $admin_stmt->close();
-
-        // 2. Get staff messages for students
+        // Get ONLY staff messages for students (no admin messages)
         $staff_stmt = $conn->prepare("SELECT id, sender_id, title, content, attachment, created_at, 'staff' as sender_type 
                                     FROM staffmessages 
                                     WHERE recipient_type = 'student' 
@@ -134,13 +97,8 @@ try {
         }
         $staff_stmt->close();
 
-        // Sort all messages by created_at descending
-        usort($messages, function($a, $b) {
-            return strtotime($b['created_at']) - strtotime($a['created_at']);
-        });
-
         $response['status'] = true;
-        $response['message'] = 'Student messages retrieved successfully.';
+        $response['message'] = 'Staff messages for students retrieved successfully.';
         $response['messages'] = $messages;
 
     } else {
