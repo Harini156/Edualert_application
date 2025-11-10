@@ -43,12 +43,19 @@ try {
             $phone = trim($_POST['phone'] ?? '');
             $address = trim($_POST['address'] ?? '');
 
-            // Convert year from display format to number
+            // Convert year from display format to number (handle both Roman and numeric formats)
             $yearNumber = 1; // default
-            if (strpos($year, 'I Year') !== false) $yearNumber = 1;
-            elseif (strpos($year, 'II Year') !== false) $yearNumber = 2;
-            elseif (strpos($year, 'III Year') !== false) $yearNumber = 3;
-            elseif (strpos($year, 'IV Year') !== false) $yearNumber = 4;
+            if (is_numeric($year)) {
+                // If already numeric (1, 2, 3, 4), use it directly
+                $yearNumber = intval($year);
+                if ($yearNumber < 1 || $yearNumber > 4) $yearNumber = 1; // validate range
+            } else {
+                // If Roman format (I Year, II Year, etc.), convert it
+                if (strpos($year, 'I Year') !== false) $yearNumber = 1;
+                elseif (strpos($year, 'II Year') !== false) $yearNumber = 2;
+                elseif (strpos($year, 'III Year') !== false) $yearNumber = 3;
+                elseif (strpos($year, 'IV Year') !== false) $yearNumber = 4;
+            }
 
             // Check if student details already exist
             $checkStmt = $conn->prepare("SELECT id FROM student_details WHERE user_id = ?");

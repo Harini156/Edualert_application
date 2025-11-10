@@ -157,16 +157,19 @@ class Details : AppCompatActivity() {
         val gender = genderSpinner.selectedItem.toString()
         val bloodGroup = findViewById<EditText>(R.id.bloodGroupField).text.toString().trim()
         val department = findViewById<EditText>(R.id.departmentFieldStudent).text.toString().trim()
-        val year = yearSpinner.selectedItem.toString()
+        val yearSelected = yearSpinner.selectedItem.toString()
         val cgpa = cgpaField.text.toString().trim()       // updated
         val backlogs = backlogsField.text.toString().trim() // updated
         val stayType = stayTypeSpinner.selectedItem.toString()
         val phone = findViewById<EditText>(R.id.phoneField).text.toString().trim()
         val address = findViewById<EditText>(R.id.addressField).text.toString().trim()
 
+        // Convert year from Roman format to number for API
+        val year = convertYearToNumber(yearSelected)
+
         // Validate all fields
         if (dob.isEmpty() || gender == "Select Gender" || bloodGroup.isEmpty() || department.isEmpty() ||
-            year == "Select Year" || cgpa.isEmpty() || backlogs.isEmpty() || stayType == "Select Stay Type" ||
+            yearSelected == "Select Year" || cgpa.isEmpty() || backlogs.isEmpty() || stayType == "Select Stay Type" ||
             phone.isEmpty() || address.isEmpty()
         ) {
             Toast.makeText(this, "Please fill all student fields", Toast.LENGTH_SHORT).show()
@@ -363,6 +366,19 @@ class Details : AppCompatActivity() {
         
         val displayValue = yearMapping[yearValue] ?: yearValue
         setSpinnerSelection(yearSpinner, displayValue)
+    }
+
+    // -------------------------
+    // Helper method to convert year from Roman format to number
+    // -------------------------
+    private fun convertYearToNumber(yearDisplay: String): String {
+        return when (yearDisplay) {
+            "I Year" -> "1"
+            "II Year" -> "2"
+            "III Year" -> "3"
+            "IV Year" -> "4"
+            else -> "1" // default fallback
+        }
     }
 
 }
