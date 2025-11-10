@@ -58,7 +58,7 @@ try {
     if ($cgpa && stripos($cgpa, 'select') !== false) $cgpa = null;
     if ($backlogs && stripos($backlogs, 'select') !== false) $backlogs = null;
 
-    // Handle file attachment
+    // Handle file attachment with proper filename cleaning and extension detection
     $attachment_path = null;
     if (!empty($_FILES['attachment']['name'])) {
         $upload_dir = 'uploads/';
@@ -67,9 +67,44 @@ try {
             mkdir($upload_dir, 0777, true);
         }
         
-        $file_name = basename($_FILES['attachment']['name']);
-        $file_ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
-        $unique_filename = time() . '_' . uniqid() . '_' . $file_name;
+        $original_name = basename($_FILES['attachment']['name']);
+        $file_mime = $_FILES['attachment']['type'];
+        
+        // Clean filename - remove invalid characters like colons, spaces, etc.
+        $clean_name = preg_replace('/[^a-zA-Z0-9._-]/', '_', $original_name);
+        
+        // Detect proper file extension from MIME type
+        $mime_to_ext = [
+            'image/jpeg' => '.jpg',
+            'image/jpg' => '.jpg',
+            'image/png' => '.png',
+            'image/gif' => '.gif',
+            'image/bmp' => '.bmp',
+            'image/webp' => '.webp',
+            'application/pdf' => '.pdf',
+            'application/msword' => '.doc',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => '.docx',
+            'application/vnd.ms-excel' => '.xls',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => '.xlsx',
+            'application/vnd.ms-powerpoint' => '.ppt',
+            'application/vnd.openxmlformats-officedocument.presentationml.presentation' => '.pptx',
+            'text/plain' => '.txt',
+            'text/csv' => '.csv',
+            'application/zip' => '.zip',
+            'application/x-rar-compressed' => '.rar',
+            'application/x-7z-compressed' => '.7z'
+        ];
+        
+        // Get extension from MIME type or fallback to original extension
+        $detected_ext = isset($mime_to_ext[$file_mime]) ? $mime_to_ext[$file_mime] : '';
+        if (empty($detected_ext)) {
+            $original_ext = strtolower(pathinfo($original_name, PATHINFO_EXTENSION));
+            $detected_ext = !empty($original_ext) ? '.' . $original_ext : '.bin';
+        }
+        
+        // Remove existing extension from clean name and add detected extension
+        $clean_name_no_ext = pathinfo($clean_name, PATHINFO_FILENAME);
+        $unique_filename = time() . '_' . uniqid() . '_' . $clean_name_no_ext . $detected_ext;
         $target_path = $upload_dir . $unique_filename;
         
         // Support ALL file types - no restrictions
