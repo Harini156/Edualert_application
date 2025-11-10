@@ -116,6 +116,10 @@ class Details : AppCompatActivity() {
         studentFields.visibility = LinearLayout.VISIBLE
         staffFields.visibility = LinearLayout.GONE
 
+        // Set DOB format guidance for new student registrations
+        val dobField = findViewById<EditText>(R.id.dobField)
+        dobField.hint = "Enter Date of Birth (YYYY-MM-DD) e.g., 2000-12-25"
+
         genderSpinner.adapter = ArrayAdapter(
             this,
             android.R.layout.simple_spinner_dropdown_item,
@@ -139,6 +143,10 @@ class Details : AppCompatActivity() {
     private fun setupStaffFields() {
         studentFields.visibility = LinearLayout.GONE
         staffFields.visibility = LinearLayout.VISIBLE
+        
+        // Set DOB format guidance for new staff registrations
+        val dobFieldStaff = findViewById<EditText>(R.id.dobFieldStaff)
+        dobFieldStaff.hint = "Enter Date of Birth (YYYY-MM-DD) e.g., 1985-06-15"
     }
 
     // -------------------------
@@ -249,9 +257,11 @@ class Details : AppCompatActivity() {
                             val dobValue = student.dob ?: ""
                             val dobField = findViewById<EditText>(R.id.dobField)
                             
+                            // Always set helpful hint for DOB format
+                            dobField.hint = "Enter Date of Birth (YYYY-MM-DD) e.g., 2000-12-25"
+                            
                             if (dobValue.isEmpty()) {
                                 dobField.setText("")
-                                dobField.hint = "Enter Date of Birth (YYYY-MM-DD) e.g., 2000-12-25"
                                 Toast.makeText(this@Details, "Please enter your Date of Birth in format: YYYY-MM-DD", Toast.LENGTH_LONG).show()
                             } else {
                                 dobField.setText(dobValue)
@@ -294,8 +304,10 @@ class Details : AppCompatActivity() {
                         if (responseBody.status == "success" && responseBody.staff != null) {
                             val staff = responseBody.staff!!
                             
-                            // Populate staff fields
-                            findViewById<EditText>(R.id.dobFieldStaff).setText(staff.dob ?: "")
+                            // Populate staff fields with DOB format hint
+                            val dobFieldStaff = findViewById<EditText>(R.id.dobFieldStaff)
+                            dobFieldStaff.setText(staff.dob ?: "")
+                            dobFieldStaff.hint = "Enter Date of Birth (YYYY-MM-DD) e.g., 1985-06-15"
                             findViewById<EditText>(R.id.phoneField).setText(staff.phone ?: "")
                             findViewById<EditText>(R.id.addressField).setText(staff.address ?: "")
 

@@ -20,8 +20,9 @@ if (empty($student_id)) {
 }
 
 // Query to get student profile from users table and join with student_details
-$sql = "SELECT u.id, u.name, u.email, u.user_id, u.user_type, u.dept as department, u.year, 
-               sd.dob, sd.gender, sd.blood_group, sd.cgpa, sd.backlogs, sd.stay_type, sd.phone, sd.address
+// Get department and year from student_details table (not users table)
+$sql = "SELECT u.id, u.name, u.email, u.user_id, u.user_type, 
+               sd.department, sd.year, sd.dob, sd.gender, sd.blood_group, sd.cgpa, sd.backlogs, sd.stay_type, sd.phone, sd.address
         FROM users u 
         LEFT JOIN student_details sd ON u.user_id = sd.user_id 
         WHERE u.user_id = ? AND u.user_type = 'student'";
