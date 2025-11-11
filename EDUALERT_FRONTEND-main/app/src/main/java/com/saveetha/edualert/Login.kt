@@ -1,11 +1,9 @@
 package com.saveetha.edualert
 
 import android.app.ProgressDialog
-import android.content.ClipData
-import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
+
 import android.os.Bundle
 import android.text.InputType
 import android.widget.EditText
@@ -150,49 +148,12 @@ class Login : AppCompatActivity() {
                         progressDialog.dismiss()
                         loginButton.isEnabled = true
                         
-                        // Enhanced error handling with debug info
-                        val errorMessage = when {
-                            t is com.google.gson.JsonSyntaxException -> 
-                                "Server returned invalid JSON. This usually means there's a PHP error on the server."
-                            t.message?.contains("ConnectException") == true -> 
-                                "Cannot connect to server. Check if server is running and URL is correct."
-                            t.message?.contains("SocketTimeoutException") == true -> 
-                                "Server is taking too long to respond. Try again."
-                            else -> "Network error: ${t.message}"
-                        }
-                        
-                        Toast.makeText(this@Login, errorMessage, Toast.LENGTH_LONG).show()
-                        
-                        // Automatic debug info collection
-                        val debugInfo = StringBuilder()
-                        debugInfo.append("=== LOGIN ERROR DEBUG ===\n")
-                        debugInfo.append("Timestamp: ${System.currentTimeMillis()}\n")
-                        debugInfo.append("Error Type: ${t.javaClass.simpleName}\n")
-                        debugInfo.append("Error Message: ${t.message}\n")
-                        debugInfo.append("URL: ${call.request().url}\n")
-                        debugInfo.append("Base URL: ${ApiClient.BASE_URL}\n")
-                        debugInfo.append("Cause: ${t.cause?.message ?: "None"}\n")
-                        
-                        if (t is com.google.gson.JsonSyntaxException) {
-                            debugInfo.append("\n=== JSON ERROR ANALYSIS ===\n")
-                            debugInfo.append("The server is returning HTML/PHP errors instead of JSON.\n")
-                            debugInfo.append("This usually means:\n")
-                            debugInfo.append("1. PHP syntax errors in login.php\n")
-                            debugInfo.append("2. Database connection issues\n")
-                            debugInfo.append("3. Missing files after server update\n")
-                        }
-                        
-                        debugInfo.append("\n=== STACK TRACE ===\n")
-                        debugInfo.append(t.stackTraceToString())
-                        
-                        // Show detailed error dialog for debugging
-                        showErrorWithCopy("Login Error - Auto Debug", debugInfo.toString())
+                        Toast.makeText(this@Login, "Login failed. Please try again.", Toast.LENGTH_SHORT).show()
                     }
                 })
         }
         
-        // Add debug button for login issues
-        addDebugButton()
+
     }
 
     // ------------------------
@@ -298,127 +259,5 @@ class Login : AppCompatActivity() {
             })
     }
     
-    private fun addDebugButton() {
-        try {
-            // Create debug button
-            val debugButton = MaterialButton(this)
-            debugButton.text = "🔧 LOGIN DEBUG"
-            debugButton.setBackgroundColor(Color.parseColor("#FF5722"))
-            debugButton.setTextColor(Color.WHITE)
-            debugButton.textSize = 12f
-            
-            // Set button click listener
-            debugButton.setOnClickListener {
-                testLoginConnection()
-            }
-            
-            // Find the main layout and add debug button - use a safer approach
-            val contentView = findViewById<android.view.ViewGroup>(android.R.id.content)
-            val rootView = contentView?.getChildAt(0) as? android.view.ViewGroup
-            
-            if (rootView != null) {
-                // Create a wrapper layout if needed
-                val layoutParams = android.view.ViewGroup.LayoutParams(
-                    android.view.ViewGroup.LayoutParams.MATCH_PARENT,
-                    android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-                )
-                debugButton.layoutParams = layoutParams
-                
-                // Add to the root view
-                rootView.addView(debugButton)
-                Toast.makeText(this, "Debug button added - tap to test connection", Toast.LENGTH_SHORT).show()
-            } else {
-                // Fallback: show debug info in toast
-                Toast.makeText(this, "Debug available: Tap login to see detailed errors", Toast.LENGTH_LONG).show()
-            }
-            
-        } catch (e: Exception) {
-            showErrorWithCopy("Debug Button Error", "Error: ${e.message}\nStack: ${e.stackTraceToString()}")
-        }
-    }
-    
-    private fun testLoginConnection() {
-        val debugInfo = StringBuilder()
-        debugInfo.append("=== LOGIN DEBUG ANALYSIS ===\n")
-        debugInfo.append("Timestamp: ${System.currentTimeMillis()}\n")
-        debugInfo.append("Base URL: ${ApiClient.BASE_URL}\n")
-        debugInfo.append("Login Endpoint: ${ApiClient.BASE_URL}api/login.php\n\n")
-        
-        // Get actual form data
-        val emailField = findViewById<EditText>(R.id.emailField)
-        val passwordField = findViewById<EditText>(R.id.passwordField)
-        val actualEmail = emailField.text.toString().trim()
-        val actualPassword = passwordField.text.toString().trim()
-        
-        debugInfo.append("=== FORM DATA ANALYSIS ===\n")
-        debugInfo.append("Email field content: '$actualEmail'\n")
-        debugInfo.append("Email field length: ${actualEmail.length}\n")
-        debugInfo.append("Password field content: '${if (actualPassword.isEmpty()) "EMPTY" else "***PROVIDED***"}'\n")
-        debugInfo.append("Password field length: ${actualPassword.length}\n")
-        debugInfo.append("Selected role: $selectedRole\n\n")
-        
-        // Test with actual form data
-        debugInfo.append("Testing with ACTUAL form data...\n\n")
-        
-        ApiClient.instance.loginUser(actualEmail, actualPassword, selectedRole.lowercase())
-            .enqueue(object : Callback<LoginResponse> {
-                override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
-                    debugInfo.append("=== SERVER RESPONSE ===\n")
-                    debugInfo.append("Response Code: ${response.code()}\n")
-                    debugInfo.append("Response Message: ${response.message()}\n")
-                    debugInfo.append("Is Successful: ${response.isSuccessful}\n")
-                    
-                    if (response.isSuccessful) {
-                        debugInfo.append("Response Body: ${response.body()}\n")
-                    } else {
-                        val errorBody = response.errorBody()?.string() ?: "No error body"
-                        debugInfo.append("Error Body: $errorBody\n")
-                    }
-                    
-                    debugInfo.append("\n=== RAW RESPONSE HEADERS ===\n")
-                    response.headers().forEach { (name, value) ->
-                        debugInfo.append("$name: $value\n")
-                    }
-                    
-                    showErrorWithCopy("Login Debug Results", debugInfo.toString())
-                }
-                
-                override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
-                    debugInfo.append("=== CONNECTION FAILURE ===\n")
-                    debugInfo.append("Error Type: ${t.javaClass.simpleName}\n")
-                    debugInfo.append("Error Message: ${t.message}\n")
-                    debugInfo.append("Cause: ${t.cause?.message ?: "None"}\n")
-                    
-                    if (t is com.google.gson.JsonSyntaxException) {
-                        debugInfo.append("\n=== JSON PARSING ERROR ===\n")
-                        debugInfo.append("This indicates the server is returning non-JSON content\n")
-                        debugInfo.append("Possible causes:\n")
-                        debugInfo.append("1. PHP errors being output before JSON\n")
-                        debugInfo.append("2. HTML error pages instead of JSON\n")
-                        debugInfo.append("3. Server configuration issues\n")
-                    }
-                    
-                    debugInfo.append("\n=== STACK TRACE ===\n")
-                    debugInfo.append(t.stackTraceToString())
-                    
-                    showErrorWithCopy("Login Connection Error", debugInfo.toString())
-                }
-            })
-    }
-    
-    private fun showErrorWithCopy(title: String, errorMessage: String) {
-        val alertDialog = android.app.AlertDialog.Builder(this)
-            .setTitle(title)
-            .setMessage(errorMessage)
-            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
-            .setNeutralButton("Copy to Clipboard") { _, _ ->
-                val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                val clip = ClipData.newPlainText("Login Debug Info", "$title\n\n$errorMessage")
-                clipboard.setPrimaryClip(clip)
-                Toast.makeText(this, "Debug info copied to clipboard!", Toast.LENGTH_SHORT).show()
-            }
-            .create()
-        
-        alertDialog.show()
-    }
+
 }
