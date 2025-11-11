@@ -75,7 +75,7 @@ class Login : AppCompatActivity() {
         }
 
         forgotPassword.setOnClickListener {
-            startActivity(Intent(this, ResetPasswordActivity::class.java))
+            startActivity(Intent(this, ResetPassword::class.java))
         }
 
         // 🔹 Login button

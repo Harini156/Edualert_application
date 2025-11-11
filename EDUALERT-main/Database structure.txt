@@ -103,14 +103,23 @@
 
 ### 4. Security & Authentication
 
-#### 4.1 `password_reset` Table
-**Purpose:** OTP-based password reset functionality
+#### 4.1 `password_reset_otps` Table
+**Purpose:** OTP-based password reset functionality (Forgot Password Feature)
 **Columns:**
 - `id` - INT(11), Primary Key, Auto Increment
-- `user_id` - INT(11), Foreign Key, NOT NULL (Reference to users.id)
+- `email` - VARCHAR(255), NOT NULL (User's email address)
 - `otp` - VARCHAR(6), NOT NULL (6-digit OTP code)
-- `expiry` - DATETIME, NOT NULL (OTP expiration time)
 - `created_at` - TIMESTAMP, NOT NULL, Default: current_timestamp()
+- `expires_at` - TIMESTAMP, NOT NULL (OTP expiration time - 10 minutes from creation)
+- `is_used` - TINYINT(1), NOT NULL, Default: 0 (0=unused, 1=used)
+- `attempts` - INT(11), NOT NULL, Default: 0 (Number of verification attempts)
+
+**Indexes:**
+- KEY `email_index` (`email`)
+- KEY `otp_index` (`otp`)
+- KEY `expires_index` (`expires_at`)
+- KEY `idx_email_otp` (`email`, `otp`)
+- KEY `idx_active_otps` (`email`, `is_used`, `expires_at`)
 
 ## Database Relationships
 

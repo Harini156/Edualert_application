@@ -13,7 +13,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class ResetPasswordActivity : AppCompatActivity() {
+class ResetPassword : AppCompatActivity() {
 
     private lateinit var emailField: EditText
     private lateinit var otpLayout: LinearLayout
@@ -62,7 +62,7 @@ class ResetPasswordActivity : AppCompatActivity() {
 
         // Click Login link → navigate to Login activity
         loginLink.setOnClickListener {
-            startActivity(Intent(this@ResetPasswordActivity, Login::class.java))
+            startActivity(Intent(this@ResetPassword, Login::class.java))
             finish()
         }
     }
@@ -71,15 +71,15 @@ class ResetPasswordActivity : AppCompatActivity() {
         ApiClient.instance.sendOtp(email).enqueue(object : Callback<GenericResponse> {
             override fun onResponse(call: Call<GenericResponse>, response: Response<GenericResponse>) {
                 if (response.isSuccessful && response.body()?.status == "success") {
-                    Toast.makeText(this@ResetPasswordActivity, "OTP sent successfully", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@ResetPassword, "OTP sent successfully", Toast.LENGTH_SHORT).show()
                     otpLayout.visibility = View.VISIBLE
                 } else {
-                    Toast.makeText(this@ResetPasswordActivity, "Error: ${response.body()?.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@ResetPassword, "Error: ${response.body()?.message}", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<GenericResponse>, t: Throwable) {
-                Toast.makeText(this@ResetPasswordActivity, "Failed: ${t.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@ResetPassword, "Failed: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
     }
@@ -88,17 +88,17 @@ class ResetPasswordActivity : AppCompatActivity() {
         ApiClient.instance.resetPassword(email, otp, newPassword).enqueue(object : Callback<GenericResponse> {
             override fun onResponse(call: Call<GenericResponse>, response: Response<GenericResponse>) {
                 if (response.isSuccessful && response.body()?.status == "success") {
-                    Toast.makeText(this@ResetPasswordActivity, "Password reset successfully", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@ResetPassword, "Password reset successfully", Toast.LENGTH_SHORT).show()
                     // Navigate to login screen
-                    startActivity(Intent(this@ResetPasswordActivity, Login::class.java))
+                    startActivity(Intent(this@ResetPassword, Login::class.java))
                     finish()
                 } else {
-                    Toast.makeText(this@ResetPasswordActivity, "Error: ${response.body()?.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@ResetPassword, "Error: ${response.body()?.message}", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<GenericResponse>, t: Throwable) {
-                Toast.makeText(this@ResetPasswordActivity, "Failed: ${t.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@ResetPassword, "Failed: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
     }
