@@ -33,6 +33,17 @@ class ReceivedMessagesFragment : Fragment() {
         progressBar = view.findViewById(R.id.progressBar)
         emptyText = view.findViewById(R.id.emptyText)
 
+        // Set appropriate title based on user type
+        val headerTitle = view.findViewById<TextView>(R.id.headerTitle)
+        context?.let { ctx ->
+            val userType = UserSession.getUserType(ctx)
+            when (userType) {
+                "student" -> headerTitle.text = "Staff Messages"
+                "staff" -> headerTitle.text = "HOD Messages"
+                else -> headerTitle.text = "Messages"
+            }
+        }
+
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         adapter = ReceivedMessageAdapter(requireContext(), messages) {
             // Callback when message is updated - refresh the list and count

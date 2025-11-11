@@ -3,17 +3,34 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:background="#F8F5FF">
 
-    <TextView
+    <!-- Header with Title and Logo -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="📨 Received Messages"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:textColor="@android:color/black"
-        android:gravity="center"
-        android:padding="16dp" />
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/headerTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Staff Messages"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="#922381"
+            android:gravity="start" />
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/logo"
+            android:contentDescription="EduAlert Logo" />
+
+    </LinearLayout>
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -38,6 +55,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:padding="8dp"
         android:scrollbars="vertical" />
 
 </LinearLayout>

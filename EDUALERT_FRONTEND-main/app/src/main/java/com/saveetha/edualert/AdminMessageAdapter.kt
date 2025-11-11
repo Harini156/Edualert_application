@@ -29,6 +29,8 @@ class AdminMessageAdapter(
         val attachmentText: TextView = itemView.findViewById(R.id.attachmentText)
         val tickButton: ImageView = itemView.findViewById(R.id.tickButton)
         val deleteButton: ImageView = itemView.findViewById(R.id.deleteButton)
+        val tickButtonCard: androidx.cardview.widget.CardView = itemView.findViewById(R.id.tickButtonCard)
+        val deleteButtonCard: androidx.cardview.widget.CardView = itemView.findViewById(R.id.deleteButtonCard)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
@@ -43,22 +45,20 @@ class AdminMessageAdapter(
         holder.contentText.text = message.content
         holder.senderText.text = "From: Admin"
         
-        // Format date
+        // Format date with "Sent at:" prefix
         try {
             val inputFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-            val outputFormat = SimpleDateFormat("MMM dd, yyyy HH:mm", Locale.getDefault())
+            val outputFormat = SimpleDateFormat("dd MMM yyyy, hh:mm a", Locale.getDefault())
             val date = inputFormat.parse(message.createdAt)
-            holder.dateText.text = date?.let { outputFormat.format(it) } ?: message.createdAt
+            holder.dateText.text = "Sent at: ${date?.let { outputFormat.format(it) } ?: message.createdAt}"
         } catch (e: Exception) {
-            holder.dateText.text = message.createdAt
+            holder.dateText.text = "Sent at: ${message.createdAt}"
         }
         
         // Handle attachment with clickable link
         if (!message.attachment.isNullOrEmpty()) {
             holder.attachmentText.visibility = View.VISIBLE
-            val fileName = message.attachment.substringAfterLast("/")
-            holder.attachmentText.text = "📎 View Attachment: $fileName"
-            holder.attachmentText.setTextColor(context.getColor(android.R.color.holo_blue_dark))
+            holder.attachmentText.text = "📎 View Attachment"
             holder.attachmentText.setOnClickListener {
                 openAttachment(message.attachment)
             }
@@ -66,26 +66,33 @@ class AdminMessageAdapter(
             holder.attachmentText.visibility = View.GONE
         }
 
-        // Use backend status just like staff messages
+        // Set enhanced tick button state based on message status
         val isRead = message.userStatus == "read"
         
-        holder.tickButton.setImageResource(
-            if (isRead) android.R.drawable.checkbox_on_background 
-            else android.R.drawable.checkbox_off_background
-        )
+        if (isRead) {
+            // Message is read - show green tick
+            holder.tickButtonCard.setCardBackgroundColor(context.getColor(android.R.color.holo_green_dark))
+            holder.tickButton.setImageResource(android.R.drawable.ic_menu_save)
+            holder.tickButton.setColorFilter(context.getColor(android.R.color.white))
+        } else {
+            // Message is unread - show red circle
+            holder.tickButtonCard.setCardBackgroundColor(context.getColor(android.R.color.holo_red_dark))
+            holder.tickButton.setImageResource(android.R.drawable.ic_menu_save)
+            holder.tickButton.setColorFilter(context.getColor(android.R.color.white))
+        }
 
         // Show delete button only if message is read
-        holder.deleteButton.visibility = if (isRead) View.VISIBLE else View.GONE
+        holder.deleteButtonCard.visibility = if (isRead) View.VISIBLE else View.GONE
 
-        // Tick button click listener
-        holder.tickButton.setOnClickListener {
+        // Enhanced tick button click listener
+        holder.tickButtonCard.setOnClickListener {
             if (!isRead) {
                 markMessageAsRead(message, position)
             }
         }
 
-        // Delete button click listener
-        holder.deleteButton.setOnClickListener {
+        // Enhanced delete button click listener
+        holder.deleteButtonCard.setOnClickListener {
             deleteMessage(message, position)
         }
     }
