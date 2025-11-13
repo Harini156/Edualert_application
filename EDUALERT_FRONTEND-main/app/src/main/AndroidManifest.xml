@@ -42,7 +42,7 @@
             android:name=".AdminNavActivity"
             android:exported="false" />
         <activity
-            android:name=".ResetPasswordActivity"
+            android:name=".ResetPassword"
             android:exported="false" />
         <activity
             android:name=".Login"

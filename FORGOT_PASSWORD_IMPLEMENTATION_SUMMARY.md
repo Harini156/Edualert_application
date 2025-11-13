@@ -4,10 +4,10 @@
 
 ### **FILES CREATED:**
 
-#### **1. Database Table SQL**
-- **File**: `OTP_TABLE_CREATION.sql`
-- **Purpose**: SQL script to create OTP storage table
-- **Action Required**: Send this SQL to server admin to execute
+#### **1. Database Table (EXISTING)**
+- **Table**: `password_reset` (already exists in database)
+- **Structure**: id, user_id, otp, expiry, created_at
+- **Action Required**: No new table creation needed ✅
 
 #### **2. Backend PHP Files**
 - **File**: `EDUALERT-main/api/send_otp.php`
@@ -31,16 +31,14 @@
 
 ## 🔧 TECHNICAL IMPLEMENTATION
 
-### **OTP Table Structure:**
+### **Existing Table Structure:**
 ```sql
-CREATE TABLE password_reset_otps (
+password_reset (
   id INT(11) AUTO_INCREMENT PRIMARY KEY,
-  email VARCHAR(255) NOT NULL,
+  user_id VARCHAR(10) FOREIGN KEY,
   otp VARCHAR(6) NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  expires_at TIMESTAMP NOT NULL,
-  is_used TINYINT(1) DEFAULT 0,
-  attempts INT(11) DEFAULT 0
+  expiry DATETIME NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```
 
@@ -76,11 +74,11 @@ CREATE TABLE password_reset_otps (
 ## 📋 DEPLOYMENT CHECKLIST
 
 ### **For Server Admin:**
-1. **Execute SQL**: Run `OTP_TABLE_CREATION.sql` in database
-2. **Upload PHP Files**: 
+1. **Upload PHP Files**: 
    - `api/send_otp.php`
    - `api/reset_password.php`
-3. **Email Configuration**: Ensure server can send emails (PHP mail() function)
+2. **Email Configuration**: Ensure server can send emails (PHP mail() function)
+3. **Database**: Uses existing `password_reset` table (no changes needed)
 
 ### **For App Developer:**
 1. **Build App**: All Android files are ready

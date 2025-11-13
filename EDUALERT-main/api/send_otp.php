@@ -56,15 +56,18 @@ try {
         // Set expiration time (10 minutes from now)
         $expiresAt = date('Y-m-d H:i:s', strtotime('+10 minutes'));
 
-        // Clean up old OTPs for this email (optional - keep database clean)
-        $cleanupStmt = $conn->prepare("DELETE FROM password_reset_otps WHERE email = ? AND expires_at < NOW()");
-        $cleanupStmt->bind_param("s", $email);
+        // Get user ID for the existing password_reset table
+        $userId = $user['user_id'];
+
+        // Clean up old OTPs for this user (optional - keep database clean)
+        $cleanupStmt = $conn->prepare("DELETE FROM password_reset WHERE user_id = ? AND expiry < NOW()");
+        $cleanupStmt->bind_param("s", $userId);
         $cleanupStmt->execute();
         $cleanupStmt->close();
 
-        // Insert new OTP
-        $insertStmt = $conn->prepare("INSERT INTO password_reset_otps (email, otp, expires_at) VALUES (?, ?, ?)");
-        $insertStmt->bind_param("sss", $email, $otp, $expiresAt);
+        // Insert new OTP using existing table structure
+        $insertStmt = $conn->prepare("INSERT INTO password_reset (user_id, otp, expiry) VALUES (?, ?, ?)");
+        $insertStmt->bind_param("sss", $userId, $otp, $expiresAt);
 
         if ($insertStmt->execute()) {
             // Send OTP via email

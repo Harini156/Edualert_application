@@ -42,40 +42,8 @@ try {
             exit;
         }
 
-        // Verify OTP
-        $otpStmt = $conn->prepare("SELECT id, attempts FROM password_reset_otps WHERE email = ? AND otp = ? AND expires_at > NOW() AND is_used = 0");
-        $otpStmt->bind_param("ss", $email, $otp);
-        $otpStmt->execute();
-        $otpResult = $otpStmt->get_result();
-
-        if ($otpResult->num_rows === 0) {
-            // Increment attempts for this email/OTP combination
-            $attemptStmt = $conn->prepare("UPDATE password_reset_otps SET attempts = attempts + 1 WHERE email = ? AND otp = ?");
-            $attemptStmt->bind_param("ss", $email, $otp);
-            $attemptStmt->execute();
-            $attemptStmt->close();
-
-            $response['status'] = 'error';
-            $response['message'] = 'Invalid or expired OTP. Please request a new one.';
-            echo json_encode($response);
-            exit;
-        }
-
-        $otpData = $otpResult->fetch_assoc();
-        $otpId = $otpData['id'];
-        $attempts = $otpData['attempts'];
-        $otpStmt->close();
-
-        // Check if too many attempts
-        if ($attempts >= 5) {
-            $response['status'] = 'error';
-            $response['message'] = 'Too many failed attempts. Please request a new OTP.';
-            echo json_encode($response);
-            exit;
-        }
-
-        // Check if user exists
-        $userStmt = $conn->prepare("SELECT user_id FROM users WHERE email = ?");
+        // Get user ID first
+        $userStmt = $conn->prepare("SELECT id, user_id FROM users WHERE email = ?");
         $userStmt->bind_param("s", $email);
         $userStmt->execute();
         $userResult = $userStmt->get_result();
@@ -91,6 +59,25 @@ try {
         $userId = $user['user_id'];
         $userStmt->close();
 
+        // Verify OTP using existing table structure
+        $otpStmt = $conn->prepare("SELECT id FROM password_reset WHERE user_id = ? AND otp = ? AND expiry > NOW()");
+        $otpStmt->bind_param("ss", $userId, $otp);
+        $otpStmt->execute();
+        $otpResult = $otpStmt->get_result();
+
+        if ($otpResult->num_rows === 0) {
+            $response['status'] = 'error';
+            $response['message'] = 'Invalid or expired OTP. Please request a new one.';
+            echo json_encode($response);
+            exit;
+        }
+
+        $otpData = $otpResult->fetch_assoc();
+        $otpId = $otpData['id'];
+        $otpStmt->close();
+
+
+
         // Hash the new password
         $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
 
@@ -99,15 +86,15 @@ try {
         $updateStmt->bind_param("ss", $hashedPassword, $email);
 
         if ($updateStmt->execute()) {
-            // Mark OTP as used
-            $markUsedStmt = $conn->prepare("UPDATE password_reset_otps SET is_used = 1 WHERE id = ?");
-            $markUsedStmt->bind_param("i", $otpId);
-            $markUsedStmt->execute();
-            $markUsedStmt->close();
+            // Delete the used OTP from password_reset table
+            $deleteOtpStmt = $conn->prepare("DELETE FROM password_reset WHERE id = ?");
+            $deleteOtpStmt->bind_param("i", $otpId);
+            $deleteOtpStmt->execute();
+            $deleteOtpStmt->close();
 
-            // Clean up old OTPs for this email
-            $cleanupStmt = $conn->prepare("DELETE FROM password_reset_otps WHERE email = ? AND id != ?");
-            $cleanupStmt->bind_param("si", $email, $otpId);
+            // Clean up any other expired OTPs for this user
+            $cleanupStmt = $conn->prepare("DELETE FROM password_reset WHERE user_id = ? AND expiry < NOW()");
+            $cleanupStmt->bind_param("s", $userId);
             $cleanupStmt->execute();
             $cleanupStmt->close();
 
