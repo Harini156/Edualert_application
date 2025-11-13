@@ -64,8 +64,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $details_result = $stmt->get_result();
             if ($details_result->num_rows > 0) {
                 $details = $details_result->fetch_assoc();
-                $response['department'] = $details['department'] ?: $user['dept'];
-                $response['year'] = $details['year'] ?: $user['year'];
+                $response['department'] = $details['department'];
+                $response['year'] = $details['year'];
                 $response['cgpa'] = $details['cgpa'];
                 $response['backlogs'] = $details['backlogs'];
                 $response['stay_type'] = $details['stay_type'];
@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $details_result = $stmt->get_result();
             if ($details_result->num_rows > 0) {
                 $details = $details_result->fetch_assoc();
-                $response['department'] = $details['department'] ?: $user['dept'];
+                $response['department'] = $details['department'];
                 $response['staff_type'] = $details['staff_type'];
                 $response['designation'] = $details['designation'];
             }
