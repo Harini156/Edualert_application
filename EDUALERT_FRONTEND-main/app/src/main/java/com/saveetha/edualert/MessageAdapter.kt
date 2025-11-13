@@ -76,34 +76,7 @@ class MessageAdapter(
             holder.tvAttachment.paint.isUnderlineText = true
 
             holder.tvAttachment.setOnClickListener {
-                try {
-                    when {
-                        msg.attachment.endsWith(".jpg", true) ||
-                                msg.attachment.endsWith(".jpeg", true) ||
-                                msg.attachment.endsWith(".png", true) -> {
-                            val intent = Intent(context, ImageViewerActivity::class.java)
-                            intent.putExtra("IMAGE_URL", msg.attachment)
-                            context.startActivity(intent)
-                        }
-
-                        msg.attachment.endsWith(".pdf", true) -> {
-                            val uri = Uri.parse(msg.attachment)
-                            viewPdf(context, uri)
-                        }
-
-                        msg.attachment.endsWith(".doc", true) ||
-                                msg.attachment.endsWith(".docx", true) ||
-                                msg.attachment.endsWith(".xls", true) ||
-                                msg.attachment.endsWith(".xlsx", true) -> {
-                            openInBrowser(context, msg.attachment)
-                        }
-
-                        else -> openInBrowser(context, msg.attachment)
-                    }
-                } catch (e: Exception) {
-                    Toast.makeText(context, "Cannot open attachment", Toast.LENGTH_SHORT).show()
-                    e.printStackTrace()
-                }
+                openAttachment(msg.attachment)
             }
         } else {
             holder.tvAttachment.visibility = View.GONE
@@ -125,26 +98,20 @@ class MessageAdapter(
         }
     }
 
-    private fun viewPdf(context: Context, uri: Uri) {
-        val intent = Intent(Intent.ACTION_VIEW).apply {
-            setDataAndType(uri, "application/pdf")
-            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        }
-        try {
-            context.startActivity(Intent.createChooser(intent, "Open with"))
-        } catch (e: Exception) {
-            Toast.makeText(context, "No app found to open PDF", Toast.LENGTH_SHORT).show()
-        }
-    }
 
-    private fun openInBrowser(context: Context, url: String) {
+
+    private fun openAttachment(attachmentPath: String) {
         try {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            val baseUrl = ApiClient.BASE_URL
+            val fileUrl = "${baseUrl}api/get_file.php?file=${attachmentPath}"
+            
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.data = Uri.parse(fileUrl)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            
             context.startActivity(intent)
         } catch (e: Exception) {
-            e.printStackTrace()
-            Toast.makeText(context, "No app found to open this file", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Unable to open attachment: ${e.message}", Toast.LENGTH_LONG).show()
         }
     }
 
