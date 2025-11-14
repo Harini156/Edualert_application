@@ -65,6 +65,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->bind_param("sssss", $name, $email, $hashedPassword, $usertype, $user_id);
 
     if ($stmt->execute()) {
+        // Create placeholder entries in detail tables to prevent null department issues
+        if ($usertype === 'student') {
+            // Create placeholder student_details entry
+            $studentStmt = $conn->prepare("INSERT INTO student_details (user_id, department, year, stay_type, backlogs) VALUES (?, '', 1, 'Day Scholar', 0)");
+            $studentStmt->bind_param("s", $user_id);
+            $studentStmt->execute();
+            $studentStmt->close();
+        } elseif ($usertype === 'staff') {
+            // Create placeholder staff_details entry
+            $staffStmt = $conn->prepare("INSERT INTO staff_details (user_id, staff_type) VALUES (?, 'teaching')");
+            $staffStmt->bind_param("s", $user_id);
+            $staffStmt->execute();
+            $staffStmt->close();
+        }
+
         $_SESSION['user_id']  = $user_id;
         $_SESSION['name']     = $name;
         $_SESSION['email']    = $email;
