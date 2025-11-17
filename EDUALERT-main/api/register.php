@@ -73,8 +73,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $studentStmt->execute();
             $studentStmt->close();
         } elseif ($usertype === 'staff') {
-            // Create placeholder staff_details entry
-            $staffStmt = $conn->prepare("INSERT INTO staff_details (user_id, staff_type) VALUES (?, 'teaching')");
+            // Create placeholder staff_details entry with empty department
+            $staffStmt = $conn->prepare("INSERT INTO staff_details (user_id, staff_type, department) VALUES (?, 'teaching', '')");
             $staffStmt->bind_param("s", $user_id);
             $staffStmt->execute();
             $staffStmt->close();
