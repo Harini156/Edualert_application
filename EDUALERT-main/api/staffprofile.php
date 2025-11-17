@@ -18,8 +18,8 @@ if (empty($staff_id)) {
 }
 
 // Fetch staff details from users table and join with staff_details
-$sql = "SELECT u.id, u.name, u.email, u.user_id, u.user_type, u.dept as department, 
-               sd.dob, sd.staff_type, sd.designation, sd.phone, sd.address
+$sql = "SELECT u.id, u.name, u.email, u.user_id, u.user_type, 
+               sd.dob, sd.staff_type, sd.department, sd.designation, sd.phone, sd.address
         FROM users u 
         LEFT JOIN staff_details sd ON u.user_id = sd.user_id 
         WHERE u.user_id = ? AND u.user_type = 'staff'";
