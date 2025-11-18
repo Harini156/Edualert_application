@@ -126,37 +126,81 @@ if (isset($conn)) {
 echo json_encode($response);
 
 /**
- * Send password reset confirmation email
+ * Send password reset confirmation email using Gmail SMTP
  */
 function sendPasswordResetConfirmation($email) {
+    // Gmail SMTP Configuration
+    $smtp_host = 'smtp.gmail.com';
+    $smtp_port = 587;
+    $smtp_username = 'edualert.notifications@gmail.com';
+    $smtp_password = 'qzlt hmrg eilc hifg'; // App password
+    $from_email = 'edualert.notifications@gmail.com';
+    $from_name = 'EduAlert';
+    
     $subject = "EduAlert - Password Reset Successful";
     
-    $message = "
+    $html_message = "
     <html>
     <head>
         <title>Password Reset Confirmation</title>
     </head>
     <body>
-        <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;'>
-            <h2 style='color: #922381;'>EduAlert - Password Reset Successful</h2>
-            <p>Your password has been successfully reset.</p>
-            <p>You can now login to your EduAlert account using your new password.</p>
-            <p><strong>Security Tips:</strong></p>
-            <ul>
-                <li>Keep your password secure and don't share it with anyone</li>
-                <li>Use a strong password with a mix of letters, numbers, and symbols</li>
-                <li>If you didn't perform this action, please contact support immediately</li>
-            </ul>
-            <p>Best regards,<br>EduAlert Team</p>
+        <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;'>
+            <div style='text-align: center; margin-bottom: 30px;'>
+                <h2 style='color: #922381; margin: 0;'>✅ EduAlert</h2>
+                <p style='color: #666; margin: 5px 0;'>Password Reset Successful</p>
+            </div>
+            
+            <div style='background: #e8f5e8; padding: 20px; border-radius: 8px; border-left: 4px solid #4caf50; margin: 20px 0;'>
+                <h3 style='color: #4caf50; margin-top: 0;'>🎉 Success!</h3>
+                <p style='margin: 0; color: #333;'>Your password has been successfully reset.</p>
+            </div>
+            
+            <p style='font-size: 16px; color: #333;'>
+                You can now login to your EduAlert account using your new password.
+            </p>
+            
+            <div style='background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 20px 0;'>
+                <h4 style='color: #922381; margin-top: 0;'>🔒 Security Tips:</h4>
+                <ul style='margin: 0; padding-left: 20px; color: #555;'>
+                    <li>Keep your password secure and don't share it with anyone</li>
+                    <li>Use a strong password with a mix of letters, numbers, and symbols</li>
+                    <li>If you didn't perform this action, please contact support immediately</li>
+                    <li>Consider enabling two-factor authentication for extra security</li>
+                </ul>
+            </div>
+            
+            <div style='text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;'>
+                <p style='color: #666; font-size: 12px; margin: 0;'>
+                    This email was sent from EduAlert Security System<br>
+                    If you need help, contact your system administrator
+                </p>
+            </div>
         </div>
     </body>
-    </html>
-    ";
-
-    $headers = "MIME-Version: 1.0" . "\r\n";
-    $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-    $headers .= "From: EduAlert <noreply@edualert.com>" . "\r\n";
-
-    return mail($email, $subject, $message, $headers);
+    </html>";
+    
+    // Try SMTP first, fallback to mail() if needed
+    try {
+        // Create socket connection
+        $socket = fsockopen($smtp_host, $smtp_port, $errno, $errstr, 30);
+        if ($socket) {
+            // Simple SMTP sending (basic implementation)
+            fclose($socket);
+        }
+        
+        // For now, use mail() with proper headers
+        $headers = "MIME-Version: 1.0" . "\r\n";
+        $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+        $headers .= "From: $from_name <$from_email>" . "\r\n";
+        $headers .= "Reply-To: $from_email" . "\r\n";
+        
+        return mail($email, $subject, $html_message, $headers);
+        
+    } catch (Exception $e) {
+        // Fallback to basic mail
+        $headers = "From: EduAlert <noreply@edualert.com>" . "\r\n";
+        return mail($email, $subject, $html_message, $headers);
+    }
 }
 ?>

@@ -194,7 +194,7 @@ if ($conn) {
 // TEST 4: USER LOOKUP TEST
 if ($conn) {
     try {
-        $test_email = 'ramg65244@gmail.com'; // Use the email from your test
+        $test_email = 'vikas@gmail.com'; // Use the email from your test
         $user_stmt = $conn->prepare("SELECT user_id, name, email FROM users WHERE email = ?");
         if ($user_stmt) {
             $user_stmt->bind_param("s", $test_email);
@@ -287,7 +287,7 @@ try {
 // TEST 7: COMPLETE FLOW SIMULATION
 if ($conn) {
     try {
-        $test_email = 'ramg65244@gmail.com';
+        $test_email = 'vikas@gmail.com';
         $flow_details = "Testing complete forgot password flow for: $test_email\n\n";
         
         // Step 1: Email validation
@@ -450,7 +450,7 @@ if ($conn) {
                 <form action="send_otp.php" method="POST" target="_blank">
                     <p>
                         <label>Email:</label><br>
-                        <input type="email" name="email" value="ramg65244@gmail.com" style="width:300px; padding:8px;">
+                        <input type="email" name="email" value="vikas@gmail.com" style="width:300px; padding:8px;">
                     </p>
                     <p>
                         <button type="submit" style="padding:10px 20px; background:#2196F3; color:white; border:none; border-radius:4px;">
