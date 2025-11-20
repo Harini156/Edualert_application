@@ -126,60 +126,93 @@ if (isset($conn)) {
 echo json_encode($response);
 
 /**
- * Send password reset confirmation email - SIMPLE AND RELIABLE
+ * Send password reset confirmation email using PHPMailer - PRODUCTION READY
  */
 function sendPasswordResetConfirmation($email) {
-    $subject = "EduAlert - Password Reset Successful";
+    // Load PHPMailer
+    require_once __DIR__ . '/PHPMailer.php';
+    require_once __DIR__ . '/SMTP.php';
+    require_once __DIR__ . '/Exception.php';
     
-    $html_message = "
-    <html>
-    <head>
-        <title>Password Reset Confirmation</title>
-    </head>
-    <body>
-        <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;'>
-            <div style='text-align: center; margin-bottom: 30px;'>
-                <h2 style='color: #922381; margin: 0;'>✅ EduAlert</h2>
-                <p style='color: #666; margin: 5px 0;'>Password Reset Successful</p>
-            </div>
-            
-            <div style='background: #e8f5e8; padding: 20px; border-radius: 8px; border-left: 4px solid #4caf50; margin: 20px 0;'>
-                <h3 style='color: #4caf50; margin-top: 0;'>🎉 Success!</h3>
-                <p style='margin: 0; color: #333;'>Your password has been successfully reset.</p>
-            </div>
-            
-            <p style='font-size: 16px; color: #333;'>
-                You can now login to your EduAlert account using your new password.
-            </p>
-            
-            <div style='background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 20px 0;'>
-                <h4 style='color: #922381; margin-top: 0;'>🔒 Security Tips:</h4>
-                <ul style='margin: 0; padding-left: 20px; color: #555;'>
-                    <li>Keep your password secure and don't share it with anyone</li>
-                    <li>Use a strong password with a mix of letters, numbers, and symbols</li>
-                    <li>If you didn't perform this action, please contact support immediately</li>
-                    <li>Consider enabling two-factor authentication for extra security</li>
-                </ul>
-            </div>
-            
-            <div style='text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;'>
-                <p style='color: #666; font-size: 12px; margin: 0;'>
-                    This email was sent from EduAlert Security System<br>
-                    If you need help, contact your system administrator
+    try {
+        $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
+        
+        // SMTP Configuration for Gmail
+        $mail->isSMTP();
+        $mail->Host       = 'smtp.gmail.com';
+        $mail->SMTPAuth   = true;
+        $mail->Username   = 'edualert.notifications@gmail.com';
+        $mail->Password   = 'qzlthmrgeilchifg'; // Gmail App Password
+        $mail->SMTPSecure = \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port       = 587;
+        $mail->CharSet    = 'UTF-8';
+        
+        // Sender and recipient
+        $mail->setFrom('edualert.notifications@gmail.com', 'EduAlert System');
+        $mail->addAddress($email);
+        $mail->addReplyTo('edualert.notifications@gmail.com', 'EduAlert Support');
+        
+        // Email content
+        $mail->isHTML(true);
+        $mail->Subject = 'EduAlert - Password Reset Successful';
+        
+        // Professional HTML email body
+        $mail->Body = "
+        <html>
+        <head>
+            <title>Password Reset Confirmation</title>
+        </head>
+        <body>
+            <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;'>
+                <div style='text-align: center; margin-bottom: 30px;'>
+                    <h2 style='color: #922381; margin: 0;'>✅ EduAlert</h2>
+                    <p style='color: #666; margin: 5px 0;'>Password Reset Successful</p>
+                </div>
+                
+                <div style='background: #e8f5e8; padding: 20px; border-radius: 8px; border-left: 4px solid #4caf50; margin: 20px 0;'>
+                    <h3 style='color: #4caf50; margin-top: 0;'>🎉 Success!</h3>
+                    <p style='margin: 0; color: #333;'>Your password has been successfully reset.</p>
+                </div>
+                
+                <p style='font-size: 16px; color: #333;'>
+                    You can now login to your EduAlert account using your new password.
                 </p>
+                
+                <div style='background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 20px 0;'>
+                    <h4 style='color: #922381; margin-top: 0;'>🔒 Security Tips:</h4>
+                    <ul style='margin: 0; padding-left: 20px; color: #555;'>
+                        <li>Keep your password secure and don't share it with anyone</li>
+                        <li>Use a strong password with a mix of letters, numbers, and symbols</li>
+                        <li>If you didn't perform this action, please contact support immediately</li>
+                        <li>Consider enabling two-factor authentication for extra security</li>
+                    </ul>
+                </div>
+                
+                <div style='text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;'>
+                    <p style='color: #666; font-size: 12px; margin: 0;'>
+                        This email was sent from EduAlert Security System<br>
+                        If you need help, contact your system administrator
+                    </p>
+                </div>
             </div>
-        </div>
-    </body>
-    </html>";
-    
-    // Simple, reliable headers
-    $headers = "MIME-Version: 1.0" . "\r\n";
-    $headers .= "Content-type: text/html; charset=UTF-8" . "\r\n";
-    $headers .= "From: EduAlert <edualert.notifications@gmail.com>" . "\r\n";
-    $headers .= "Reply-To: edualert.notifications@gmail.com" . "\r\n";
-    $headers .= "X-Mailer: EduAlert System" . "\r\n";
-    
-    // Send using PHP's built-in mail() function
-    return mail($email, $subject, $html_message, $headers);
+        </body>
+        </html>";
+        
+        // Plain text alternative
+        $mail->AltBody = "Your password has been successfully reset.\n\nYou can now login to your EduAlert account using your new password.\n\nIf you didn't perform this action, please contact support immediately.\n\nBest regards,\nEduAlert System";
+        
+        // Send email
+        $mail->send();
+        return true;
+        
+    } catch (\PHPMailer\PHPMailer\Exception $e) {
+        // Log error for debugging
+        error_log("PHPMailer Error: {$mail->ErrorInfo}");
+        return false;
+    } catch (\Exception $e) {
+        // Log general errors
+        error_log("Email Error: " . $e->getMessage());
+        return false;
+    }
 }
 ?>
