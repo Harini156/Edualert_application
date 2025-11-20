@@ -126,17 +126,9 @@ if (isset($conn)) {
 echo json_encode($response);
 
 /**
- * Send password reset confirmation email using Gmail SMTP
+ * Send password reset confirmation email - SIMPLE AND RELIABLE
  */
 function sendPasswordResetConfirmation($email) {
-    // Gmail SMTP Configuration
-    $smtp_host = 'smtp.gmail.com';
-    $smtp_port = 587;
-    $smtp_username = 'edualert.notifications@gmail.com';
-    $smtp_password = 'qzlt hmrg eilc hifg'; // App password
-    $from_email = 'edualert.notifications@gmail.com';
-    $from_name = 'EduAlert';
-    
     $subject = "EduAlert - Password Reset Successful";
     
     $html_message = "
@@ -180,27 +172,14 @@ function sendPasswordResetConfirmation($email) {
     </body>
     </html>";
     
-    // Try SMTP first, fallback to mail() if needed
-    try {
-        // Create socket connection
-        $socket = fsockopen($smtp_host, $smtp_port, $errno, $errstr, 30);
-        if ($socket) {
-            // Simple SMTP sending (basic implementation)
-            fclose($socket);
-        }
-        
-        // For now, use mail() with proper headers
-        $headers = "MIME-Version: 1.0" . "\r\n";
-        $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-        $headers .= "From: $from_name <$from_email>" . "\r\n";
-        $headers .= "Reply-To: $from_email" . "\r\n";
-        
-        return mail($email, $subject, $html_message, $headers);
-        
-    } catch (Exception $e) {
-        // Fallback to basic mail
-        $headers = "From: EduAlert <noreply@edualert.com>" . "\r\n";
-        return mail($email, $subject, $html_message, $headers);
-    }
+    // Simple, reliable headers
+    $headers = "MIME-Version: 1.0" . "\r\n";
+    $headers .= "Content-type: text/html; charset=UTF-8" . "\r\n";
+    $headers .= "From: EduAlert <edualert.notifications@gmail.com>" . "\r\n";
+    $headers .= "Reply-To: edualert.notifications@gmail.com" . "\r\n";
+    $headers .= "X-Mailer: EduAlert System" . "\r\n";
+    
+    // Send using PHP's built-in mail() function
+    return mail($email, $subject, $html_message, $headers);
 }
 ?>
