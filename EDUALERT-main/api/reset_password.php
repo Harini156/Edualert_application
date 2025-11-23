@@ -16,7 +16,6 @@ $response = [];
 
 try {
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        // CRITICAL FIX: Trim all inputs to remove whitespace
         $email = trim($_POST['email'] ?? '');
         $otp = trim($_POST['otp'] ?? '');
         $newPassword = trim($_POST['new_password'] ?? '');
@@ -60,46 +59,13 @@ try {
         $userId = $user['user_id'];
         $userStmt->close();
 
-        // CRITICAL FIX: Verify OTP with proper timezone handling
-        // Use CURRENT_TIMESTAMP instead of NOW() for consistency
-        $otpStmt = $conn->prepare("
-            SELECT id, otp, expiry, CURRENT_TIMESTAMP as current_time 
-            FROM password_reset 
-            WHERE user_id = ? 
-            AND TRIM(otp) = TRIM(?) 
-            AND expiry > CURRENT_TIMESTAMP
-            LIMIT 1
-        ");
+        // Verify OTP using existing table structure
+        $otpStmt = $conn->prepare("SELECT id FROM password_reset WHERE user_id = ? AND otp = ? AND expiry > NOW()");
         $otpStmt->bind_param("ss", $userId, $otp);
         $otpStmt->execute();
         $otpResult = $otpStmt->get_result();
 
         if ($otpResult->num_rows === 0) {
-            // ENHANCED ERROR: Check if OTP exists but is expired
-            $debugStmt = $conn->prepare("
-                SELECT id, otp, expiry, CURRENT_TIMESTAMP as current_time,
-                CASE 
-                    WHEN expiry <= CURRENT_TIMESTAMP THEN 'expired'
-                    WHEN TRIM(otp) != TRIM(?) THEN 'mismatch'
-                    ELSE 'unknown'
-                END as error_reason
-                FROM password_reset 
-                WHERE user_id = ?
-                ORDER BY created_at DESC
-                LIMIT 1
-            ");
-            $debugStmt->bind_param("ss", $otp, $userId);
-            $debugStmt->execute();
-            $debugResult = $debugStmt->get_result();
-            
-            if ($debugResult->num_rows > 0) {
-                $debugData = $debugResult->fetch_assoc();
-                error_log("OTP Validation Failed - Reason: " . $debugData['error_reason'] . 
-                         " | User: $userId | OTP Entered: $otp | OTP in DB: " . $debugData['otp'] . 
-                         " | Expiry: " . $debugData['expiry'] . " | Current: " . $debugData['current_time']);
-            }
-            $debugStmt->close();
-            
             $response['status'] = 'error';
             $response['message'] = 'Invalid or expired OTP. Please request a new one.';
             echo json_encode($response);
