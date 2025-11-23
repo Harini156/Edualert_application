@@ -118,6 +118,7 @@ function logOtpBackup($email, $userName, $otp, $expiresAt) {
 
 /**
  * Send OTP email using PHPMailer with Gmail SMTP - PRODUCTION READY
+ * FIXED: Proper MIME encoding to prevent empty email body
  */
 function sendOtpEmail($email, $userName, $otp) {
     // Load PHPMailer
@@ -136,65 +137,80 @@ function sendOtpEmail($email, $userName, $otp) {
         $mail->Password   = 'qzlthmrgeilchifg'; // Gmail App Password
         $mail->SMTPSecure = \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port       = 587;
+        
+        // CRITICAL FIX: Proper encoding settings
         $mail->CharSet    = 'UTF-8';
+        $mail->Encoding   = 'base64';
+        $mail->ContentType = 'text/html; charset=UTF-8';
         
         // Sender and recipient
         $mail->setFrom('edualert.notifications@gmail.com', 'EduAlert System');
         $mail->addAddress($email, $userName);
         $mail->addReplyTo('edualert.notifications@gmail.com', 'EduAlert Support');
         
-        // Email content
+        // CRITICAL FIX: Set HTML mode BEFORE setting content
         $mail->isHTML(true);
+        
+        // Email subject
         $mail->Subject = 'EduAlert - Password Reset OTP';
         
-        // Professional HTML email body
-        $mail->Body = "
-        <html>
-        <head>
-            <title>Password Reset OTP</title>
-        </head>
-        <body>
-            <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;'>
-                <div style='text-align: center; margin-bottom: 30px;'>
-                    <h2 style='color: #922381; margin: 0;'>🔐 EduAlert</h2>
-                    <p style='color: #666; margin: 5px 0;'>Password Reset Request</p>
-                </div>
-                
-                <p style='font-size: 16px;'>Dear <strong>$userName</strong>,</p>
-                
-                <p style='font-size: 14px; line-height: 1.6;'>
-                    You have requested to reset your password for your EduAlert account. 
-                    Please use the following One-Time Password (OTP) to proceed:
-                </p>
-                
-                <div style='background: linear-gradient(135deg, #922381, #b8336a); padding: 20px; text-align: center; border-radius: 8px; margin: 25px 0;'>
-                    <div style='background: white; padding: 15px; border-radius: 5px; display: inline-block;'>
-                        <span style='font-size: 32px; font-weight: bold; color: #922381; letter-spacing: 3px;'>$otp</span>
-                    </div>
-                </div>
-                
-                <div style='background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 20px 0;'>
-                    <h4 style='color: #922381; margin-top: 0;'>⚠️ Important Security Information:</h4>
-                    <ul style='margin: 0; padding-left: 20px; color: #555;'>
-                        <li>This OTP is valid for <strong>10 minutes only</strong></li>
-                        <li>Do not share this OTP with anyone</li>
-                        <li>If you did not request this, please ignore this email</li>
-                        <li>For security, this OTP can only be used once</li>
-                    </ul>
-                </div>
-                
-                <div style='text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;'>
-                    <p style='color: #666; font-size: 12px; margin: 0;'>
-                        This email was sent from EduAlert Password Reset System<br>
-                        If you need help, contact your system administrator
-                    </p>
-                </div>
-            </div>
-        </body>
-        </html>";
+        // CRITICAL FIX: Clean HTML without extra whitespace
+        $htmlBody = '<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Password Reset OTP</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f5f5f5;">
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 20px auto; padding: 20px; background-color: #ffffff; border: 1px solid #ddd; border-radius: 10px;">
+        <div style="text-align: center; margin-bottom: 30px;">
+            <h2 style="color: #922381; margin: 0;">🔐 EduAlert</h2>
+            <p style="color: #666; margin: 5px 0;">Password Reset Request</p>
+        </div>
         
-        // Plain text alternative
-        $mail->AltBody = "Dear $userName,\n\nYou have requested to reset your password for your EduAlert account.\n\nYour OTP is: $otp\n\nThis OTP is valid for 10 minutes only.\n\nIf you did not request this, please ignore this email.\n\nBest regards,\nEduAlert System";
+        <p style="font-size: 16px; color: #333;">Dear <strong>' . htmlspecialchars($userName) . '</strong>,</p>
+        
+        <p style="font-size: 14px; line-height: 1.6; color: #555;">
+            You have requested to reset your password for your EduAlert account. 
+            Please use the following One-Time Password (OTP) to proceed:
+        </p>
+        
+        <div style="background: linear-gradient(135deg, #922381, #b8336a); padding: 20px; text-align: center; border-radius: 8px; margin: 25px 0;">
+            <div style="background: white; padding: 15px; border-radius: 5px; display: inline-block;">
+                <span style="font-size: 32px; font-weight: bold; color: #922381; letter-spacing: 3px;">' . htmlspecialchars($otp) . '</span>
+            </div>
+        </div>
+        
+        <div style="background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 20px 0;">
+            <h4 style="color: #922381; margin-top: 0;">⚠️ Important Security Information:</h4>
+            <ul style="margin: 0; padding-left: 20px; color: #555;">
+                <li>This OTP is valid for <strong>10 minutes only</strong></li>
+                <li>Do not share this OTP with anyone</li>
+                <li>If you did not request this, please ignore this email</li>
+                <li>For security, this OTP can only be used once</li>
+            </ul>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
+            <p style="color: #666; font-size: 12px; margin: 0;">
+                This email was sent from EduAlert Password Reset System<br>
+                If you need help, contact your system administrator
+            </p>
+        </div>
+    </div>
+</body>
+</html>';
+        
+        // Set the HTML body
+        $mail->Body = $htmlBody;
+        
+        // Plain text alternative for non-HTML email clients
+        $mail->AltBody = "Dear " . $userName . ",\n\n" .
+                        "You have requested to reset your password for your EduAlert account.\n\n" .
+                        "Your OTP is: " . $otp . "\n\n" .
+                        "This OTP is valid for 10 minutes only.\n\n" .
+                        "If you did not request this, please ignore this email.\n\n" .
+                        "Best regards,\nEduAlert System";
         
         // Send email
         $mail->send();
