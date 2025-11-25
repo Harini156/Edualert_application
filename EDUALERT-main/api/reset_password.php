@@ -1,4 +1,7 @@
 <?php
+// CRITICAL FIX: Set timezone to India (IST) - Fixes 5.5 hour difference
+date_default_timezone_set('Asia/Kolkata');
+
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
@@ -11,6 +14,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 include 'db.php';
+
+// Set MySQL timezone to match India time
+$conn->query("SET time_zone = '+05:30'");
 
 $response = [];
 

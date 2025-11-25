@@ -1,4 +1,7 @@
 <?php
+// CRITICAL FIX: Set timezone to India (IST) - Fixes 5.5 hour difference
+date_default_timezone_set('Asia/Kolkata');
+
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
@@ -11,6 +14,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 include 'db.php';
+
+// Set MySQL timezone to match India time
+$conn->query("SET time_zone = '+05:30'");
 
 $response = [];
 
@@ -54,8 +60,8 @@ try {
         // Generate 6-digit OTP
         $otp = sprintf("%06d", mt_rand(100000, 999999));
         
-        // Set expiration time (10 minutes from now)
-        $expiresAt = date('Y-m-d H:i:s', strtotime('+10 minutes'));
+        // FIXED: Set expiration time (30 minutes from now) - More user-friendly
+        $expiresAt = date('Y-m-d H:i:s', strtotime('+30 minutes'));
 
         // Clean up old OTPs for this user
         $cleanupStmt = $conn->prepare("DELETE FROM password_reset WHERE user_id = ? AND expiry < NOW()");
@@ -117,8 +123,9 @@ function logOtpBackup($email, $userName, $otp, $expiresAt) {
 }
 
 /**
- * Send OTP email using PHPMailer with Gmail SMTP - PRODUCTION READY
- * FIXED: Proper MIME encoding to prevent empty email body
+ * Send OTP email using PHPMailer - PLAIN TEXT VERSION
+ * FIXED: Removed HTML to prevent "noname" attachment issue
+ * FIXED: Simple, clean, guaranteed to work
  */
 function sendOtpEmail($email, $userName, $otp) {
     // Load PHPMailer
@@ -137,80 +144,37 @@ function sendOtpEmail($email, $userName, $otp) {
         $mail->Password   = 'qzlthmrgeilchifg'; // Gmail App Password
         $mail->SMTPSecure = \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port       = 587;
-        
-        // CRITICAL FIX: Proper encoding settings
         $mail->CharSet    = 'UTF-8';
-        $mail->Encoding   = 'base64';
-        $mail->ContentType = 'text/html; charset=UTF-8';
         
         // Sender and recipient
         $mail->setFrom('edualert.notifications@gmail.com', 'EduAlert System');
         $mail->addAddress($email, $userName);
         $mail->addReplyTo('edualert.notifications@gmail.com', 'EduAlert Support');
         
-        // CRITICAL FIX: Set HTML mode BEFORE setting content
-        $mail->isHTML(true);
+        // CRITICAL FIX: Use PLAIN TEXT only (no HTML)
+        $mail->isHTML(false);
         
         // Email subject
         $mail->Subject = 'EduAlert - Password Reset OTP';
         
-        // CRITICAL FIX: Clean HTML without extra whitespace
-        $htmlBody = '<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>Password Reset OTP</title>
-</head>
-<body style="margin: 0; padding: 0; background-color: #f5f5f5;">
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 20px auto; padding: 20px; background-color: #ffffff; border: 1px solid #ddd; border-radius: 10px;">
-        <div style="text-align: center; margin-bottom: 30px;">
-            <h2 style="color: #922381; margin: 0;">🔐 EduAlert</h2>
-            <p style="color: #666; margin: 5px 0;">Password Reset Request</p>
-        </div>
+        // PLAIN TEXT EMAIL BODY - Simple and guaranteed to work
+        $emailBody = "Dear " . $userName . ",\n\n";
+        $emailBody .= "You have requested to reset your password for your EduAlert account.\n\n";
+        $emailBody .= "Your One-Time Password (OTP) is:\n\n";
+        $emailBody .= "    " . $otp . "\n\n";
+        $emailBody .= "This OTP is valid for 30 minutes only.\n\n";
+        $emailBody .= "IMPORTANT SECURITY INFORMATION:\n";
+        $emailBody .= "- Do not share this OTP with anyone\n";
+        $emailBody .= "- If you did not request this, please ignore this email\n";
+        $emailBody .= "- For security, this OTP can only be used once\n\n";
+        $emailBody .= "Best regards,\n";
+        $emailBody .= "EduAlert System\n\n";
+        $emailBody .= "---\n";
+        $emailBody .= "This is an automated email from EduAlert Password Reset System.\n";
+        $emailBody .= "If you need help, contact your system administrator.";
         
-        <p style="font-size: 16px; color: #333;">Dear <strong>' . htmlspecialchars($userName) . '</strong>,</p>
-        
-        <p style="font-size: 14px; line-height: 1.6; color: #555;">
-            You have requested to reset your password for your EduAlert account. 
-            Please use the following One-Time Password (OTP) to proceed:
-        </p>
-        
-        <div style="background: linear-gradient(135deg, #922381, #b8336a); padding: 20px; text-align: center; border-radius: 8px; margin: 25px 0;">
-            <div style="background: white; padding: 15px; border-radius: 5px; display: inline-block;">
-                <span style="font-size: 32px; font-weight: bold; color: #922381; letter-spacing: 3px;">' . htmlspecialchars($otp) . '</span>
-            </div>
-        </div>
-        
-        <div style="background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 20px 0;">
-            <h4 style="color: #922381; margin-top: 0;">⚠️ Important Security Information:</h4>
-            <ul style="margin: 0; padding-left: 20px; color: #555;">
-                <li>This OTP is valid for <strong>10 minutes only</strong></li>
-                <li>Do not share this OTP with anyone</li>
-                <li>If you did not request this, please ignore this email</li>
-                <li>For security, this OTP can only be used once</li>
-            </ul>
-        </div>
-        
-        <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
-            <p style="color: #666; font-size: 12px; margin: 0;">
-                This email was sent from EduAlert Password Reset System<br>
-                If you need help, contact your system administrator
-            </p>
-        </div>
-    </div>
-</body>
-</html>';
-        
-        // Set the HTML body
-        $mail->Body = $htmlBody;
-        
-        // Plain text alternative for non-HTML email clients
-        $mail->AltBody = "Dear " . $userName . ",\n\n" .
-                        "You have requested to reset your password for your EduAlert account.\n\n" .
-                        "Your OTP is: " . $otp . "\n\n" .
-                        "This OTP is valid for 10 minutes only.\n\n" .
-                        "If you did not request this, please ignore this email.\n\n" .
-                        "Best regards,\nEduAlert System";
+        // Set the plain text body
+        $mail->Body = $emailBody;
         
         // Send email
         $mail->send();

@@ -27,4 +27,11 @@ if ($conn->connect_error) {
 
 // Set charset to prevent encoding issues
 $conn->set_charset("utf8");
+
+// CRITICAL FIX: Set timezone to India (IST) for all database operations
+// This ensures all timestamps are in Indian Standard Time
+$conn->query("SET time_zone = '+05:30'");
+
+// Set PHP timezone to match
+date_default_timezone_set('Asia/Kolkata');
 ?>
