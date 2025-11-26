@@ -19,7 +19,8 @@ class MainPageActivity : AppCompatActivity() {
         getStartedBtn = findViewById(R.id.getStartedBtn)
 
         getStartedBtn.setOnClickListener {
-            val intent = Intent(this, Login::class.java)
+            // Navigate to Subscription page first
+            val intent = Intent(this, SubscriptionActivity::class.java)
             startActivity(intent)
         }
     }
